@@ -147,6 +147,8 @@
   {
    "fieldname": "salutation",
    "fieldtype": "Link",
+   "hidden": 1,
+   "is_virtual": 1,
    "label": "Salutation",
    "oldfieldname": "salutation",
    "oldfieldtype": "Select",
@@ -162,7 +164,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "middle_name",
    "fieldtype": "Data",
-   "label": "Middle Name"
+   "label": "Second Name"
   },
   {
    "allow_in_quick_entry": 1,
@@ -223,6 +225,7 @@
    "oldfieldtype": "Data"
   },
   {
+   "default": "Male",
    "fieldname": "gender",
    "fieldtype": "Link",
    "label": "Gender",
@@ -341,6 +344,8 @@
   {
    "fieldname": "date_of_retirement",
    "fieldtype": "Date",
+   "hidden": 1,
+   "is_virtual": 1,
    "label": "Date Of Retirement",
    "oldfieldname": "date_of_retirement",
    "oldfieldtype": "Date"
@@ -411,16 +416,18 @@
   {
    "depends_on": "eval:doc.salary_mode == 'Bank'",
    "fieldname": "bank_name",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Bank Name",
    "oldfieldname": "bank_name",
-   "oldfieldtype": "Link"
+   "oldfieldtype": "Link",
+   "options": "Bank"
   },
   {
    "depends_on": "eval:doc.salary_mode == 'Bank'",
    "fieldname": "bank_ac_no",
    "fieldtype": "Data",
    "label": "Bank A/C No.",
+   "mandatory_depends_on": "eval:doc.salary_mode == 'Bank'",
    "oldfieldname": "bank_ac_no",
    "oldfieldtype": "Data"
   },
@@ -468,6 +475,8 @@
    "default": "0",
    "fieldname": "unsubscribed",
    "fieldtype": "Check",
+   "hidden": 1,
+   "is_virtual": 1,
    "label": "Unsubscribed"
   },
   {
@@ -693,9 +702,11 @@
   },
   {
    "fieldname": "attendance_device_id",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Attendance Device ID (Biometric/RF tag ID)",
    "no_copy": 1,
+   "non_negative": 1,
+   "reqd": 1,
    "unique": 1
   },
   {
@@ -721,6 +732,8 @@
   {
    "fieldname": "ctc",
    "fieldtype": "Currency",
+   "hidden": 1,
+   "is_virtual": 1,
    "label": "Cost to Company (CTC)",
    "options": "salary_currency"
   },
@@ -822,7 +835,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2025-02-07 13:54:40.122345",
+ "modified": "2025-07-11 23:11:42.508168",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -864,6 +877,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "search_fields": "employee_name",
  "show_name_in_global_search": 1,
  "sort_field": "modified",

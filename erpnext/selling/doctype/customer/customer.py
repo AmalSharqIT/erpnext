@@ -36,9 +36,7 @@ class Customer(TransactionBase):
 			AllowedToTransactWith,
 		)
 		from erpnext.accounts.doctype.party_account.party_account import PartyAccount
-		from erpnext.selling.doctype.customer_credit_limit.customer_credit_limit import (
-			CustomerCreditLimit,
-		)
+		from erpnext.selling.doctype.customer_credit_limit.customer_credit_limit import CustomerCreditLimit
 		from erpnext.selling.doctype.sales_team.sales_team import SalesTeam
 		from erpnext.utilities.doctype.portal_user.portal_user import PortalUser
 
@@ -54,7 +52,6 @@ class Customer(TransactionBase):
 		customer_primary_contact: DF.Link | None
 		customer_type: DF.Literal["Company", "Individual", "Partnership"]
 		default_bank_account: DF.Link | None
-		default_commission_rate: DF.Float
 		default_currency: DF.Link | None
 		default_price_list: DF.Link | None
 		default_sales_partner: DF.Link | None
@@ -83,7 +80,6 @@ class Customer(TransactionBase):
 		salutation: DF.Link | None
 		so_required: DF.Check
 		tax_category: DF.Link | None
-		tax_id: DF.Data | None
 		tax_withholding_category: DF.Link | None
 		territory: DF.Link | None
 		website: DF.Data | None
