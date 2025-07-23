@@ -158,6 +158,10 @@
    "role": "HR Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
   }
  ],
  "sort_field": "modified",
