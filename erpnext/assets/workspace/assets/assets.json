@@ -5,7 +5,7 @@
       "label": "Asset Value Analytics"
     }
   ],
-  "content": "[{\"id\":\"AYdg9ZeB9q\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Asset Value Analytics\",\"col\":12}},{\"id\":\"ZLGciNzZnl\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Khenwc5P-7\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcuts</b></span>\",\"col\":12}},{\"id\":\"puyEiH9EN_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Asset\",\"col\":3}},{\"id\":\"Q8sfnK0iOr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Asset Category\",\"col\":3}},{\"id\":\"-Nv9wcJgJB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fixed Asset Register\",\"col\":3}},{\"id\":\"Rl4vlk6UGZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Dashboard\",\"col\":3}},{\"id\":\"Ewv9gk4J_h\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Op3qjfqWgI\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"un2MKyCvXy\",\"type\":\"card\",\"data\":{\"card_name\":\"Assets\",\"col\":4}},{\"id\":\"W7SaVW_12S\",\"type\":\"card\",\"data\":{\"card_name\":\"Maintenance\",\"col\":4}},{\"id\":\"-fdxxEIPED\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+  "content": "[{\"id\":\"AYdg9ZeB9q\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Asset Value Analytics\",\"col\":12}},{\"id\":\"ZLGciNzZnl\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Khenwc5P-7\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Your Shortcuts</b></span>\",\"col\":12}},{\"id\":\"puyEiH9EN_\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Asset\",\"col\":3}},{\"id\":\"Q8sfnK0iOr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Asset Category\",\"col\":3}},{\"id\":\"-Nv9wcJgJB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fixed Asset Register\",\"col\":3}},{\"id\":\"Rl4vlk6UGZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Asset Dashboard\",\"col\":3}},{\"id\":\"Ewv9gk4J_h\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Op3qjfqWgI\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"un2MKyCvXy\",\"type\":\"card\",\"data\":{\"card_name\":\"Assets\",\"col\":4}},{\"id\":\"W7SaVW_12S\",\"type\":\"card\",\"data\":{\"card_name\":\"Maintenance\",\"col\":4}},{\"id\":\"-fdxxEIPED\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
   "creation": "2020-03-02 15:43:27.634865",
   "custom_blocks": [],
   "docstatus": 0,
@@ -201,7 +201,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-07-08",
+  "modified": "2025-08-04",
   "modified_by": "Administrator",
   "module": "Assets",
   "name": "Assets",
@@ -235,7 +235,7 @@
       "type": "Report"
     },
     {
-      "label": "Dashboard",
+      "label": "Asset Dashboard",
       "link_to": "Asset",
       "type": "Dashboard"
     }
