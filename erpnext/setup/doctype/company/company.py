@@ -516,7 +516,7 @@ class Company(NestedSet):
 				"parent_cost_center": None,
 			},
 			{
-				"cost_center_name": _("Main"),
+				"cost_center_name": "ادارة",
 				"company": self.name,
 				"is_group": 0,
 				"parent_cost_center": self.name + " - " + self.abbr,
@@ -530,10 +530,6 @@ class Company(NestedSet):
 			if cc.get("cost_center_name") == self.name:
 				cc_doc.flags.ignore_mandatory = True
 			cc_doc.insert()
-
-		self.db_set("cost_center", _("Main") + " - " + self.abbr)
-		self.db_set("round_off_cost_center", _("Main") + " - " + self.abbr)
-		self.db_set("depreciation_cost_center", _("Main") + " - " + self.abbr)
 
 	def after_rename(self, olddn, newdn, merge=False):
 		self.db_set("company_name", newdn)
