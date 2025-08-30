@@ -857,7 +857,7 @@
    "fieldname": "switch_account_by_currency",
    "fieldtype": "Table",
    "label": "Switch account by currency",
-   "options": "Switch account by currency"
+   "options": "Switch Account by Currency"
   },
   {
    "fieldname": "section_break_switch_account_by_currency",
@@ -869,7 +869,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2025-01-09 20:12:25.471544",
+ "modified": "2025-08-30 11:02:41.172601",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",
@@ -931,6 +931,7 @@
    "select": 1
   }
  ],
+ "row_format": "Dynamic",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",
