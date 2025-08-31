@@ -95,8 +95,8 @@
   "depreciation_cost_center",
   "capital_work_in_progress_account",
   "asset_received_but_not_billed",
-  "section_break_switch_account_by_currency",
-  "switch_account_by_currency",
+  "section_break_company_account_by_currency",
+  "company_account_by_currency",
   "buying_and_selling_tab",
   "sales_settings",
   "default_buying_terms",
@@ -854,14 +854,14 @@
    "options": "Advance Payment Date\nOldest Of Invoice Or Advance\nReconciliation Date"
   },
   {
-   "fieldname": "switch_account_by_currency",
-   "fieldtype": "Table",
-   "label": "Switch account by currency",
-   "options": "Switch Account by Currency"
+   "fieldname": "section_break_company_account_by_currency",
+   "fieldtype": "Section Break"
   },
   {
-   "fieldname": "section_break_switch_account_by_currency",
-   "fieldtype": "Section Break"
+   "fieldname": "company_account_by_currency",
+   "fieldtype": "Table",
+   "label": "Company Account By Currency",
+   "options": "Company Account By Currency"
   }
  ],
  "icon": "fa fa-building",
@@ -869,7 +869,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2025-08-30 11:02:41.172601",
+ "modified": "2025-08-31 09:03:38.870683",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",

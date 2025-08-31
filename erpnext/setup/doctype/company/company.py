@@ -25,11 +25,10 @@ class Company(NestedSet):
 	from typing import TYPE_CHECKING
 
 	if TYPE_CHECKING:
-		from frappe.types import DF
-
-		from erpnext.accounts.doctype.switch_account_by_currency.switch_account_by_currency import (
-			Switchaccountbycurrency,
+		from amalsharq.amalsharq_account.doctype.company_account_by_currency.company_account_by_currency import (
+			CompanyAccountByCurrency,
 		)
+		from frappe.types import DF
 
 		abbr: DF.Data
 		accumulated_depreciation_account: DF.Link | None
@@ -40,6 +39,7 @@ class Company(NestedSet):
 		book_advance_payments_in_separate_party_account: DF.Check
 		capital_work_in_progress_account: DF.Link | None
 		chart_of_accounts: DF.Literal[None]
+		company_account_by_currency: DF.Table[CompanyAccountByCurrency]
 		company_description: DF.TextEditor | None
 		company_logo: DF.AttachImage | None
 		company_name: DF.Data
@@ -106,7 +106,6 @@ class Company(NestedSet):
 		stock_adjustment_account: DF.Link | None
 		stock_received_but_not_billed: DF.Link | None
 		submit_err_jv: DF.Check
-		switch_account_by_currency: DF.Table[Switchaccountbycurrency]
 		tax_id: DF.Data | None
 		total_monthly_sales: DF.Currency
 		transactions_annual_history: DF.Code | None
