@@ -19,6 +19,7 @@
   "report_type",
   "account_currency",
   "column_break1",
+  "description",
   "parent_account",
   "account_type",
   "tax_rate",
@@ -101,6 +102,12 @@
    "fieldname": "column_break1",
    "fieldtype": "Column Break",
    "width": "50%"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description",
+   "no_copy": 1
   },
   {
    "fieldname": "parent_account",
@@ -244,9 +251,13 @@
    "role": "Accounts Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "role": "HR User",
+   "select": 1
   }
  ],
- "search_fields": "account_number",
+ "search_fields": "account_number,description",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",
