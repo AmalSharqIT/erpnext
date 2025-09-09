@@ -674,6 +674,7 @@ class BatchNoValuation(DeprecatedBatchNoValuation):
 		for key, value in kwargs.items():
 			setattr(self, key, value)
 
+		self.stock_queue = []
 		self.batch_nos = self.get_batch_nos()
 		self.prepare_batches()
 		self.calculate_avg_rate()
