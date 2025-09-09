@@ -25,6 +25,9 @@ class Company(NestedSet):
 	from typing import TYPE_CHECKING
 
 	if TYPE_CHECKING:
+		from amalsharq.amalsharq_account.doctype.company_account_by_currency.company_account_by_currency import (
+			CompanyAccountByCurrency,
+		)
 		from frappe.types import DF
 
 		abbr: DF.Data
@@ -36,6 +39,7 @@ class Company(NestedSet):
 		book_advance_payments_in_separate_party_account: DF.Check
 		capital_work_in_progress_account: DF.Link | None
 		chart_of_accounts: DF.Literal[None]
+		company_account_by_currency: DF.Table[CompanyAccountByCurrency]
 		company_description: DF.TextEditor | None
 		company_logo: DF.AttachImage | None
 		company_name: DF.Data
@@ -78,6 +82,8 @@ class Company(NestedSet):
 		exception_budget_approver_role: DF.Link | None
 		exchange_gain_loss_account: DF.Link | None
 		existing_company: DF.Link | None
+		expenses_included_in_asset_valuation: DF.Link | None
+		expenses_included_in_valuation: DF.Link | None
 		fax: DF.Data | None
 		is_group: DF.Check
 		lft: DF.Int

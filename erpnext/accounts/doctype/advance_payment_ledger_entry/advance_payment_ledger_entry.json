@@ -10,6 +10,7 @@
   "voucher_no",
   "against_voucher_type",
   "against_voucher_no",
+  "amount_in_company_currency",
   "amount",
   "currency",
   "event",
@@ -48,6 +49,7 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -74,7 +76,12 @@
    "default": "0",
    "fieldname": "delinked",
    "fieldtype": "Check",
-   "label": "DeLinked",
+   "label": "DeLinked"
+  },
+  {
+   "fieldname": "amount_in_company_currency",
+   "fieldtype": "Currency",
+   "label": "Amount in Company Currency",
    "read_only": 1
   }
  ],
@@ -82,7 +89,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-29 11:37:42.678556",
+ "modified": "2025-09-01 16:41:53.760650",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Advance Payment Ledger Entry",
