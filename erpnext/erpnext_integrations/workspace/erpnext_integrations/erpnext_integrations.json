@@ -10,7 +10,7 @@
   "icon": "integration",
   "idx": 0,
   "is_hidden": 0,
-  "label": "ERPNext Integrations",
+  "label": "ERPRiva Integrations",
   "links": [
     {
       "hidden": 0,
@@ -211,7 +211,7 @@
   "modified": "2025-07-08",
   "modified_by": "Administrator",
   "module": "ERPNext Integrations",
-  "name": "ERPNext Integrations",
+  "name": "ERPRiva Integrations",
   "number_cards": [],
   "owner": "Administrator",
   "parent_page": "",
@@ -225,5 +225,5 @@
   ],
   "sequence_id": 21.0,
   "shortcuts": [],
-  "title": "ERPNext Integrations"
+  "title": "ERPRiva Integrations"
 }

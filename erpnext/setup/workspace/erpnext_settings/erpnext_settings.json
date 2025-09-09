@@ -10,7 +10,7 @@
   "icon": "setting",
   "idx": 0,
   "is_hidden": 0,
-  "label": "ERPNext Settings",
+  "label": "ERPRiva Settings",
   "links": [
     {
       "hidden": 0,
@@ -391,7 +391,7 @@
   "modified": "2025-07-08",
   "modified_by": "Administrator",
   "module": "Setup",
-  "name": "ERPNext Settings",
+  "name": "ERPRiva Settings",
   "number_cards": [],
   "owner": "Administrator",
   "parent_page": "",
@@ -451,5 +451,5 @@
       "type": "DocType"
     }
   ],
-  "title": "ERPNext Settings"
+  "title": "ERPRiva Settings"
 }
