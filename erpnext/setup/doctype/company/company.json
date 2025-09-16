@@ -546,6 +546,16 @@
    "options": "Account"
   },
   {
+   "fieldname": "section_break_company_account_by_currency",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company_account_by_currency",
+   "fieldtype": "Table",
+   "label": "Company Account By Currency",
+   "options": "Company Account By Currency"
+  },
+  {
    "fieldname": "budget_detail",
    "fieldtype": "Section Break",
    "label": "Budget Detail"
@@ -853,16 +863,6 @@
    "fieldtype": "Select",
    "label": "Reconciliation Takes Effect On",
    "options": "Advance Payment Date\nOldest Of Invoice Or Advance\nReconciliation Date"
-  },
-  {
-   "fieldname": "section_break_company_account_by_currency",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "company_account_by_currency",
-   "fieldtype": "Table",
-   "label": "Company Account By Currency",
-   "options": "Company Account By Currency"
   }
  ],
  "icon": "fa fa-building",
@@ -870,7 +870,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2025-08-31 09:03:38.870683",
+ "modified": "2025-08-25 18:34:03.602046",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",

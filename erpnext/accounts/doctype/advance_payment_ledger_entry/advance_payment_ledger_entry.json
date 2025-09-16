@@ -46,6 +46,12 @@
    "read_only": 1
   },
   {
+   "fieldname": "amount_in_company_currency",
+   "fieldtype": "Currency",
+   "label": "Amount in Company Currency",
+   "read_only": 1
+  },
+  {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount",
@@ -77,19 +83,13 @@
    "fieldname": "delinked",
    "fieldtype": "Check",
    "label": "DeLinked"
-  },
-  {
-   "fieldname": "amount_in_company_currency",
-   "fieldtype": "Currency",
-   "label": "Amount in Company Currency",
-   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-01 16:41:53.760650",
+ "modified": "2025-07-29 11:37:42.678556",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Advance Payment Ledger Entry",

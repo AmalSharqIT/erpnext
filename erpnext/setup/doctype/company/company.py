@@ -82,8 +82,6 @@ class Company(NestedSet):
 		exception_budget_approver_role: DF.Link | None
 		exchange_gain_loss_account: DF.Link | None
 		existing_company: DF.Link | None
-		expenses_included_in_asset_valuation: DF.Link | None
-		expenses_included_in_valuation: DF.Link | None
 		fax: DF.Data | None
 		is_group: DF.Check
 		lft: DF.Int
