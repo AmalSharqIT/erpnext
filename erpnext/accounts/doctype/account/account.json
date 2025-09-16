@@ -253,8 +253,8 @@
    "write": 1
   },
   {
-   "role": "HR User",
-   "select": 1
+   "read": 1,
+   "role": "HR User"
   }
  ],
  "search_fields": "account_number,description",
