@@ -82,7 +82,8 @@
    "default": "0",
    "fieldname": "delinked",
    "fieldtype": "Check",
-   "label": "DeLinked"
+   "label": "DeLinked",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
