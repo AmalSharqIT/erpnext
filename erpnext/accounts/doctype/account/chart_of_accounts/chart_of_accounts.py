@@ -138,11 +138,17 @@ def get_chart(chart_template, existing_company=None):
 
 		return standard_chart_of_accounts_with_account_number.get()
 	else:
+		paths = []
 		folders = ("verified",)
 		if frappe.local.flags.allow_unverified_charts:
 			folders = ("verified", "unverified")
 		for folder in folders:
-			path = os.path.join(os.path.dirname(__file__), folder)
+			paths.append(os.path.join(os.path.dirname(__file__), folder))
+		for app in frappe.get_installed_apps():
+			path = frappe.get_app_path(app, "chart_of_accounts")
+			if os.path.isdir(path):
+				paths.append(path)
+		for path in paths:
 			for fname in os.listdir(path):
 				fname = frappe.as_unicode(fname)
 				if fname.endswith(".json"):
