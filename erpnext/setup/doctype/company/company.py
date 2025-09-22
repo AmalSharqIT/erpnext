@@ -25,10 +25,11 @@ class Company(NestedSet):
 	from typing import TYPE_CHECKING
 
 	if TYPE_CHECKING:
-		from amalsharq.amalsharq_account.doctype.company_account_by_currency.company_account_by_currency import (
+		from frappe.types import DF
+
+		from erpnext.setup.doctype.company_account_by_currency.company_account_by_currency import (
 			CompanyAccountByCurrency,
 		)
-		from frappe.types import DF
 
 		abbr: DF.Data
 		accumulated_depreciation_account: DF.Link | None
