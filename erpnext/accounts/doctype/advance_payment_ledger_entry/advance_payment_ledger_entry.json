@@ -10,6 +10,7 @@
   "voucher_no",
   "against_voucher_type",
   "against_voucher_no",
+  "amount_in_company_currency",
   "amount",
   "currency",
   "event",
@@ -45,9 +46,16 @@
    "read_only": 1
   },
   {
+   "fieldname": "amount_in_company_currency",
+   "fieldtype": "Currency",
+   "label": "Amount in Company Currency",
+   "read_only": 1
+  },
+  {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount",
+   "options": "currency",
    "read_only": 1
   },
   {
