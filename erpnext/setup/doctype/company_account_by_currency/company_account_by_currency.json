@@ -17,6 +17,7 @@
       "reqd": 1
     },
     {
+      "default": "eval:(null)",
       "fieldname": "currency",
       "fieldtype": "Link",
       "in_list_view": 1,
@@ -37,7 +38,7 @@
   "index_web_pages_for_search": 1,
   "istable": 1,
   "links": [],
-  "modified": "2025-09-21",
+  "modified": "2025-09-28",
   "modified_by": "Administrator",
   "module": "Setup",
   "name": "Company Account By Currency",
