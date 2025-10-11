@@ -343,7 +343,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Serial No and Batch",
-      "link_count": 6,
+      "link_count": 5,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -368,17 +368,6 @@
       "link_to": "Batch",
       "link_type": "DocType",
       "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "Item",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Installation Note",
-      "link_count": 0,
-      "link_to": "Installation Note",
-      "link_type": "DocType",
-      "onboard": 0,
       "type": "Link"
     },
     {
@@ -582,7 +571,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Other Reports",
-      "link_count": 7,
+      "link_count": 5,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -641,31 +630,9 @@
       "link_type": "Report",
       "onboard": 0,
       "type": "Link"
-    },
-    {
-      "dependencies": "Purchase Order",
-      "hidden": 0,
-      "is_query_report": 1,
-      "label": "Subcontracted Raw Materials To Be Transferred",
-      "link_count": 0,
-      "link_to": "Subcontracted Raw Materials To Be Transferred",
-      "link_type": "Report",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "dependencies": "Purchase Order",
-      "hidden": 0,
-      "is_query_report": 1,
-      "label": "Subcontracted Item To Be Received",
-      "link_count": 0,
-      "link_to": "Subcontracted Item To Be Received",
-      "link_type": "Report",
-      "onboard": 0,
-      "type": "Link"
     }
   ],
-  "modified": "2025-08-04",
+  "modified": "2025-10-11",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Stock",

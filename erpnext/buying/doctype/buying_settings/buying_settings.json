@@ -90,6 +90,7 @@
   {
    "fieldname": "subcontract",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Subcontracting Settings"
   },
   {

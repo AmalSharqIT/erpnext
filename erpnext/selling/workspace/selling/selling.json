@@ -21,7 +21,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Selling",
-      "link_count": 7,
+      "link_count": 5,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -33,17 +33,6 @@
       "label": "Customer",
       "link_count": 0,
       "link_to": "Customer",
-      "link_type": "DocType",
-      "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "Item, Customer",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Quotation",
-      "link_count": 0,
-      "link_to": "Quotation",
       "link_type": "DocType",
       "onboard": 1,
       "type": "Link"
@@ -66,17 +55,6 @@
       "label": "Sales Invoice",
       "link_count": 0,
       "link_to": "Sales Invoice",
-      "link_type": "DocType",
-      "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "Item, Customer",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Blanket Order",
-      "link_count": 0,
-      "link_to": "Blanket Order",
       "link_type": "DocType",
       "onboard": 1,
       "type": "Link"
@@ -381,7 +359,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Key Reports",
-      "link_count": 9,
+      "link_count": 8,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -426,17 +404,6 @@
       "label": "Sales Order Trends",
       "link_count": 0,
       "link_to": "Sales Order Trends",
-      "link_type": "Report",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "dependencies": "Quotation",
-      "hidden": 0,
-      "is_query_report": 1,
-      "label": "Quotation Trends",
-      "link_count": 0,
-      "link_to": "Quotation Trends",
       "link_type": "Report",
       "onboard": 0,
       "type": "Link"
@@ -489,7 +456,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Other Reports",
-      "link_count": 11,
+      "link_count": 9,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -572,17 +539,6 @@
       "type": "Link"
     },
     {
-      "dependencies": "Customer",
-      "hidden": 0,
-      "is_query_report": 1,
-      "label": "Sales Partners Commission",
-      "link_count": 0,
-      "link_to": "Sales Partners Commission",
-      "link_type": "Report",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
       "dependencies": "Sales Order",
       "hidden": 0,
       "is_query_report": 1,
@@ -603,20 +559,9 @@
       "link_type": "Report",
       "onboard": 0,
       "type": "Link"
-    },
-    {
-      "dependencies": "Sales Order",
-      "hidden": 0,
-      "is_query_report": 1,
-      "label": "Sales Partner Target Variance Based On Item Group",
-      "link_count": 0,
-      "link_to": "Sales Partner Target Variance based on Item Group",
-      "link_type": "Report",
-      "onboard": 0,
-      "type": "Link"
     }
   ],
-  "modified": "2025-08-04",
+  "modified": "2025-10-11",
   "modified_by": "Administrator",
   "module": "Selling",
   "name": "Selling",
