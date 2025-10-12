@@ -343,7 +343,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Serial No and Batch",
-      "link_count": 5,
+      "link_count": 2,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -368,42 +368,6 @@
       "link_to": "Batch",
       "link_type": "DocType",
       "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "Serial No",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Serial No Service Contract Expiry",
-      "link_count": 0,
-      "link_to": "Serial No Service Contract Expiry",
-      "link_type": "Report",
-      "onboard": 0,
-      "report_ref_doctype": "Serial No",
-      "type": "Link"
-    },
-    {
-      "dependencies": "Serial No",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Serial No Status",
-      "link_count": 0,
-      "link_to": "Serial No Status",
-      "link_type": "Report",
-      "onboard": 0,
-      "report_ref_doctype": "Serial No",
-      "type": "Link"
-    },
-    {
-      "dependencies": "Serial No",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Serial No Warranty Expiry",
-      "link_count": 0,
-      "link_to": "Serial No Warranty Expiry",
-      "link_type": "Report",
-      "onboard": 0,
-      "report_ref_doctype": "Serial No",
       "type": "Link"
     },
     {
@@ -632,7 +596,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-10-11",
+  "modified": "2025-10-12",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Stock",
