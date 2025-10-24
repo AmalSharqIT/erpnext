@@ -16,7 +16,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Module Settings",
-      "link_count": 8,
+      "link_count": 10,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -97,6 +97,26 @@
       "label": "Support Settings",
       "link_count": 0,
       "link_to": "Support Settings",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "HR Settings",
+      "link_count": 0,
+      "link_to": "HR Settings",
+      "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
+      "is_query_report": 0,
+      "label": "Payroll Settings",
+      "link_count": 0,
+      "link_to": "Payroll Settings",
       "link_type": "DocType",
       "onboard": 0,
       "type": "Link"
@@ -388,7 +408,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-07-08",
+  "modified": "2025-10-24",
   "modified_by": "Administrator",
   "module": "Setup",
   "name": "ERPRiva Settings",
