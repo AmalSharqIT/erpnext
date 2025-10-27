@@ -143,7 +143,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Items and Pricing",
-      "link_count": 9,
+      "link_count": 8,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -190,17 +190,6 @@
       "link_to": "Item Group",
       "link_type": "DocType",
       "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "Item",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Product Bundle",
-      "link_count": 0,
-      "link_to": "Product Bundle",
-      "link_type": "DocType",
-      "onboard": 0,
       "type": "Link"
     },
     {
@@ -550,7 +539,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-10-11",
+  "modified": "2025-10-27",
   "modified_by": "Administrator",
   "module": "Selling",
   "name": "Selling",
