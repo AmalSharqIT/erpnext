@@ -21,7 +21,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Items Catalogue",
-      "link_count": 6,
+      "link_count": 5,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -44,17 +44,6 @@
       "label": "Item Group",
       "link_count": 0,
       "link_to": "Item Group",
-      "link_type": "DocType",
-      "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Product Bundle",
-      "link_count": 0,
-      "link_to": "Product Bundle",
       "link_type": "DocType",
       "onboard": 1,
       "type": "Link"
@@ -596,7 +585,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-10-12",
+  "modified": "2025-10-27",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Stock",

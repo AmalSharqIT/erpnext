@@ -48,9 +48,9 @@
   "col_break_mfg",
   "bom_no",
   "accounting_dimensions_section",
-  "project",
-  "dimension_col_break",
   "cost_center",
+  "dimension_col_break",
+  "project",
   "more_info",
   "lead_time_date",
   "sales_order",
@@ -277,6 +277,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project"
   },
@@ -415,7 +416,8 @@
   },
   {
    "fieldname": "rate_and_amount_section_break",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "col_break4",
@@ -440,7 +442,8 @@
   },
   {
    "fieldname": "section_break_46",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "col_break_mfg",
@@ -474,6 +477,7 @@
   {
    "fieldname": "wip_composite_asset",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "WIP Composite Asset",
    "options": "Asset"
   },
