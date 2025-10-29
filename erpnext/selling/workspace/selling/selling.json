@@ -240,21 +240,10 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Settings",
-      "link_count": 8,
+      "link_count": 6,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Selling Settings",
-      "link_count": 0,
-      "link_to": "Selling Settings",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
     },
     {
       "dependencies": "",
@@ -318,17 +307,6 @@
       "label": "Territory",
       "link_count": 0,
       "link_to": "Territory",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Campaign",
-      "link_count": 0,
-      "link_to": "Campaign",
       "link_type": "DocType",
       "onboard": 0,
       "type": "Link"
