@@ -559,6 +559,7 @@
    "default": "0",
    "fieldname": "ignore_pricing_rule",
    "fieldtype": "Check",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Ignore Pricing Rule",
@@ -717,6 +718,7 @@
   {
    "fieldname": "tax_category",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Tax Category",
@@ -732,6 +734,7 @@
   {
    "fieldname": "shipping_rule",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Shipping Rule",
@@ -860,6 +863,7 @@
   {
    "fieldname": "coupon_code",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Coupon Code",
@@ -1146,6 +1150,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Project",
@@ -1169,6 +1174,7 @@
   {
    "fieldname": "source",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Source",
@@ -1180,6 +1186,7 @@
   {
    "fieldname": "campaign",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Campaign",
@@ -1346,6 +1353,7 @@
    "collapsible_depends_on": "commission_rate",
    "fieldname": "sales_team_section_break",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Commission",
@@ -1424,6 +1432,7 @@
    "collapsible": 1,
    "fieldname": "subscription_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Auto Repeat",
@@ -1497,6 +1506,7 @@
    "fetch_from": "customer.is_internal_customer",
    "fieldname": "is_internal_customer",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Customer",
    "read_only": 1
   },
@@ -1583,6 +1593,7 @@
   {
    "fieldname": "payment_terms_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Payment Terms"
   },
   {
@@ -1624,6 +1635,7 @@
   {
    "fieldname": "incoterm",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Incoterm",
    "options": "Incoterm"
   },

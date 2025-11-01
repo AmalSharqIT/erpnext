@@ -609,7 +609,6 @@
   {
    "fieldname": "taxes_and_charges",
    "fieldtype": "Link",
-   "hidden": 1,
    "label": "Purchase Taxes and Charges Template",
    "oldfieldname": "purchase_other_charges",
    "oldfieldtype": "Link",

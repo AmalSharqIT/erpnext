@@ -433,6 +433,7 @@
    "collapsible_depends_on": "eval:doc.delivered_by_supplier==1",
    "fieldname": "drop_ship",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Drop Ship"
   },
   {
@@ -478,6 +479,7 @@
   {
    "fieldname": "item_tax_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item Tax Template",
    "options": "Item Tax Template",
    "print_hide": 1
@@ -522,6 +524,7 @@
    "default": "0",
    "fieldname": "enable_deferred_revenue",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Enable Deferred Revenue"
   },
   {
@@ -820,6 +823,7 @@
    "allow_on_submit": 1,
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project",
    "search_index": 1
@@ -973,6 +977,7 @@
   {
    "fieldname": "pos_invoice",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "POS Invoice",
    "no_copy": 1,
    "options": "POS Invoice",
