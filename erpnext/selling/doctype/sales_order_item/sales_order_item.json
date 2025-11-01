@@ -141,6 +141,7 @@
    "default": "0",
    "fieldname": "ensure_delivery_based_on_produced_serial_no",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Ensure Delivery Based on Produced Serial No"
   },
   {
@@ -468,6 +469,7 @@
    "collapsible_depends_on": "eval:doc.delivered_by_supplier==1||doc.supplier",
    "fieldname": "drop_ship_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Drop Ship",
    "print_hide": 1
   },
@@ -589,6 +591,7 @@
   {
    "fieldname": "valuation_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Valuation Rate",
    "no_copy": 1,
    "options": "Company:company:default_currency",
@@ -599,6 +602,7 @@
   {
    "fieldname": "gross_profit",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Gross Profit",
    "no_copy": 1,
    "options": "Company:company:default_currency",
@@ -674,6 +678,7 @@
   {
    "fieldname": "work_order_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Work Order Qty",
    "no_copy": 1,
    "print_hide": 1,
@@ -695,6 +700,7 @@
   {
    "fieldname": "item_tax_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item Tax Template",
    "options": "Item Tax Template",
    "print_hide": 1
@@ -792,6 +798,7 @@
    "default": "0",
    "fieldname": "against_blanket_order",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Against Blanket Order"
   },
   {
@@ -805,6 +812,7 @@
   {
    "fieldname": "manufacturing_section_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Manufacturing Section"
   },
   {
@@ -900,6 +908,7 @@
   {
    "fieldname": "production_plan_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Production Plan Qty",
    "no_copy": 1,
    "read_only": 1
@@ -963,6 +972,7 @@
    "allow_on_submit": 1,
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project",
    "search_index": 1
