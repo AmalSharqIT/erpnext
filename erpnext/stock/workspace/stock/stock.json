@@ -63,7 +63,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Stock Transactions",
-      "link_count": 5,
+      "link_count": 4,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -110,17 +110,6 @@
       "link_to": "Purchase Receipt",
       "link_type": "DocType",
       "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Delivery Trip",
-      "link_count": 0,
-      "link_to": "Delivery Trip",
-      "link_type": "DocType",
-      "onboard": 0,
       "type": "Link"
     },
     {
@@ -213,7 +202,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Settings",
-      "link_count": 6,
+      "link_count": 5,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -269,17 +258,6 @@
       "label": "Item Attribute",
       "link_count": 0,
       "link_to": "Item Attribute",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "UOM Conversion Factor",
-      "link_count": 0,
-      "link_to": "UOM Conversion Factor",
       "link_type": "DocType",
       "onboard": 0,
       "type": "Link"
@@ -486,7 +464,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-10-31",
+  "modified": "2025-11-01",
   "modified_by": "Administrator",
   "module": "Stock",
   "name": "Stock",
