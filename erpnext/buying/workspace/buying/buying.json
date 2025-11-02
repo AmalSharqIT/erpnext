@@ -264,21 +264,10 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Other Reports",
-      "link_count": 7,
+      "link_count": 4,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 1,
-      "label": "Items To Be Requested",
-      "link_count": 0,
-      "link_to": "Items To Be Requested",
-      "link_type": "Report",
-      "onboard": 1,
-      "type": "Link"
     },
     {
       "dependencies": "",
@@ -317,28 +306,6 @@
       "dependencies": "",
       "hidden": 0,
       "is_query_report": 1,
-      "label": "Supplier Quotation Comparison",
-      "link_count": 0,
-      "link_to": "Supplier Quotation Comparison",
-      "link_type": "Report",
-      "onboard": 1,
-      "type": "Link"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 1,
-      "label": "Material Requests for which Supplier Quotations are not created",
-      "link_count": 0,
-      "link_to": "Material Requests for which Supplier Quotations are not created",
-      "link_type": "Report",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 1,
       "label": "Supplier Addresses And Contacts",
       "link_count": 0,
       "link_to": "Address And Contacts",
@@ -347,7 +314,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-10-27",
+  "modified": "2025-11-02",
   "modified_by": "Administrator",
   "module": "Buying",
   "name": "Buying",

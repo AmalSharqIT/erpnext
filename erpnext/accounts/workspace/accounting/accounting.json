@@ -169,7 +169,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Cost Center and Budgeting",
-      "link_count": 3,
+      "link_count": 2,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -181,17 +181,6 @@
       "label": "Chart of Cost Centers",
       "link_count": 0,
       "link_to": "Cost Center",
-      "link_type": "DocType",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "dependencies": "",
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Accounting Dimension",
-      "link_count": 0,
-      "link_to": "Accounting Dimension",
       "link_type": "DocType",
       "onboard": 0,
       "type": "Link"
@@ -253,7 +242,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Banking",
-      "link_count": 6,
+      "link_count": 5,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -310,16 +299,6 @@
       "link_count": 0,
       "link_to": "Bank Reconciliation Statement",
       "link_type": "Report",
-      "onboard": 0,
-      "type": "Link"
-    },
-    {
-      "hidden": 0,
-      "is_query_report": 0,
-      "label": "Plaid Settings",
-      "link_count": 0,
-      "link_to": "Plaid Settings",
-      "link_type": "DocType",
       "onboard": 0,
       "type": "Link"
     },
@@ -450,7 +429,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2025-10-11",
+  "modified": "2025-11-02",
   "modified_by": "Administrator",
   "module": "Accounts",
   "name": "Accounting",
