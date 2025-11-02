@@ -17,19 +17,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Stock User"
-  },
-  {
-   "role": "Sales Manager"
-  },
-  {
-   "role": "Maintenance User"
-  },
-  {
-   "role": "Accounts User"
-  },
-  {
-   "role": "Sales User"
+   "role": "System Manager"
   }
  ]
 }
