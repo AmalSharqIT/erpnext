@@ -285,6 +285,7 @@
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "label": "User ID",
+   "no_copy": 1,
    "options": "User"
   },
   {
@@ -299,7 +300,8 @@
    "description": "This will restrict user access to other employee records",
    "fieldname": "create_user_permission",
    "fieldtype": "Check",
-   "label": "Create User Permission"
+   "label": "Create User Permission",
+   "no_copy": 1
   },
   {
    "allow_in_quick_entry": 1,
