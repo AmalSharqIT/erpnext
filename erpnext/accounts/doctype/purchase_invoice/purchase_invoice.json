@@ -259,6 +259,7 @@
   {
    "fieldname": "due_date",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Due Date",
    "oldfieldname": "due_date",
    "oldfieldtype": "Date"
@@ -555,6 +556,7 @@
    "default": "0",
    "fieldname": "ignore_pricing_rule",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Ignore Pricing Rule",
    "permlevel": 1,
    "print_hide": 1
@@ -1529,6 +1531,7 @@
   {
    "fieldname": "terms_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Terms"
   },
   {
