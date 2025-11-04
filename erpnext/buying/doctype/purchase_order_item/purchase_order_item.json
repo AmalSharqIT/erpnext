@@ -501,6 +501,7 @@
   {
    "fieldname": "sales_order",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Sales Order",
    "no_copy": 1,
    "options": "Sales Order",
@@ -861,6 +862,7 @@
   {
    "fieldname": "sales_order_packed_item",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Sales Order Packed Item",
    "no_copy": 1,
    "print_hide": 1
