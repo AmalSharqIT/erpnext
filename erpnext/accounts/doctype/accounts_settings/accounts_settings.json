@@ -361,6 +361,7 @@
   {
    "fieldname": "pos_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "POS"
   },
   {

@@ -216,6 +216,7 @@
   {
    "fieldname": "batch_no",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Batch No",
    "options": "Batch"
   }

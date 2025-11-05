@@ -141,7 +141,6 @@
   {
    "fieldname": "scan_barcode",
    "fieldtype": "Data",
-   "hidden": 1,
    "label": "Scan Barcode",
    "options": "Barcode"
   },

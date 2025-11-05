@@ -583,6 +583,7 @@
   {
    "fieldname": "section_break_45",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Serial and Batch No"
   },
   {
@@ -1053,7 +1054,8 @@
   {
    "depends_on": "eval:doc.use_serial_batch_fields === 1",
    "fieldname": "section_break_3vxt",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "column_break_tolu",
