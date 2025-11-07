@@ -149,6 +149,7 @@
   {
    "fieldname": "lead_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "From Lead",
    "no_copy": 1,
    "oldfieldname": "lead_name",
@@ -219,6 +220,7 @@
    "default": "0",
    "fieldname": "is_internal_customer",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Customer"
   },
   {
@@ -279,6 +281,7 @@
   {
    "fieldname": "website",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Website"
   },
   {
@@ -480,6 +483,7 @@
   {
    "fieldname": "opportunity_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "From Opportunity",
    "no_copy": 1,
    "options": "Opportunity",
@@ -582,6 +586,7 @@
   {
    "fieldname": "prospect_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "From Prospect",
    "no_copy": 1,
    "options": "Prospect",
