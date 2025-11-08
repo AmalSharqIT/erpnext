@@ -786,6 +786,7 @@
    "collapsible": 1,
    "fieldname": "shopping_cart_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Shopping Cart"
   },
   {
@@ -828,12 +829,14 @@
    "fetch_from": "item_code.grant_commission",
    "fieldname": "grant_commission",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Grant Commission",
    "read_only": 1
   },
   {
    "fieldname": "picked_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Picked Qty (in Stock UOM)",
    "no_copy": 1,
    "read_only": 1
@@ -841,6 +844,7 @@
   {
    "fieldname": "inter_transfer_reference_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Inter Transfer Reference"
   },
   {
@@ -950,6 +954,7 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Dimensions"
   },
   {
