@@ -102,9 +102,9 @@
   "column_break_40",
   "weight_uom",
   "accounting_dimensions_section",
-  "project",
-  "dimension_col_break",
   "cost_center",
+  "dimension_col_break",
+  "project",
   "more_info_section_break",
   "is_fixed_asset",
   "item_tax_rate",
@@ -465,6 +465,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project",
    "print_hide": 1
@@ -500,6 +501,7 @@
   {
    "fieldname": "sales_order",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Sales Order",
    "no_copy": 1,
    "options": "Sales Order",
@@ -697,6 +699,7 @@
   {
    "fieldname": "item_tax_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item Tax Template",
    "options": "Item Tax Template"
   },
@@ -739,6 +742,7 @@
    "default": "0",
    "fieldname": "against_blanket_order",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Against Blanket Order"
   },
   {
@@ -858,6 +862,7 @@
   {
    "fieldname": "sales_order_packed_item",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Sales Order Packed Item",
    "no_copy": 1,
    "print_hide": 1
@@ -900,11 +905,13 @@
    "default": "1",
    "fieldname": "apply_tds",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Apply TDS"
   },
   {
    "fieldname": "wip_composite_asset",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "WIP Composite Asset",
    "options": "Asset"
   },

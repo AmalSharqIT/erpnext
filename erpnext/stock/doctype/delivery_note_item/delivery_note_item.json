@@ -282,6 +282,7 @@
    "collapsible_depends_on": "eval: doc.margin_type || doc.discount_amount || doc.distributed_discount_amount",
    "fieldname": "discount_and_margin",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Discount and Margin"
   },
   {
@@ -510,6 +511,7 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "quality_inspection",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Quality Inspection",
    "no_copy": 1,
    "options": "Quality Inspection",
@@ -595,6 +597,7 @@
   {
    "fieldname": "item_tax_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item Tax Template",
    "options": "Item Tax Template",
    "print_hide": 1
@@ -724,6 +727,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project"
   },

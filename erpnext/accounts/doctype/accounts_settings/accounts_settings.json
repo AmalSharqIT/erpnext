@@ -75,6 +75,7 @@
   "period_closing_settings_section",
   "acc_frozen_upto",
   "ignore_account_closing_balance",
+  "use_legacy_controller_for_pcv",
   "column_break_25",
   "frozen_accounts_modifier",
   "tab_break_dpet",
@@ -301,7 +302,6 @@
   },
   {
    "default": "0",
-   "description": "Learn about <a href=\"https://docs.erpnext.com/docs/v13/user/manual/en/accounts/articles/common_party_accounting#:~:text=Common%20Party%20Accounting%20in%20ERPNext,Invoice%20against%20a%20primary%20Supplier.\">Common Party</a>",
    "fieldname": "enable_common_party_accounting",
    "fieldtype": "Check",
    "label": "Enable Common Party Accounting"
@@ -361,6 +361,7 @@
   {
    "fieldname": "pos_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "POS"
   },
   {
@@ -629,6 +630,12 @@
    "fieldname": "fetch_valuation_rate_for_internal_transaction",
    "fieldtype": "Check",
    "label": "Fetch Valuation Rate for Internal Transaction"
+  },
+  {
+   "default": "1",
+   "fieldname": "use_legacy_controller_for_pcv",
+   "fieldtype": "Check",
+   "label": "Use Legacy Controller For Period Closing Voucher"
   }
  ],
  "icon": "icon-cog",
@@ -636,7 +643,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-07-18 13:56:47.192437",
+ "modified": "2025-10-20 14:06:08.870427",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts Settings",
