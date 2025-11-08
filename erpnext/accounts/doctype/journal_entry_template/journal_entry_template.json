@@ -124,6 +124,10 @@
    "report": 1,
    "role": "Auditor",
    "share": 1
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "search_fields": "voucher_type, company",
