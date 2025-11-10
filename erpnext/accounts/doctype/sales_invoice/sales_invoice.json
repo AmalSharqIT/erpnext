@@ -239,6 +239,7 @@
   },
   {
    "bold": 1,
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hide_days": 1,
