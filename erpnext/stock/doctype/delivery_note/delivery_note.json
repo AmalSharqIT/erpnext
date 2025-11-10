@@ -1041,6 +1041,7 @@
    "collapsible": 1,
    "fieldname": "printing_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Print Settings"
   },
   {
@@ -1078,7 +1079,7 @@
   },
   {
    "allow_on_submit": 1,
-   "default": "0",
+   "default": "1",
    "fieldname": "print_without_amount",
    "fieldtype": "Check",
    "label": "Print Without Amount",
@@ -1088,7 +1089,7 @@
   },
   {
    "allow_on_submit": 1,
-   "default": "0",
+   "default": "1",
    "fieldname": "group_same_items",
    "fieldtype": "Check",
    "label": "Group same items",
@@ -1226,6 +1227,7 @@
    "collapsible_depends_on": "sales_team",
    "fieldname": "section_break1",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Sales Team",
    "print_hide": 1
   },
@@ -1244,12 +1246,14 @@
    "fetch_from": "customer.is_internal_customer",
    "fieldname": "is_internal_customer",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Customer",
    "read_only": 1
   },
   {
    "fieldname": "inter_company_reference",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Inter Company Reference",
    "options": "Purchase Receipt"
   },

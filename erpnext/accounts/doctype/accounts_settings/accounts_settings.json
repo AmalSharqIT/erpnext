@@ -287,6 +287,7 @@
   {
    "fieldname": "tax_settings_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Tax Settings"
   },
   {

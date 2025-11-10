@@ -363,6 +363,7 @@
   {
    "fieldname": "payment_terms",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Default Payment Terms Template",
    "options": "Payment Terms Template"
   },
