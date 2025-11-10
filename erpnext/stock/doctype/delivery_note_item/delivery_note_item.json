@@ -680,6 +680,7 @@
   {
    "fieldname": "installed_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Installed Qty",
    "no_copy": 1,
    "oldfieldname": "installed_qty",
@@ -911,12 +912,14 @@
    "depends_on": "eval:doc.use_serial_batch_fields === 1",
    "fieldname": "serial_no",
    "fieldtype": "Text",
+   "hidden": 1,
    "label": "Serial No"
   },
   {
    "depends_on": "eval:doc.use_serial_batch_fields === 1",
    "fieldname": "batch_no",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Batch No",
    "options": "Batch",
    "search_index": 1
