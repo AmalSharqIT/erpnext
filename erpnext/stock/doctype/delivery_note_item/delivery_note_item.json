@@ -734,7 +734,6 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
-   "hidden": 1,
    "label": "Accounting Dimensions"
   },
   {
