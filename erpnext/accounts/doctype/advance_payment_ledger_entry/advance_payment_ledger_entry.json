@@ -10,6 +10,7 @@
   "voucher_no",
   "against_voucher_type",
   "against_voucher_no",
+  "amount_in_company_currency",
   "amount",
   "currency",
   "event",
@@ -45,9 +46,16 @@
    "read_only": 1
   },
   {
+   "fieldname": "amount_in_company_currency",
+   "fieldtype": "Currency",
+   "label": "Amount in Company Currency",
+   "read_only": 1
+  },
+  {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "label": "Amount",
+   "options": "currency",
    "read_only": 1
   },
   {
@@ -90,7 +98,6 @@
  "permissions": [
   {
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
@@ -99,7 +106,6 @@
   },
   {
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
