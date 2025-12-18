@@ -81,18 +81,19 @@
   "column_break_heye",
   "bank_ac_no",
   "iban",
-  "personal_details",
-  "marital_status",
-  "family_background",
-  "column_break6",
-  "blood_group",
-  "health_details",
+  "official_info_tab",
   "passport_details_section",
   "passport_number",
   "valid_upto",
   "column_break_73",
   "date_of_issue",
   "place_of_issue",
+  "personal_details",
+  "marital_status",
+  "family_background",
+  "column_break6",
+  "blood_group",
+  "health_details",
   "profile_tab",
   "bio",
   "educational_qualification",
@@ -308,6 +309,7 @@
    "collapsible": 1,
    "fieldname": "employment_details",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Joining"
   },
   {
@@ -401,6 +403,7 @@
    "collapsible": 1,
    "fieldname": "salary_information",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Salary",
    "oldfieldtype": "Section Break",
    "width": "50%"
@@ -827,6 +830,11 @@
    "fieldtype": "Data",
    "label": "IBAN",
    "options": "IBAN"
+  },
+  {
+   "fieldname": "official_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "Official Info"
   }
  ],
  "icon": "fa fa-user",
