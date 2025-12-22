@@ -101,7 +101,7 @@
    "fieldtype": "Select",
    "label": "Series",
    "no_copy": 1,
-   "options": "CUST-.YYYY.-",
+   "options": "CUST-",
    "set_only_once": 1
   },
   {
