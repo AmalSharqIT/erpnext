@@ -1906,7 +1906,7 @@ def get_payment_ledger_entries(gl_entries, cancel=0):
 
 
 def get_advance_ledger_entry(
-	gle, against_voucher_type, against_voucher_no, amount, amount_in_company_currency, cancel
+	gle, against_voucher_type, against_voucher_no, amount, base_amount, cancel
 ):
 	event = (
 		"Submit"
@@ -1925,7 +1925,7 @@ def get_advance_ledger_entry(
 		currency=gle.account_currency,
 		event=event,
 		delinked=cancel,
-		amount_in_company_currency=amount_in_company_currency,
+		base_amount=base_amount,
 	)
 
 
