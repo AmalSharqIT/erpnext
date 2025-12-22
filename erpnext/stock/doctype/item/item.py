@@ -94,6 +94,7 @@ class Item(Document):
 		delivered_by_supplier: DF.Check
 		description: DF.TextEditor | None
 		disabled: DF.Check
+		edari_item_code: DF.Data | None
 		enable_deferred_expense: DF.Check
 		enable_deferred_revenue: DF.Check
 		end_of_life: DF.Date | None
@@ -121,7 +122,7 @@ class Item(Document):
 		lead_time_days: DF.Int
 		max_discount: DF.Float
 		min_order_qty: DF.Float
-		naming_series: DF.Literal["STO-ITEM-.YYYY.-"]
+		naming_series: DF.Literal["ITEM-"]
 		no_of_months: DF.Int
 		no_of_months_exp: DF.Int
 		opening_stock: DF.Float
