@@ -33,7 +33,7 @@
   "over_delivery_receipt_allowance",
   "over_billing_allowance",
   "image",
-  "edari_item_code",
+  "edari_item_number",
   "unit_of_measure_conversion",
   "uoms",
   "section_break_11",
@@ -907,9 +907,9 @@
    "label": "Deferred Accounting"
   },
   {
-   "fieldname": "edari_item_code",
+   "fieldname": "edari_item_number",
    "fieldtype": "Data",
-   "label": "Edari Item Code"
+   "label": "Edari Item Number"
   }
  ],
  "icon": "fa fa-tag",

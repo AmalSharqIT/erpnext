@@ -94,7 +94,7 @@ class Item(Document):
 		delivered_by_supplier: DF.Check
 		description: DF.TextEditor | None
 		disabled: DF.Check
-		edari_item_code: DF.Data | None
+		edari_item_number: DF.Data | None
 		enable_deferred_expense: DF.Check
 		enable_deferred_revenue: DF.Check
 		end_of_life: DF.Date | None
