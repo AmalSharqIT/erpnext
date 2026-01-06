@@ -172,6 +172,7 @@ class JournalEntry(AccountsController):
 
 	def submit(self):
 		if len(self.accounts) > 100:
+			self.save()
 			msgprint(_("The task has been enqueued as a background job."), alert=True)
 			self.queue_action("submit", timeout=4600)
 		else:
@@ -224,6 +225,10 @@ class JournalEntry(AccountsController):
 			"Unreconcile Payment Entries",
 			"Advance Payment Ledger Entry",
 		)
+		if self.flags.get("append_to_ignore_linked_doctypes"):
+			self.ignore_linked_doctypes = (
+				self.ignore_linked_doctypes + self.flags.append_to_ignore_linked_doctypes
+			)
 		self.make_gl_entries(1)
 		self.unlink_advance_entry_reference()
 		self.unlink_asset_reference()
