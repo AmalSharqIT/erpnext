@@ -81,18 +81,19 @@
   "column_break_heye",
   "bank_ac_no",
   "iban",
-  "personal_details",
-  "marital_status",
-  "family_background",
-  "column_break6",
-  "blood_group",
-  "health_details",
+  "official_info_tab",
   "passport_details_section",
   "passport_number",
   "valid_upto",
   "column_break_73",
   "date_of_issue",
   "place_of_issue",
+  "personal_details",
+  "marital_status",
+  "family_background",
+  "column_break6",
+  "blood_group",
+  "health_details",
   "profile_tab",
   "bio",
   "educational_qualification",
@@ -147,6 +148,7 @@
   {
    "fieldname": "salutation",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Salutation",
    "oldfieldname": "salutation",
    "oldfieldtype": "Select",
@@ -162,7 +164,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "middle_name",
    "fieldtype": "Data",
-   "label": "Middle Name"
+   "label": "Second Name"
   },
   {
    "allow_in_quick_entry": 1,
@@ -223,6 +225,7 @@
    "oldfieldtype": "Data"
   },
   {
+   "default": "Male",
    "fieldname": "gender",
    "fieldtype": "Link",
    "label": "Gender",
@@ -283,6 +286,7 @@
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "label": "User ID",
+   "no_copy": 1,
    "options": "User"
   },
   {
@@ -297,13 +301,15 @@
    "description": "This will restrict user access to other employee records",
    "fieldname": "create_user_permission",
    "fieldtype": "Check",
-   "label": "Create User Permission"
+   "label": "Create User Permission",
+   "no_copy": 1
   },
   {
    "allow_in_quick_entry": 1,
    "collapsible": 1,
    "fieldname": "employment_details",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Joining"
   },
   {
@@ -341,6 +347,7 @@
   {
    "fieldname": "date_of_retirement",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Date Of Retirement",
    "oldfieldname": "date_of_retirement",
    "oldfieldtype": "Date"
@@ -396,6 +403,7 @@
    "collapsible": 1,
    "fieldname": "salary_information",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Salary",
    "oldfieldtype": "Section Break",
    "width": "50%"
@@ -411,16 +419,18 @@
   {
    "depends_on": "eval:doc.salary_mode == 'Bank'",
    "fieldname": "bank_name",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Bank Name",
    "oldfieldname": "bank_name",
-   "oldfieldtype": "Link"
+   "oldfieldtype": "Link",
+   "options": "Bank"
   },
   {
    "depends_on": "eval:doc.salary_mode == 'Bank'",
    "fieldname": "bank_ac_no",
    "fieldtype": "Data",
    "label": "Bank A/C No.",
+   "mandatory_depends_on": "eval:doc.salary_mode == 'Bank'",
    "oldfieldname": "bank_ac_no",
    "oldfieldtype": "Data"
   },
@@ -468,6 +478,7 @@
    "default": "0",
    "fieldname": "unsubscribed",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Unsubscribed"
   },
   {
@@ -693,9 +704,11 @@
   },
   {
    "fieldname": "attendance_device_id",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Attendance Device ID (Biometric/RF tag ID)",
    "no_copy": 1,
+   "non_negative": 1,
+   "reqd": 1,
    "unique": 1
   },
   {
@@ -721,6 +734,7 @@
   {
    "fieldname": "ctc",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Cost to Company (CTC)",
    "options": "salary_currency"
   },
@@ -816,6 +830,11 @@
    "fieldtype": "Data",
    "label": "IBAN",
    "options": "IBAN"
+  },
+  {
+   "fieldname": "official_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "Official Info"
   }
  ],
  "icon": "fa fa-user",
@@ -842,7 +861,6 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "import": 1,
    "print": 1,
    "read": 1,
@@ -855,7 +873,6 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "import": 1,
    "print": 1,
    "read": 1,
