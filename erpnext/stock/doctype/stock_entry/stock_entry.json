@@ -89,6 +89,7 @@
  ],
  "fields": [
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
@@ -240,6 +241,7 @@
    "default": "0",
    "fieldname": "inspection_required",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Inspection Required"
   },
   {
@@ -577,6 +579,7 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Accounting Dimensions"
   },
   {
@@ -606,6 +609,7 @@
    "depends_on": "eval:in_list([\"Material Transfer\", \"Material Receipt\"], doc.purpose)",
    "fieldname": "apply_putaway_rule",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Apply Putaway Rule"
   },
   {
@@ -623,6 +627,7 @@
    "collapsible": 1,
    "fieldname": "bom_info_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "BOM Info"
   },
   {
@@ -761,7 +766,6 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "import": 1,
    "print": 1,
    "read": 1,

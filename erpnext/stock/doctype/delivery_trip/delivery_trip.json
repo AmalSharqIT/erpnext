@@ -35,6 +35,7 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Series",
    "options": "MAT-DT-.YYYY.-"
   },
@@ -54,6 +55,7 @@
    "default": "0",
    "fieldname": "email_notification_sent",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Initial Email Notification Sent",
    "read_only": 1
   },
