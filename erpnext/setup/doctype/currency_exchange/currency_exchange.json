@@ -328,6 +328,10 @@
    "share": 0, 
    "submit": 0, 
    "write": 0
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ], 
  "quick_entry": 1, 
