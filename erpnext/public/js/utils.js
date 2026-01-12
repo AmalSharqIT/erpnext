@@ -1072,6 +1072,15 @@ frappe.form.link_formatters["Project"] = function (value, doc) {
 	}
 };
 
+frappe.form.link_formatters["Shift Type"] = function (value, doc) {
+	let title = frappe.boot.shift_types[value];
+	if (doc && value && title && title !== value) {
+		return value + ": " + title;
+	} else {
+		return value;
+	}
+};
+
 // add description on posting time
 $(document).on("app_ready", function () {
 	if (!frappe.datetime.is_timezone_same()) {
