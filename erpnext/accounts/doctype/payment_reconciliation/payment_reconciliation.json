@@ -197,6 +197,7 @@
   {
     "fieldname": "project",
     "fieldtype": "Link",
+    "hidden": 1,
     "label": "Project",
     "options": "Project"
   },
