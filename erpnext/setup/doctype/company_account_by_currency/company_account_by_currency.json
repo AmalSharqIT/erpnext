@@ -21,7 +21,7 @@
       "fieldtype": "Link",
       "in_list_view": 1,
       "label": "Currency",
-      "link_filters": "[[\"Currency\",\"name\",\"!=\",\"eval:(cur_frm.doc.default_currency)\"]]",
+      "link_filters": "[[\"Currency\",\"name\",\"!=\",\"eval:(doc.default_currency)\"]]",
       "options": "Currency",
       "reqd": 1
     },
