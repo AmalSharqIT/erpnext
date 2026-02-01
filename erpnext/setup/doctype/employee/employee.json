@@ -90,9 +90,11 @@
   "place_of_issue",
   "personal_details",
   "marital_status",
+  "number_of_sons",
   "family_background",
   "column_break6",
   "blood_group",
+  "number_of_daughters",
   "health_details",
   "profile_tab",
   "bio",
@@ -108,7 +110,6 @@
   "exit_interview_details",
   "held_on",
   "new_workplace",
-  "column_break_99",
   "leave_encashed",
   "encashment_date",
   "feedback_section",
@@ -164,13 +165,15 @@
    "allow_in_quick_entry": 1,
    "fieldname": "middle_name",
    "fieldtype": "Data",
-   "label": "Second Name"
+   "label": "Second Name",
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
    "fieldname": "last_name",
    "fieldtype": "Data",
-   "label": "Last Name"
+   "label": "Last Name",
+   "reqd": 1
   },
   {
    "fieldname": "employee_name",
@@ -261,18 +264,21 @@
    "fieldname": "emergency_phone_number",
    "fieldtype": "Data",
    "label": "Emergency Phone",
-   "options": "Phone"
+   "options": "Phone",
+   "reqd": 1
   },
   {
    "bold": 1,
    "fieldname": "person_to_be_contacted",
    "fieldtype": "Data",
-   "label": "Emergency Contact Name"
+   "label": "Emergency Contact Name",
+   "reqd": 1
   },
   {
    "fieldname": "relation",
    "fieldtype": "Data",
-   "label": "Relation"
+   "label": "Relation",
+   "reqd": 1
   },
   {
    "collapsible": 1,
@@ -355,6 +361,7 @@
   {
    "fieldname": "department",
    "fieldtype": "Link",
+   "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Department",
    "oldfieldname": "department",
@@ -366,6 +373,7 @@
    "fieldtype": "Link",
    "in_global_search": 1,
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Designation",
    "oldfieldname": "designation",
    "oldfieldtype": "Link",
@@ -377,6 +385,7 @@
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "label": "Reports to",
+   "mandatory_depends_on": "eval:!frappe.user.has_role(\"System Manager\")",
    "oldfieldname": "reports_to",
    "oldfieldtype": "Link",
    "options": "Employee"
@@ -384,10 +393,12 @@
   {
    "fieldname": "branch",
    "fieldtype": "Link",
+   "in_preview": 1,
    "label": "Branch",
    "oldfieldname": "branch",
    "oldfieldtype": "Link",
-   "options": "Branch"
+   "options": "Branch",
+   "reqd": 1
   },
   {
    "description": "Applicable Holiday List",
@@ -443,8 +454,10 @@
   {
    "fieldname": "cell_number",
    "fieldtype": "Data",
+   "in_preview": 1,
    "label": "Mobile",
-   "options": "Phone"
+   "options": "Phone",
+   "reqd": 1
   },
   {
    "fieldname": "prefered_contact_email",
@@ -549,7 +562,8 @@
    "fieldname": "marital_status",
    "fieldtype": "Select",
    "label": "Marital Status",
-   "options": "\nSingle\nMarried\nDivorced\nWidowed"
+   "options": "\nSingle\nMarried\nDivorced\nWidowed",
+   "reqd": 1
   },
   {
    "fieldname": "blood_group",
@@ -640,6 +654,7 @@
   {
    "fieldname": "leave_encashed",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Leave Encashed?",
    "oldfieldname": "leave_encashed",
    "oldfieldtype": "Select",
@@ -808,10 +823,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "column_break_99",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "feedback_section",
    "fieldtype": "Section Break",
    "label": "Feedback"
@@ -835,6 +846,18 @@
    "fieldname": "official_info_tab",
    "fieldtype": "Tab Break",
    "label": "Official Info"
+  },
+  {
+   "depends_on": "eval:(doc.marital_status && doc.marital_status!=\"Single\")",
+   "fieldname": "number_of_sons",
+   "fieldtype": "Int",
+   "label": "Number of Sons"
+  },
+  {
+   "depends_on": "eval:(doc.marital_status && doc.marital_status!=\"Single\")",
+   "fieldname": "number_of_daughters",
+   "fieldtype": "Int",
+   "label": "Number of Daughters"
   }
  ],
  "icon": "fa fa-user",
@@ -885,6 +908,7 @@
  "row_format": "Dynamic",
  "search_fields": "employee_name",
  "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
