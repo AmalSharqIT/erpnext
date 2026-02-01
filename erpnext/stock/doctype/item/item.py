@@ -122,7 +122,7 @@ class Item(Document):
 		lead_time_days: DF.Int
 		max_discount: DF.Float
 		min_order_qty: DF.Float
-		naming_series: DF.Literal["ITEM-"]
+		naming_series: DF.Literal["ITEM-.######"]
 		no_of_months: DF.Int
 		no_of_months_exp: DF.Int
 		opening_stock: DF.Float

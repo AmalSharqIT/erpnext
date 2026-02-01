@@ -124,7 +124,7 @@
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
-   "options": "ITEM-",
+   "options": "ITEM-.######",
    "set_only_once": 1
   },
   {
