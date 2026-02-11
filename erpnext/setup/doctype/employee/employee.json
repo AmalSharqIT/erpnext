@@ -271,14 +271,12 @@
    "bold": 1,
    "fieldname": "person_to_be_contacted",
    "fieldtype": "Data",
-   "label": "Emergency Contact Name",
-   "reqd": 1
+   "label": "Emergency Contact Name"
   },
   {
    "fieldname": "relation",
    "fieldtype": "Data",
-   "label": "Relation",
-   "reqd": 1
+   "label": "Relation"
   },
   {
    "collapsible": 1,
