@@ -264,8 +264,7 @@
    "fieldname": "emergency_phone_number",
    "fieldtype": "Data",
    "label": "Emergency Phone",
-   "options": "Phone",
-   "reqd": 1
+   "options": "Phone"
   },
   {
    "bold": 1,
@@ -454,8 +453,7 @@
    "fieldtype": "Data",
    "in_preview": 1,
    "label": "Mobile",
-   "options": "Phone",
-   "reqd": 1
+   "options": "Phone"
   },
   {
    "fieldname": "prefered_contact_email",
@@ -560,8 +558,7 @@
    "fieldname": "marital_status",
    "fieldtype": "Select",
    "label": "Marital Status",
-   "options": "\nSingle\nMarried\nDivorced\nWidowed",
-   "reqd": 1
+   "options": "\nSingle\nMarried\nDivorced\nWidowed"
   },
   {
    "fieldname": "blood_group",
