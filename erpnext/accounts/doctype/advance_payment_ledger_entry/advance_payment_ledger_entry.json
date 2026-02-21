@@ -11,6 +11,7 @@
   "against_voucher_type",
   "against_voucher_no",
   "amount",
+  "base_amount",
   "currency",
   "event",
   "delinked"
@@ -77,6 +78,13 @@
    "fieldtype": "Check",
    "label": "DeLinked",
    "read_only": 1
+  },
+  {
+   "depends_on": "base_amount",
+   "fieldname": "base_amount",
+   "fieldtype": "Currency",
+   "label": "Amount (Company Currency)",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
@@ -91,7 +99,6 @@
  "permissions": [
   {
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
@@ -100,7 +107,6 @@
   },
   {
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
