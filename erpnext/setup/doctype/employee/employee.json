@@ -437,7 +437,7 @@
    "fieldname": "bank_ac_no",
    "fieldtype": "Data",
    "label": "Bank A/C No.",
-   "mandatory_depends_on": "eval:doc.salary_mode == 'Bank'",
+   "mandatory_depends_on": "eval:doc.salary_mode=='Bank'",
    "oldfieldname": "bank_ac_no",
    "oldfieldtype": "Data"
   },
