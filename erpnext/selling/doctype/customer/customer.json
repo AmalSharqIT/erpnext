@@ -644,7 +644,6 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "import": 1,
    "print": 1,
    "read": 1,
@@ -686,6 +685,10 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager"
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "quick_entry": 1,
