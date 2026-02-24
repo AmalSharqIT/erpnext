@@ -381,7 +381,7 @@
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "label": "Reports to",
-   "mandatory_depends_on": "eval:!frappe.user.has_role(\"System Manager\")",
+   "mandatory_depends_on": "eval:!frappe.user.has_role('System Manager')",
    "oldfieldname": "reports_to",
    "oldfieldtype": "Link",
    "options": "Employee"
@@ -433,7 +433,7 @@
    "options": "Bank"
   },
   {
-   "depends_on": "eval:doc.salary_mode == 'Bank'",
+   "depends_on": "eval:doc.salary_mode=='Bank'",
    "fieldname": "bank_ac_no",
    "fieldtype": "Data",
    "label": "Bank A/C No.",
@@ -842,13 +842,13 @@
    "label": "Official Info"
   },
   {
-   "depends_on": "eval:(doc.marital_status && doc.marital_status!=\"Single\")",
+   "depends_on": "eval:(doc.marital_status && doc.marital_status!='Single')",
    "fieldname": "number_of_sons",
    "fieldtype": "Int",
    "label": "Number of Sons"
   },
   {
-   "depends_on": "eval:(doc.marital_status && doc.marital_status!=\"Single\")",
+   "depends_on": "eval:(doc.marital_status && doc.marital_status!='Single')",
    "fieldname": "number_of_daughters",
    "fieldtype": "Int",
    "label": "Number of Daughters"
