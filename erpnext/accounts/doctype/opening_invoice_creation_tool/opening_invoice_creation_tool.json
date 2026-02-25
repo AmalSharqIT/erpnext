@@ -66,6 +66,7 @@
   {
     "fieldname": "project",
     "fieldtype": "Link",
+    "hidden": 1,
     "label": "Project",
     "options": "Project"
   },
@@ -93,7 +94,7 @@
    "email": 1,
    "print": 1,
    "read": 1,
-   "role": "System Manager",
+   "role": "Accounts Manager",
    "share": 1,
    "write": 1
   }
