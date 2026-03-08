@@ -11,6 +11,7 @@
   "against_voucher_type",
   "against_voucher_no",
   "amount",
+  "base_amount",
   "currency",
   "event",
   "delinked"
@@ -76,6 +77,13 @@
    "fieldname": "delinked",
    "fieldtype": "Check",
    "label": "DeLinked",
+   "read_only": 1
+  },
+  {
+   "depends_on": "base_amount",
+   "fieldname": "base_amount",
+   "fieldtype": "Currency",
+   "label": "Amount (Company Currency)",
    "read_only": 1
   }
  ],

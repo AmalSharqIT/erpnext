@@ -99,6 +99,7 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "address_and_contact",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Address and Contact"
   },
   {
