@@ -251,6 +251,20 @@
    "write": 1
   },
   {
+   "permlevel": 9,
+   "read": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
+  },
+  {
+   "permlevel": 9,
+   "read": 1,
+   "role": "Cash Desk User"
+  },
+  {
    "read": 1,
    "role": "Employee"
   }
