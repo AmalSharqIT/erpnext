@@ -116,7 +116,7 @@
       "hidden": 0,
       "is_query_report": 0,
       "label": "Sales Incentive",
-      "link_count": 2,
+      "link_count": 3,
       "link_type": "DocType",
       "onboard": 0,
       "type": "Card Break"
@@ -138,6 +138,16 @@
       "link_count": 0,
       "link_to": "Sales Entry",
       "link_type": "DocType",
+      "onboard": 0,
+      "type": "Link"
+    },
+    {
+      "hidden": 0,
+      "is_query_report": 1,
+      "label": "Sales Incentive",
+      "link_count": 0,
+      "link_to": "Sales Incentive",
+      "link_type": "Report",
       "onboard": 0,
       "type": "Link"
     },
@@ -356,7 +366,7 @@
       "type": "Link"
     }
   ],
-  "modified": "2026-02-23",
+  "modified": "2026-03-13",
   "modified_by": "Administrator",
   "module": "Selling",
   "name": "Selling",
