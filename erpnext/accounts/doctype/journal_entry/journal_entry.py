@@ -215,6 +215,8 @@ class JournalEntry(AccountsController):
 	def on_cancel(self):
 		# References for this Journal are removed on the `on_cancel` event in accounts_controller
 		super().on_cancel()
+
+		from_doc_events = getattr(self, "ignore_linked_doctypes", ())
 		self.ignore_linked_doctypes = (
 			"GL Entry",
 			"Stock Ledger Entry",
@@ -227,10 +229,10 @@ class JournalEntry(AccountsController):
 			"Unreconcile Payment Entries",
 			"Advance Payment Ledger Entry",
 		)
-		if self.flags.get("append_to_ignore_linked_doctypes"):
-			self.ignore_linked_doctypes = (
-				self.ignore_linked_doctypes + self.flags.append_to_ignore_linked_doctypes
-			)
+
+		if from_doc_events and from_doc_events != self.ignore_linked_doctypes:
+			self.ignore_linked_doctypes = self.ignore_linked_doctypes + from_doc_events
+
 		self.make_gl_entries(1)
 		self.unlink_advance_entry_reference()
 		self.unlink_asset_reference()
@@ -268,6 +270,9 @@ class JournalEntry(AccountsController):
 			frappe.throw(_("Journal Entry type should be set as Depreciation Entry for asset depreciation"))
 
 	def validate_stock_accounts(self):
+		if not erpnext.is_perpetual_inventory_enabled(self.company):
+			return
+
 		stock_accounts = get_stock_accounts(self.company, accounts=self.accounts)
 		for account in stock_accounts:
 			account_bal, stock_bal, warehouse_list = get_stock_and_account_balance(

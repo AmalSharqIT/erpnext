@@ -736,10 +736,6 @@ erpnext.buying.PurchaseOrderController = class PurchaseOrderController extends (
 	items_on_form_rendered() {
 		set_schedule_date(this.frm);
 	}
-
-	schedule_date() {
-		set_schedule_date(this.frm);
-	}
 };
 
 // for backward compatibility: combine new and previous states
