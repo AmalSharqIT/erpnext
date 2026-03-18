@@ -481,12 +481,6 @@
    "write": 1
   },
   {
-   "permlevel": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Desk User"
-  },
-  {
    "create": 1,
    "delete": 1,
    "email": 1,
