@@ -136,34 +136,9 @@ erpnext.accounts.SalesInvoiceController = class SalesInvoiceController extends (
 			}
 
 			if (doc.outstanding_amount > 0) {
-				cur_frm.add_custom_button(
-					__("Payment Request"),
-					function () {
-						me.make_payment_request();
-					},
-					__("Create")
-				);
-				this.frm.add_custom_button(
-					__("Invoice Discounting"),
-					this.make_invoice_discounting.bind(this),
-					__("Create")
-				);
-
 				const payment_is_overdue = doc.payment_schedule
 					.map((row) => Date.parse(row.due_date) < Date.now())
 					.reduce((prev, current) => prev || current, false);
-
-				if (payment_is_overdue) {
-					this.frm.add_custom_button(__("Dunning"), this.make_dunning.bind(this), __("Create"));
-				}
-			}
-
-			if (doc.docstatus === 1) {
-				cur_frm.add_custom_button(
-					__("Maintenance Schedule"),
-					this.make_maintenance_schedule.bind(this),
-					__("Create")
-				);
 			}
 		}
 
@@ -171,7 +146,6 @@ erpnext.accounts.SalesInvoiceController = class SalesInvoiceController extends (
 		if (cint(doc.docstatus == 0) && cur_frm.page.current_view_name !== "pos" && !doc.is_return) {
 			this.frm.cscript.sales_order_btn();
 			this.frm.cscript.delivery_note_btn();
-			this.frm.cscript.quotation_btn();
 		}
 
 		this.set_default_print_format();
@@ -279,38 +253,6 @@ erpnext.accounts.SalesInvoiceController = class SalesInvoiceController extends (
 					allow_child_item_selection: true,
 					child_fieldname: "items",
 					child_columns: ["item_code", "item_name", "qty", "amount", "billed_amt"],
-				});
-			},
-			__("Get Items From")
-		);
-	}
-
-	quotation_btn() {
-		var me = this;
-		this.$quotation_btn = this.frm.add_custom_button(
-			__("Quotation"),
-			function () {
-				erpnext.utils.map_current_doc({
-					method: "erpnext.selling.doctype.quotation.quotation.make_sales_invoice",
-					source_doctype: "Quotation",
-					target: me.frm,
-					setters: [
-						{
-							fieldtype: "Link",
-							label: __("Customer"),
-							options: "Customer",
-							fieldname: "party_name",
-							default: me.frm.doc.customer,
-						},
-					],
-					get_query_filters: {
-						docstatus: 1,
-						status: ["!=", "Lost"],
-						company: me.frm.doc.company,
-					},
-					allow_child_item_selection: true,
-					child_fieldname: "items",
-					child_columns: ["item_code", "item_name", "qty", "rate", "amount"],
 				});
 			},
 			__("Get Items From")
@@ -1039,71 +981,6 @@ frappe.ui.form.on("Sales Invoice", {
 	},
 
 	refresh: function (frm) {
-		if (frm.doc.docstatus === 0 && !frm.doc.is_return) {
-			frm.add_custom_button(
-				__("Timesheet"),
-				function () {
-					let d = new frappe.ui.Dialog({
-						title: __("Fetch Timesheet"),
-						fields: [
-							{
-								label: __("From"),
-								fieldname: "from_time",
-								fieldtype: "Date",
-								reqd: 1,
-							},
-							{
-								label: __("Item Code"),
-								fieldname: "item_code",
-								fieldtype: "Link",
-								options: "Item",
-								get_query: () => {
-									return {
-										query: "erpnext.controllers.queries.item_query",
-										filters: {
-											is_sales_item: 1,
-											customer: frm.doc.customer,
-											has_variants: 0,
-										},
-									};
-								},
-							},
-							{
-								fieldtype: "Column Break",
-								fieldname: "col_break_1",
-							},
-							{
-								label: __("To"),
-								fieldname: "to_time",
-								fieldtype: "Date",
-								reqd: 1,
-							},
-							{
-								label: __("Project"),
-								fieldname: "project",
-								fieldtype: "Link",
-								options: "Project",
-								default: frm.doc.project,
-							},
-						],
-						primary_action: function () {
-							const data = d.get_values();
-							frm.events.add_timesheet_data(frm, {
-								from_time: data.from_time,
-								to_time: data.to_time,
-								project: data.project,
-								item_code: data.item_code,
-							});
-							d.hide();
-						},
-						primary_action_label: __("Get Timesheets"),
-					});
-					d.show();
-				},
-				__("Get Items From")
-			);
-		}
-
 		if (frm.doc.is_debit_note) {
 			frm.set_df_property("return_against", "label", __("Adjustment Against"));
 		}

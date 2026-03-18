@@ -19,6 +19,7 @@
   "report_type",
   "account_currency",
   "column_break1",
+  "description",
   "parent_account",
   "account_type",
   "tax_rate",
@@ -101,6 +102,12 @@
    "fieldname": "column_break1",
    "fieldtype": "Column Break",
    "width": "50%"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description",
+   "no_copy": 1
   },
   {
    "fieldname": "parent_account",
@@ -202,7 +209,6 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "import": 1,
    "print": 1,
    "read": 1,
@@ -236,7 +242,6 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "import": 1,
    "print": 1,
    "read": 1,
@@ -244,9 +249,27 @@
    "role": "Accounts Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "permlevel": 9,
+   "read": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
+  },
+  {
+   "permlevel": 9,
+   "read": 1,
+   "role": "Cash Desk User"
+  },
+  {
+   "read": 1,
+   "role": "Employee"
   }
  ],
- "search_fields": "account_number",
+ "search_fields": "account_number,description",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",

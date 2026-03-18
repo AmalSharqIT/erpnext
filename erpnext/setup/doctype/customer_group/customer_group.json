@@ -63,6 +63,7 @@
   {
    "fieldname": "default_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "ignore_user_permissions": 1,
    "label": "Default Price List",
    "options": "Price List"
@@ -113,6 +114,7 @@
   {
    "fieldname": "default_receivable_account",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Default Accounts"
   },
   {
@@ -165,7 +167,6 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "import": 1,
    "print": 1,
    "read": 1,
@@ -192,7 +193,6 @@
   },
   {
    "email": 1,
-   "export": 1,
    "print": 1,
    "report": 1,
    "role": "Customer",

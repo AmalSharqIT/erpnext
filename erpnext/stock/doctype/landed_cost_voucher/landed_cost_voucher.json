@@ -29,11 +29,11 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Series",
    "no_copy": 1,
    "options": "MAT-LCV-.YYYY.-",
    "print_hide": 1,
-   "reqd": 1,
    "set_only_once": 1,
    "show_days": 1,
    "show_seconds": 1
@@ -192,7 +192,6 @@
    "cancel": 1,
    "create": 1,
    "delete": 1,
-   "export": 1,
    "read": 1,
    "report": 1,
    "role": "Stock Manager",

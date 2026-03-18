@@ -173,6 +173,7 @@ class JournalEntry(AccountsController):
 
 	def submit(self):
 		if len(self.accounts) > 100 and not self.meta.queue_in_background:
+			self.save()
 			queue_submission(self, "_submit")
 		else:
 			return self._submit()

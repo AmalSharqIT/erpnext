@@ -22,10 +22,7 @@
  "report_type": "Query Report",
  "roles": [
   {
-   "role": "Accounts Manager"
-  },
-  {
-   "role": "Accounts User"
+   "role": "System Manager"
   }
  ],
  "timeout": 0

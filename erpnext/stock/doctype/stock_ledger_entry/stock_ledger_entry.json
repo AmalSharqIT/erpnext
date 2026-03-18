@@ -370,14 +370,12 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Stock User"
   },
   {
-   "export": 1,
    "read": 1,
    "report": 1,
    "role": "Accounts Manager"

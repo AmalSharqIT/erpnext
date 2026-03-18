@@ -256,6 +256,7 @@
   {
    "fieldname": "price_list_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Price List Rate",
    "oldfieldname": "ref_rate",
    "oldfieldtype": "Currency",
@@ -268,6 +269,7 @@
   {
    "fieldname": "base_price_list_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Price List Rate (Company Currency)",
    "oldfieldname": "base_ref_rate",
    "oldfieldtype": "Currency",
@@ -282,6 +284,7 @@
    "collapsible_depends_on": "eval: doc.margin_type || doc.discount_amount || doc.distributed_discount_amount",
    "fieldname": "discount_and_margin",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Discount and Margin"
   },
   {
@@ -346,6 +349,7 @@
   {
    "fieldname": "rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Rate",
    "oldfieldname": "export_rate",
@@ -357,6 +361,7 @@
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Amount",
    "oldfieldname": "export_amount",
@@ -373,6 +378,7 @@
   {
    "fieldname": "base_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Rate (Company Currency)",
    "oldfieldname": "basic_rate",
    "oldfieldtype": "Currency",
@@ -385,6 +391,7 @@
   {
    "fieldname": "base_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Amount (Company Currency)",
    "oldfieldname": "amount",
    "oldfieldtype": "Currency",
@@ -406,6 +413,7 @@
    "default": "0",
    "fieldname": "is_free_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Free Item",
    "print_hide": 1,
    "read_only": 1
@@ -417,6 +425,7 @@
   {
    "fieldname": "net_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Net Rate",
    "options": "currency",
    "print_hide": 1,
@@ -425,6 +434,7 @@
   {
    "fieldname": "net_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Net Amount",
    "options": "currency",
    "print_hide": 1,
@@ -437,6 +447,7 @@
   {
    "fieldname": "base_net_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Net Rate (Company Currency)",
    "options": "Company:company:default_currency",
    "print_hide": 1,
@@ -445,6 +456,7 @@
   {
    "fieldname": "base_net_amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Net Amount (Company Currency)",
    "options": "Company:company:default_currency",
    "print_hide": 1,
@@ -510,6 +522,7 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "quality_inspection",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Quality Inspection",
    "no_copy": 1,
    "options": "Quality Inspection",
@@ -518,6 +531,7 @@
   {
    "fieldname": "section_break_40",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Serial and Batch No"
   },
   {
@@ -595,6 +609,7 @@
   {
    "fieldname": "item_tax_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item Tax Template",
    "options": "Item Tax Template",
    "print_hide": 1
@@ -613,6 +628,7 @@
    "default": "0",
    "fieldname": "allow_zero_valuation_rate",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Zero Valuation Rate",
    "no_copy": 1,
    "print_hide": 1
@@ -664,6 +680,7 @@
   {
    "fieldname": "installed_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Installed Qty",
    "no_copy": 1,
    "oldfieldname": "installed_qty",
@@ -676,6 +693,7 @@
   {
    "fieldname": "billed_amt",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Billed Amt",
    "no_copy": 1,
    "options": "currency",
@@ -695,6 +713,7 @@
   {
    "fieldname": "accounting_details_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Details"
   },
   {
@@ -724,6 +743,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project"
   },
@@ -756,6 +776,7 @@
   {
    "fieldname": "incoming_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Incoming Rate",
    "no_copy": 1,
    "options": "Company:company:default_currency",
@@ -777,6 +798,7 @@
    "fetch_from": "item_code.grant_commission",
    "fieldname": "grant_commission",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Grant Commission",
    "read_only": 1
   },
@@ -889,12 +911,14 @@
    "depends_on": "eval:doc.use_serial_batch_fields === 1",
    "fieldname": "serial_no",
    "fieldtype": "Text",
+   "hidden": 1,
    "label": "Serial No"
   },
   {
    "depends_on": "eval:doc.use_serial_batch_fields === 1",
    "fieldname": "batch_no",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Batch No",
    "options": "Batch",
    "search_index": 1

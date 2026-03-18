@@ -512,6 +512,7 @@
   {
    "fieldname": "quality_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Quality"
   },
   {
@@ -560,17 +561,21 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "email": 1,
-   "print": 1,
    "read": 1,
-   "role": "Stock Manager",
-   "share": 1,
-   "write": 1
+   "role": "Stock Manager"
   },
   {
    "read": 1,
    "role": "Sales User"
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
   }
  ],
  "quick_entry": 1,

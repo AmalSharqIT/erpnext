@@ -247,7 +247,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales User",
+   "role": "System Manager",
    "share": 1,
    "submit": 1,
    "write": 1
@@ -256,7 +256,7 @@
    "permlevel": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales User"
+   "role": "System Manager"
   }
  ],
  "sort_field": "modified",
