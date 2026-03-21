@@ -266,7 +266,7 @@
   },
   {
    "read": 1,
-   "role": "Employee"
+   "role": "HR User"
   }
  ],
  "search_fields": "account_number,description",

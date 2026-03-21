@@ -496,7 +496,7 @@
    "email": 1,
    "print": 1,
    "report": 1,
-   "role": "Employee",
+   "role": "HR User",
    "select": 1,
    "share": 1
   }
