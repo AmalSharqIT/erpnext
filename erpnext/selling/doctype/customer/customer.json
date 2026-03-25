@@ -650,6 +650,14 @@
    "role": "Sales User"
   },
   {
+   "read": 1,
+   "role": "Sales Manager"
+  },
+  {
+   "read": 1,
+   "role": "Sales Master Manager"
+  },
+  {
    "email": 1,
    "print": 1,
    "read": 1,
