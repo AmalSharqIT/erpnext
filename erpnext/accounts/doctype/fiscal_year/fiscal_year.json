@@ -118,10 +118,6 @@
   },
   {
    "read": 1,
-   "role": "Employee"
-  },
-  {
-   "read": 1,
    "role": "Accounts Manager"
   },
   {
