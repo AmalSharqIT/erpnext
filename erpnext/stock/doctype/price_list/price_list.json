@@ -98,16 +98,6 @@
    "role": "Sales User"
   },
   {
-   "create": 1,
-   "delete": 1,
-   "import": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Master Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
    "read": 1,
    "report": 1,
    "role": "Purchase User"
