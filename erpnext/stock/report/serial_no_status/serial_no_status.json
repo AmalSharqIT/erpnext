@@ -21,7 +21,13 @@
  "report_type": "Report Builder",
  "roles": [
   {
-   "role": "System Manager"
+   "role": "Item Manager"
+  },
+  {
+   "role": "Stock Manager"
+  },
+  {
+   "role": "Stock User"
   }
  ]
 }

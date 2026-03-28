@@ -39,10 +39,6 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "read": 1,
-   "role": "HR User"
-  },
-  {
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -56,6 +52,10 @@
   {
    "read": 1,
    "role": "Sales User"
+  },
+  {
+   "read": 1,
+   "role": "HR User"
   },
   {
    "role": "Employee",

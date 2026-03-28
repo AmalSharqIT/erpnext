@@ -680,6 +680,15 @@
    "delete": 1,
    "read": 1,
    "report": 1,
+   "role": "Purchase Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "report": 1,
    "role": "Website Manager",
    "share": 1,
    "write": 1

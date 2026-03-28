@@ -96,7 +96,23 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager"
+   "role": "Auditor"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
   }
  ],
  "quick_entry": 1,
