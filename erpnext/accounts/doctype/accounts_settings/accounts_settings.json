@@ -679,8 +679,13 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "create": 1,
+   "email": 1,
+   "print": 1,
    "read": 1,
-   "role": "Accounts Manager"
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
   },
   {
    "read": 1,

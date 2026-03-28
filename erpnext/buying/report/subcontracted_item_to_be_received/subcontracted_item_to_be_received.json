@@ -18,7 +18,13 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "System Manager"
+   "role": "Stock User"
+  },
+  {
+   "role": "Purchase Manager"
+  },
+  {
+   "role": "Purchase User"
   }
  ]
 }

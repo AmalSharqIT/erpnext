@@ -21,7 +21,13 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "System Manager"
+   "role": "Sales User"
+  },
+  {
+   "role": "Maintenance Manager"
+  },
+  {
+   "role": "Maintenance User"
   }
  ],
  "timeout": 0

@@ -41,6 +41,10 @@
  "permissions": [
   {
    "read": 1,
+   "role": "Sales User"
+  },
+  {
+   "read": 1,
    "role": "Maintenance User"
   },
   {

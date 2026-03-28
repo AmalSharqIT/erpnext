@@ -102,9 +102,49 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "System Manager",
+   "role": "Accounts Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Purchase User"
+  },
+  {
+   "read": 1,
+   "role": "Sales User"
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  },
+  {
+   "read": 1,
+   "role": "Stock User"
   }
  ],
  "show_title_field_in_link": 1,

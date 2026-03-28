@@ -18,7 +18,16 @@
  "report_type": "Query Report", 
  "roles": [
   {
-   "role": "System Manager"
+   "role": "Purchase Manager"
+  }, 
+  {
+   "role": "Stock Manager"
+  }, 
+  {
+   "role": "Stock User"
+  }, 
+  {
+   "role": "Purchase User"
   }
  ]
 }
