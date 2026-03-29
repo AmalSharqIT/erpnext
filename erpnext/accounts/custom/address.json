@@ -36,7 +36,7 @@
    "label": "Tax Category",
    "length": 0,
    "mandatory_depends_on": null,
-   "modified": "2018-12-28 22:29:21.828090",
+   "modified": "2026-03-29",
    "modified_by": "Administrator",
    "name": "Address-tax_category",
    "no_copy": 0,
