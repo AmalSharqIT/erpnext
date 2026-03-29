@@ -56,17 +56,8 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "amend": 0,
-   "apply_user_permissions": 0,
-   "cancel": 0,
-   "export": 0,
-   "if_owner": 0,
-   "import": 0,
-   "permlevel": 0,
    "read": 1,
-   "role": "HR User",
-   "set_user_permissions": 0,
-   "submit": 0
+   "role": "HR User"
   },
   {
    "amend": 0,
