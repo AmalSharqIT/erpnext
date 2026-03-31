@@ -223,6 +223,11 @@
    "read": 1,
    "report": 1,
    "role": "Purchase Manager"
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "System Manager"
   }
  ],
  "quick_entry": 1,

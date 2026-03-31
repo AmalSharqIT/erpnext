@@ -98,6 +98,17 @@
    "role": "Sales User"
   },
   {
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "import": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
    "read": 1,
    "report": 1,
    "role": "Purchase User"

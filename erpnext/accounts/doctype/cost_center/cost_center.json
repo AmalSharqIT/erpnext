@@ -165,6 +165,15 @@
    "role": "Purchase User"
   },
   {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1
+  },
+  {
    "role": "HR Manager",
    "select": 1
   },

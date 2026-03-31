@@ -548,6 +548,12 @@
    "permlevel": 1,
    "read": 1,
    "report": 1,
+   "role": "System Manager"
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "report": 1,
    "role": "Sales User"
   }
  ],
