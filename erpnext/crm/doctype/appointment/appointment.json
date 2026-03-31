@@ -102,7 +102,7 @@
   }
  ],
  "links": [],
- "modified": "2022-12-15 11:11:02.131986",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Appointment",
@@ -123,36 +123,12 @@
   },
   {
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Sales User",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Employee",
    "share": 1,
    "write": 1
   }

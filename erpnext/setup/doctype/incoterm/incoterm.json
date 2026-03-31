@@ -87,7 +87,7 @@
    "link_fieldname": "incoterm"
   }
  ],
- "modified": "2022-11-17 22:35:52.084553",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Incoterm",
@@ -103,18 +103,6 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Manager",
    "share": 1,
    "write": 1
   },
