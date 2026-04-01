@@ -823,7 +823,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2025-08-29 11:52:12.819878",
+ "modified": "2026-04-01",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -832,23 +832,14 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "email": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
    "role": "Employee"
   },
   {
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "import": 1,
-   "print": 1,
    "read": 1,
    "report": 1,
    "role": "HR User",
-   "share": 1,
    "write": 1
   },
   {
@@ -860,9 +851,14 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "HR Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "export": 1,
+   "read": 1,
+   "role": "HR Manager"
   }
  ],
  "row_format": "Dynamic",

@@ -224,7 +224,7 @@
  "idx": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-02 22:18:00.450641",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Price",
@@ -240,7 +240,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Master Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
