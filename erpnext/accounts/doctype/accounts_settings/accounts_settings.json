@@ -292,6 +292,7 @@
   {
    "fieldname": "tax_settings_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Tax Settings"
   },
   {
@@ -307,7 +308,6 @@
   },
   {
    "default": "0",
-   "description": "Learn about <a href=\"https://docs.erpnext.com/docs/v13/user/manual/en/accounts/articles/common_party_accounting#:~:text=Common%20Party%20Accounting%20in%20ERPNext,Invoice%20against%20a%20primary%20Supplier.\">Common Party</a>",
    "fieldname": "enable_common_party_accounting",
    "fieldtype": "Check",
    "label": "Enable Common Party Accounting"
@@ -367,6 +367,7 @@
   {
    "fieldname": "pos_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "POS"
   },
   {
@@ -671,7 +672,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-06 14:49:11.467716",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts Settings",
