@@ -24,6 +24,7 @@ def create_charts(
 
 				if account_name not in [
 					"account_name",
+					"account_category",
 					"description",
 					"account_number",
 					"account_type",
@@ -48,6 +49,7 @@ def create_charts(
 						{
 							"doctype": "Account",
 							"account_name": child.get("account_name") if from_coa_importer else account_name,
+							"account_category": child.get("account_category"),
 							"description": child.get("description"),
 							"company": company,
 							"parent_account": parent,
@@ -102,6 +104,7 @@ def identify_is_group(child):
 		- set(
 			[
 				"account_name",
+				"account_category",
 				"description",
 				"account_type",
 				"root_type",
@@ -201,6 +204,7 @@ def get_account_tree_from_existing_company(existing_company):
 		fields=[
 			"name",
 			"account_name",
+			"account_category",
 			"description",
 			"parent_account",
 			"account_type",
@@ -292,6 +296,7 @@ def build_tree_from_json(chart_template, chart_data=None, from_coa_importer=Fals
 			account = {}
 			if account_name in [
 				"account_name",
+				"account_category",
 				"description",
 				"account_number",
 				"account_type",
