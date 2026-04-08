@@ -125,7 +125,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-04-24 10:55:54.083042",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Cost Center",
@@ -169,9 +169,17 @@
    "export": 1,
    "print": 1,
    "report": 1,
-   "role": "Employee",
+   "role": "System Manager",
    "select": 1,
    "share": 1
+  },
+  {
+   "role": "HR Manager",
+   "select": 1
+  },
+  {
+   "role": "Cash Desk User",
+   "select": 1
   }
  ],
  "search_fields": "parent_cost_center, is_group",
