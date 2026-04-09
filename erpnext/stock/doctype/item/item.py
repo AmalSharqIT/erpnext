@@ -140,6 +140,7 @@ class Item(Document):
 		standard_rate: DF.Currency
 		stock_uom: DF.Link
 		supplier_items: DF.Table[ItemSupplier]
+		suppliers_part_no: DF.Data | None
 		taxes: DF.Table[ItemTax]
 		total_projected_qty: DF.Float
 		uoms: DF.Table[UOMConversionDetail]

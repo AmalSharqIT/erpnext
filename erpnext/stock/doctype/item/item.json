@@ -90,6 +90,7 @@
   "supplier_details",
   "delivered_by_supplier",
   "supplier_items",
+  "suppliers_part_no",
   "foreign_trade_details",
   "country_of_origin",
   "column_break_59",
@@ -625,6 +626,11 @@
    "options": "Item Supplier"
   },
   {
+   "fieldname": "suppliers_part_no",
+   "fieldtype": "Data",
+   "hidden": 1
+  },
+  {
    "fieldname": "foreign_trade_details",
    "fieldtype": "Section Break",
    "label": "Foreign Trade Details"
@@ -924,7 +930,7 @@
  "image_field": "image",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-04-08",
+ "modified": "2026-04-09",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
@@ -994,7 +1000,7 @@
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
- "search_fields": "item_name,description,item_group,customer_code",
+ "search_fields": "item_name,description,item_group,suppliers_part_no",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",
