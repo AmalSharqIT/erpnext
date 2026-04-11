@@ -167,6 +167,7 @@
    "bold": 1,
    "fieldname": "expected_delivery_date",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Expected Delivery Date",
    "search_index": 1
   },
@@ -379,7 +380,8 @@
   },
   {
    "fieldname": "section_break_29",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "net_rate",
@@ -421,6 +423,7 @@
    "collapsible": 1,
    "fieldname": "item_weight_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Item Weight Details"
   },
   {
@@ -450,6 +453,7 @@
   {
    "fieldname": "warehouse_and_reference",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Warehouse Settings"
   },
   {
@@ -669,6 +673,7 @@
    "collapsible": 1,
    "fieldname": "accounting_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Details"
   },
   {
@@ -711,6 +716,7 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Dimensions "
   },
   {
@@ -721,6 +727,7 @@
    "collapsible": 1,
    "fieldname": "manufacture_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Manufacture"
   },
   {
@@ -789,6 +796,7 @@
    "collapsible_depends_on": "eval: doc.margin_type || doc.discount_amount || doc.distributed_discount_amount",
    "fieldname": "discount_and_margin_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Discount and Margin"
   },
   {
@@ -941,7 +949,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-29",
+ "modified": "2026-04-11",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",
