@@ -33,6 +33,7 @@
   "over_delivery_receipt_allowance",
   "over_billing_allowance",
   "image",
+  "legacy_name",
   "edari_item_number",
   "unit_of_measure_conversion",
   "uoms",
@@ -920,6 +921,11 @@
    "label": "Deferred Accounting"
   },
   {
+   "fieldname": "legacy_name",
+   "fieldtype": "Data",
+   "label": "Legacy Name"
+  },
+  {
    "fieldname": "edari_item_number",
    "fieldtype": "Data",
    "label": "Edari Item Number"
@@ -930,7 +936,7 @@
  "image_field": "image",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-04-09",
+ "modified": "2026-04-14",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
@@ -1000,7 +1006,7 @@
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
- "search_fields": "item_name,description,item_group,suppliers_part_no",
+ "search_fields": "item_name,description,item_group,legacy_name",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",
