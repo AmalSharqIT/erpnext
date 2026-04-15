@@ -94,6 +94,7 @@ class Item(Document):
 		delivered_by_supplier: DF.Check
 		description: DF.TextEditor | None
 		disabled: DF.Check
+		edari_item_number: DF.Data | None
 		enable_deferred_expense: DF.Check
 		enable_deferred_revenue: DF.Check
 		end_of_life: DF.Date | None
@@ -116,12 +117,13 @@ class Item(Document):
 		item_code: DF.Data
 		item_defaults: DF.Table[ItemDefault]
 		item_group: DF.Link
-		item_name: DF.Data | None
+		item_name: DF.Data
 		last_purchase_rate: DF.Float
 		lead_time_days: DF.Int
+		legacy_name: DF.Data | None
 		max_discount: DF.Float
 		min_order_qty: DF.Float
-		naming_series: DF.Literal["STO-ITEM-.YYYY.-"]
+		naming_series: DF.Literal["ITEM-.######"]
 		no_of_months: DF.Int
 		no_of_months_exp: DF.Int
 		opening_stock: DF.Float
@@ -139,6 +141,7 @@ class Item(Document):
 		standard_rate: DF.Currency
 		stock_uom: DF.Link
 		supplier_items: DF.Table[ItemSupplier]
+		suppliers_part_no: DF.Data | None
 		taxes: DF.Table[ItemTax]
 		total_projected_qty: DF.Float
 		uoms: DF.Table[UOMConversionDetail]

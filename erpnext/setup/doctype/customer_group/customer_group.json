@@ -63,6 +63,7 @@
   {
    "fieldname": "default_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "ignore_user_permissions": 1,
    "label": "Default Price List",
    "options": "Price List"
@@ -113,6 +114,7 @@
   {
    "fieldname": "default_receivable_account",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Default Accounts"
   },
   {
@@ -139,7 +141,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-12-02 13:58:03.378607",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Customer Group",
@@ -147,13 +149,6 @@
  "nsm_parent_field": "parent_customer_group",
  "owner": "Administrator",
  "permissions": [
-  {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Manager"
-  },
   {
    "email": 1,
    "print": 1,
@@ -170,25 +165,20 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Master Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
   {
    "permlevel": 1,
    "read": 1,
-   "role": "Sales Master Manager",
+   "role": "System Manager",
    "write": 1
   },
   {
    "permlevel": 1,
    "read": 1,
    "role": "Sales User"
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "Sales Manager"
   },
   {
    "email": 1,

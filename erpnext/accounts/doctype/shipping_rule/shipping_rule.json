@@ -147,7 +147,7 @@
  ],
  "icon": "fa fa-truck",
  "idx": 1,
- "modified": "2019-05-25 23:12:26.156405",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Shipping Rule",
@@ -190,7 +190,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Master Manager",
+   "role": "System Manager",
    "set_user_permissions": 1,
    "share": 1,
    "write": 1
