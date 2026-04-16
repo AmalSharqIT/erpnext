@@ -80,6 +80,7 @@
   "item_defaults",
   "purchasing_tab",
   "purchase_uom",
+  "packet_filling",
   "min_order_qty",
   "safety_stock",
   "is_purchase_item",
@@ -549,6 +550,11 @@
    "options": "UOM"
   },
   {
+   "fieldname": "packet_filling",
+   "fieldtype": "Int",
+   "label": "Packet Filling"
+  },
+  {
    "default": "0.00",
    "depends_on": "is_stock_item",
    "description": "Minimum quantity should be as per Stock UOM",
@@ -936,7 +942,7 @@
  "image_field": "image",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-04-14",
+ "modified": "2026-04-16",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
