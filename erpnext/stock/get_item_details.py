@@ -439,6 +439,7 @@ def get_basic_details(args, item, overwrite_warehouse=True):
 		{
 			"item_code": item.name,
 			"item_name": item.item_name,
+			"description": cstr(item.description).strip(),
 			"image": cstr(item.image).strip(),
 			"warehouse": warehouse,
 			"income_account": get_default_income_account(
