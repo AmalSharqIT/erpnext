@@ -26,6 +26,7 @@
   "uom",
   "conversion_factor",
   "stock_qty",
+  "note",
   "qty_info_sec_break",
   "min_order_qty",
   "projected_qty",
@@ -186,7 +187,6 @@
    "columns": 2,
    "fieldname": "schedule_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
    "label": "Required By",
    "oldfieldname": "schedule_date",
    "oldfieldtype": "Date",
@@ -492,6 +492,12 @@
    "options": "currency",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Note"
   }
  ],
  "idx": 1,
