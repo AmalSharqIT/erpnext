@@ -120,7 +120,7 @@ class Item(Document):
 		item_name: DF.Data
 		last_purchase_rate: DF.Float
 		lead_time_days: DF.Int
-		legacy_name: DF.Data | None
+		legacy_code: DF.Data | None
 		max_discount: DF.Float
 		min_order_qty: DF.Float
 		naming_series: DF.Literal["ITEM-.######"]
