@@ -40,6 +40,10 @@ class Company(NestedSet):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		from erpnext.setup.doctype.company_account_by_currency.company_account_by_currency import (
+			CompanyAccountByCurrency,
+		)
+
 		abbr: DF.Data
 		accounts_frozen_till_date: DF.Date | None
 		accumulated_depreciation_account: DF.Link | None
@@ -50,6 +54,7 @@ class Company(NestedSet):
 		book_advance_payments_in_separate_party_account: DF.Check
 		capital_work_in_progress_account: DF.Link | None
 		chart_of_accounts: DF.Literal[None]
+		company_account_by_currency: DF.Table[CompanyAccountByCurrency]
 		company_description: DF.TextEditor | None
 		company_logo: DF.AttachImage | None
 		company_name: DF.Data
