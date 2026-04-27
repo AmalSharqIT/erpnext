@@ -56,6 +56,7 @@
   "lead_time_date",
   "sales_order",
   "sales_order_item",
+  "supplier",
   "col_break4",
   "production_plan",
   "material_request_plan_item",
@@ -276,6 +277,14 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "permlevel": 1
   },
   {
    "fieldname": "project",
