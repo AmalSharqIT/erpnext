@@ -85,7 +85,7 @@
  "idx": 1,
  "links": [],
  "max_attachments": 1,
- "modified": "2026-03-29",
+ "modified": "2026-04-27",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Price List",
@@ -107,11 +107,6 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User"
   },
   {
    "create": 1,

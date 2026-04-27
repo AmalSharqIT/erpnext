@@ -198,7 +198,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-03-29",
+ "modified": "2026-04-27",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
@@ -233,11 +233,8 @@
    "role": "Sales User"
   },
   {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "select": 1
   },
   {
    "create": 1,

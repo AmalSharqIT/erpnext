@@ -877,7 +877,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2026-03-30",
+ "modified": "2026-04-27",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",
@@ -941,6 +941,10 @@
   {
    "read": 1,
    "role": "Cash Desk User"
+  },
+  {
+   "read": 1,
+   "role": "Sales Manager"
   }
  ],
  "row_format": "Dynamic",
