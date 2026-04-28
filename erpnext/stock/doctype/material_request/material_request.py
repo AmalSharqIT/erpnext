@@ -446,7 +446,7 @@ def make_purchase_order(source_name, target_doc=None, args=None):
 			# items only for given default supplier
 			supplier_items = []
 			for d in target_doc.items:
-				default_supplier = get_item_defaults(d.item_code, target_doc.company).get("default_supplier")
+				default_supplier = d.get("supplier")
 				if frappe.flags.args.default_supplier == default_supplier:
 					supplier_items.append(d)
 			target_doc.items = supplier_items
