@@ -167,14 +167,6 @@ frappe.ui.form.on("Material Request", {
 					);
 				}
 
-				if (frm.doc.material_request_type === "Purchase") {
-					frm.add_custom_button(
-						__("Purchase Order"),
-						() => frm.events.make_purchase_order(frm),
-						__("Create")
-					);
-				}
-
 				if (frm.doc.material_request_type === "Manufacture") {
 					frm.add_custom_button(
 						__("Work Order"),
