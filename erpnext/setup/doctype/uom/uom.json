@@ -40,7 +40,7 @@
  "icon": "fa fa-compass",
  "idx": 1,
  "links": [],
- "modified": "2026-04-27",
+ "modified": "2026-04-30",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "UOM",
@@ -75,8 +75,12 @@
    "role": "Stock User"
   },
   {
-   "role": "Item Manager",
-   "select": 1
+   "read": 1,
+   "role": "Item Manager"
+  },
+  {
+   "read": 1,
+   "role": "Purchase User"
   }
  ],
  "quick_entry": 1,

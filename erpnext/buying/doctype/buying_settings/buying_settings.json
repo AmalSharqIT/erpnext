@@ -292,7 +292,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-04-27",
+ "modified": "2026-04-30",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying Settings",
@@ -332,6 +332,10 @@
   {
    "read": 1,
    "role": "Stock User"
+  },
+  {
+   "read": 1,
+   "role": "Purchase User"
   }
  ],
  "sort_field": "modified",

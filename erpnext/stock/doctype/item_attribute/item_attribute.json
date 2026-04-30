@@ -87,7 +87,7 @@
  "icon": "fa fa-edit",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-27",
+ "modified": "2026-04-30",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Attribute",
@@ -102,6 +102,10 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Item Manager"
   }
  ],
  "sort_field": "modified",
