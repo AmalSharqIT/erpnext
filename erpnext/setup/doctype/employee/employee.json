@@ -859,7 +859,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-04-01",
+ "modified": "2026-05-01",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -895,6 +895,12 @@
    "export": 1,
    "read": 1,
    "role": "HR Manager"
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "HR Manager",
+   "write": 1
   }
  ],
  "row_format": "Dynamic",
