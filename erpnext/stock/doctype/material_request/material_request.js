@@ -272,6 +272,7 @@ frappe.ui.form.on("Material Request", {
 					"uom",
 					"conversion_factor",
 					"stock_qty",
+					"supplier",
 				];
 
 				if (overwrite_warehouse) {
@@ -279,6 +280,7 @@ frappe.ui.form.on("Material Request", {
 				}
 
 				if (!r.exc) {
+					r.message.supplier = r.message.supplier || '';
 					$.each(r.message, function (key, value) {
 						if (!d[key] || allow_to_change_fields.includes(key)) {
 							d[key] = value;

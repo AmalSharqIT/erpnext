@@ -112,7 +112,8 @@
   "production_plan",
   "production_plan_item",
   "production_plan_sub_assembly_item",
-  "page_break"
+  "page_break",
+  "supplier"
  ],
  "fields": [
   {
@@ -944,6 +945,12 @@
    "no_copy": 1,
    "non_negative": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "is_virtual": 1
   }
  ],
  "grid_page_length": 50,
