@@ -950,8 +950,7 @@
    "fieldname": "supplier",
    "fieldtype": "Data",
    "hidden": 1,
-   "is_virtual": 1,
-   "label": "Supplier"
+   "is_virtual": 1
   }
  ],
  "grid_page_length": 50,
