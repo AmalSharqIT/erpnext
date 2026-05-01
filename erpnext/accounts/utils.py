@@ -500,7 +500,7 @@ def reconcile_against_document(
 					skip_ref_details_update_for_pe=skip_ref_details_update_for_pe,
 					dimensions_dict=dimensions_dict,
 				)
-				if referenced_row.get("outstanding_amount"):
+				if referenced_row.get("outstanding_amount") and entry.get("outstanding_amount") is None:
 					referenced_row.outstanding_amount -= flt(entry.allocated_amount)
 
 				reposting_rows.append(referenced_row)
@@ -2328,6 +2328,7 @@ def create_gain_loss_journal(
 	ref2_detail_no,
 	cost_center,
 	dimensions,
+	project=None,
 ) -> str:
 	journal_entry = frappe.new_doc("Journal Entry")
 	journal_entry.voucher_type = "Exchange Gain Or Loss"
@@ -2354,6 +2355,7 @@ def create_gain_loss_journal(
 			"account_currency": party_account_currency,
 			"exchange_rate": 0,
 			"cost_center": cost_center or erpnext.get_default_cost_center(company),
+			"project": project,
 			"reference_type": ref1_dt,
 			"reference_name": ref1_dn,
 			"reference_detail_no": ref1_detail_no,
@@ -2371,6 +2373,7 @@ def create_gain_loss_journal(
 			"account_currency": gain_loss_account_currency,
 			"exchange_rate": 1,
 			"cost_center": cost_center or erpnext.get_default_cost_center(company),
+			"project": project,
 			"reference_type": ref2_dt,
 			"reference_name": ref2_dn,
 			"reference_detail_no": ref2_detail_no,
