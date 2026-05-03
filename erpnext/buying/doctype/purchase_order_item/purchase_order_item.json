@@ -86,6 +86,7 @@
   "returned_qty",
   "column_break_60",
   "billed_amt",
+  "completed_cargo",
   "accounting_details",
   "expense_account",
   "column_break_fyqr",
@@ -658,6 +659,15 @@
    "no_copy": 1,
    "options": "currency",
    "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "completed_cargo",
+   "fieldname": "completed_cargo",
+   "fieldtype": "Float",
+   "label": "Completed Cargo",
+   "no_copy": 1,
+   "non_negative": 1,
    "read_only": 1
   },
   {

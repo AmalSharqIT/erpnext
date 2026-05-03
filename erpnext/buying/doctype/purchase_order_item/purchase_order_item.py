@@ -31,6 +31,7 @@ class PurchaseOrderItem(Document):
 		bom: DF.Link | None
 		brand: DF.Link | None
 		company_total_stock: DF.Float
+		completed_cargo: DF.Float
 		conversion_factor: DF.Float
 		cost_center: DF.Link | None
 		delivered_by_supplier: DF.Check
