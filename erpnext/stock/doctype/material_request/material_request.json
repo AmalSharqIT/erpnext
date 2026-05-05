@@ -372,7 +372,7 @@
  "idx": 70,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-30",
+ "modified": "2026-05-05",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",
@@ -430,6 +430,12 @@
    "report": 1,
    "role": "Purchase User",
    "submit": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Purchase User",
    "write": 1
   },
   {
