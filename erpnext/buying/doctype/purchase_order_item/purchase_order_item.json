@@ -86,7 +86,7 @@
   "returned_qty",
   "column_break_60",
   "billed_amt",
-  "completed_cargo",
+  "qty_in_cargo",
   "accounting_details",
   "expense_account",
   "column_break_fyqr",
@@ -662,10 +662,10 @@
    "read_only": 1
   },
   {
-   "depends_on": "completed_cargo",
-   "fieldname": "completed_cargo",
+   "depends_on": "qty_in_cargo",
+   "fieldname": "qty_in_cargo",
    "fieldtype": "Float",
-   "label": "Completed Cargo",
+   "label": "Qty in Cargo",
    "no_copy": 1,
    "non_negative": 1,
    "read_only": 1
@@ -968,7 +968,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-04-11",
+ "modified": "2026-05-08",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",

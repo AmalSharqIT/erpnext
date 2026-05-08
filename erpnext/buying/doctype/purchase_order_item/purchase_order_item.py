@@ -31,7 +31,6 @@ class PurchaseOrderItem(Document):
 		bom: DF.Link | None
 		brand: DF.Link | None
 		company_total_stock: DF.Float
-		completed_cargo: DF.Float
 		conversion_factor: DF.Float
 		cost_center: DF.Link | None
 		delivered_by_supplier: DF.Check
@@ -74,6 +73,7 @@ class PurchaseOrderItem(Document):
 		production_plan_sub_assembly_item: DF.Data | None
 		project: DF.Link | None
 		qty: DF.Float
+		qty_in_cargo: DF.Float
 		rate: DF.Currency
 		rate_with_margin: DF.Currency
 		received_qty: DF.Float
