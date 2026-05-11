@@ -1051,9 +1051,6 @@ frappe.form.link_formatters["Item"] = function (value, doc) {
 frappe.form.link_formatters["Employee"] = function (value, doc) {
 	if (doc && value && doc.employee_name && doc.employee_name !== value && doc.employee === value) {
 		return value + ": " + doc.employee_name;
-	} else if (!value && doc.doctype && doc.employee_name) {
-		// format blank value in child table
-		return doc.employee;
 	} else {
 		// if value is blank in report view or project name and name are the same, return as is
 		return value;

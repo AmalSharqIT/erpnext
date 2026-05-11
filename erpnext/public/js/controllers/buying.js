@@ -135,11 +135,6 @@ erpnext.buying = {
 				this.frm.toggle_display("supplier_name",
 					(this.frm.doc.supplier_name && this.frm.doc.supplier_name!==this.frm.doc.supplier));
 
-				if(this.frm.doc.docstatus==0 &&
-					(this.frm.doctype==="Purchase Order" || this.frm.doctype==="Material Request")) {
-					this.set_from_product_bundle();
-				}
-
 				this.toggle_subcontracting_fields();
 				super.refresh();
 				this.prevent_past_schedule_dates(this.frm);
@@ -316,13 +311,6 @@ erpnext.buying = {
 			}
 			add_deduct_tax(doc, cdt, cdn) {
 				this.calculate_taxes_and_totals();
-			}
-
-			set_from_product_bundle() {
-				var me = this;
-				this.frm.add_custom_button(__("Product Bundle"), function() {
-					erpnext.buying.get_items_from_product_bundle(me.frm);
-				}, __("Get Items From"));
 			}
 
 			shipping_address(){

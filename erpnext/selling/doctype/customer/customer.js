@@ -163,14 +163,6 @@ frappe.ui.form.on("Customer", {
 			);
 
 			frm.add_custom_button(
-				__("Pricing Rule"),
-				function () {
-					erpnext.utils.make_pricing_rule(frm.doc.doctype, frm.doc.name);
-				},
-				__("Create")
-			);
-
-			frm.add_custom_button(
 				__("Get Customer Group Details"),
 				function () {
 					frm.trigger("get_customer_group_details");
