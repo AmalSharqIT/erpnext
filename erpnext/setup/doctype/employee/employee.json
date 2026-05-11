@@ -823,7 +823,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2025-08-29 11:52:12.819878",
+ "modified": "2026-05-11",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -832,23 +832,31 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "email": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
+   "role": "Employee"
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
    "role": "Employee"
   },
   {
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "import": 1,
-   "print": 1,
    "read": 1,
    "report": 1,
    "role": "HR User",
-   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 2,
+   "read": 1,
+   "role": "HR User",
+   "write": 1
+  },
+  {
+   "permlevel": 3,
+   "read": 1,
+   "role": "HR User",
    "write": 1
   },
   {
@@ -860,9 +868,37 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "HR Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "export": 1,
+   "read": 1,
+   "role": "HR Manager"
+  },
+  {
+   "permlevel": 4,
+   "read": 1,
+   "role": "HR Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "HR User - Branch",
+   "write": 1
+  },
+  {
+   "permlevel": 2,
+   "read": 1,
+   "role": "HR User - Branch"
   }
  ],
  "row_format": "Dynamic",

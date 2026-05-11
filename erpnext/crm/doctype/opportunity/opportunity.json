@@ -625,7 +625,7 @@
  "icon": "fa fa-info-sign",
  "idx": 195,
  "links": [],
- "modified": "2025-06-26 11:16:13.665866",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity",
@@ -652,7 +652,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   }

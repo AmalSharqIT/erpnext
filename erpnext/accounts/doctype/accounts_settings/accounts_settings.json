@@ -671,7 +671,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-06 14:49:11.467716",
+ "modified": "2026-04-27",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts Settings",
@@ -689,10 +689,6 @@
   {
    "read": 1,
    "role": "Sales User"
-  },
-  {
-   "read": 1,
-   "role": "Purchase User"
   }
  ],
  "quick_entry": 1,

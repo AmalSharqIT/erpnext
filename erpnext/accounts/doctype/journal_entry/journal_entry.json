@@ -566,7 +566,7 @@
    "table_fieldname": "payment_entries"
   }
  ],
- "modified": "2025-09-29 13:05:46.982277",
+ "modified": "2026-04-27",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry",
@@ -609,6 +609,14 @@
    "read": 1,
    "report": 1,
    "role": "Auditor"
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "read": 1,
+   "role": "Cash Desk User",
+   "submit": 1,
+   "write": 1
   }
  ],
  "search_fields": "voucher_type,posting_date, due_date, cheque_no",
