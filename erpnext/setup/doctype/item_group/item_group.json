@@ -85,6 +85,7 @@
   {
    "fieldname": "sec_break_taxes",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Item Tax"
   },
   {
@@ -135,7 +136,7 @@
  "is_tree": 1,
  "links": [],
  "max_attachments": 3,
- "modified": "2025-12-02 13:58:30.018021",
+ "modified": "2026-04-27",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Item Group",
@@ -159,17 +160,8 @@
    "role": "Stock User"
   },
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "import": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
    "role": "Item Manager",
-   "share": 1,
-   "write": 1
+   "select": 1
   },
   {
    "email": 1,
@@ -183,23 +175,21 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Purchase User"
-  },
-  {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
    "role": "Accounts User"
   },
   {
+   "create": 1,
+   "delete": 1,
    "email": 1,
    "export": 1,
+   "import": 1,
    "print": 1,
+   "read": 1,
    "report": 1,
-   "role": "Desk User",
+   "role": "System Manager",
    "select": 1,
-   "share": 1
+   "share": 1,
+   "write": 1
   }
  ],
  "row_format": "Dynamic",

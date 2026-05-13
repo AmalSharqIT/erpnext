@@ -25,23 +25,13 @@
  "icon": "fa fa-flag",
  "idx": 1,
  "links": [],
- "modified": "2023-02-10 03:14:40.735763",
+ "modified": "2026-03-29",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Industry Type",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
-  {
-   "create": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Manager",
-   "share": 1,
-   "write": 1
-  },
   {
    "email": 1,
    "print": 1,
@@ -55,7 +45,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Master Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   }
