@@ -486,7 +486,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-02-06 12:58:01.398824",
+ "modified": "2026-04-27",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",
@@ -494,11 +494,10 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "email": 1,
-   "print": 1,
+   "create": 1,
    "read": 1,
-   "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "write": 1
   },
   {
    "email": 1,
@@ -542,6 +541,10 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager"
+  },
+  {
+   "role": "Item Manager",
+   "select": 1
   }
  ],
  "quick_entry": 1,
