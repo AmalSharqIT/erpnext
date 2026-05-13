@@ -870,7 +870,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-05-11",
+ "modified": "2026-05-13",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -888,11 +888,21 @@
    "role": "Employee"
   },
   {
+   "permlevel": 2,
+   "read": 1,
+   "role": "Employee"
+  },
+  {
    "create": 1,
    "read": 1,
    "report": 1,
    "role": "HR User",
    "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "HR User"
   },
   {
    "permlevel": 2,
@@ -941,11 +951,6 @@
    "read": 1,
    "role": "HR User - Branch",
    "write": 1
-  },
-  {
-   "permlevel": 2,
-   "read": 1,
-   "role": "HR User - Branch"
   }
  ],
  "row_format": "Dynamic",
