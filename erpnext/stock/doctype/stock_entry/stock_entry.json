@@ -97,6 +97,7 @@
  ],
  "fields": [
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
@@ -262,6 +263,7 @@
    "depends_on": "eval: doc.purpose === \"Manufacture\"",
    "fieldname": "inspection_required",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Inspection Required"
   },
   {
@@ -530,6 +532,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "oldfieldtype": "Link",
    "options": "Project"
@@ -599,6 +602,7 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Accounting Dimensions"
   },
   {
@@ -628,6 +632,7 @@
    "depends_on": "eval:in_list([\"Material Transfer\", \"Material Receipt\"], doc.purpose)",
    "fieldname": "apply_putaway_rule",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Apply Putaway Rule"
   },
   {
@@ -646,6 +651,7 @@
    "depends_on": "eval:in_list([\"Material Issue\", \"Manufacture\", \"Repack\", \"Send to Subcontractor\", \"Material Transfer for Manufacture\", \"Material Consumption for Manufacture\", \"Disassemble\"], doc.purpose)",
    "fieldname": "bom_info_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "BOM Info"
   },
   {
@@ -769,7 +775,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-03-04 19:03:23.426082",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry",

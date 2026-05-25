@@ -55,6 +55,7 @@
    "options": "fa fa-pushpin"
   },
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
@@ -82,7 +83,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Purpose",
-   "options": "Purchase\nMaterial Transfer\nMaterial Issue\nManufacture\nSubcontracting\nCustomer Provided",
+   "options": "Purchase\nMaterial Transfer\nMaterial Issue",
    "reqd": 1
   },
   {
@@ -140,6 +141,7 @@
    "options": "fa fa-shopping-cart"
   },
   {
+   "depends_on": "false",
    "fieldname": "scan_barcode",
    "fieldtype": "Data",
    "label": "Scan Barcode",
@@ -215,6 +217,7 @@
    "collapsible": 1,
    "fieldname": "printing_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Printing Details"
   },
   {
@@ -321,6 +324,7 @@
   {
    "fieldname": "terms_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Terms"
   },
   {
@@ -353,6 +357,7 @@
   {
    "fieldname": "buying_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Price List",
    "options": "Price List"
   },
@@ -377,7 +382,7 @@
  "idx": 70,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-03-09 17:15:30.124509",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",

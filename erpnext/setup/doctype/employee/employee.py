@@ -39,9 +39,9 @@ class Employee(NestedSet):
 			EmployeeInternalWorkHistory,
 		)
 
-		attendance_device_id: DF.Data | None
+		attendance_device_id: DF.Int
 		bank_ac_no: DF.Data | None
-		bank_name: DF.Data | None
+		bank_name: DF.Link | None
 		bio: DF.TextEditor | None
 		blood_group: DF.Literal["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
 		branch: DF.Link | None
@@ -82,10 +82,12 @@ class Employee(NestedSet):
 		leave_encashed: DF.Literal["", "Yes", "No"]
 		lft: DF.Int
 		marital_status: DF.Literal["", "Single", "Married", "Divorced", "Widowed"]
-		middle_name: DF.Data | None
+		middle_name: DF.Data
 		naming_series: DF.Literal["HR-EMP-"]
 		new_workplace: DF.Data | None
 		notice_number_of_days: DF.Int
+		number_of_daughters: DF.Int
+		number_of_sons: DF.Int
 		old_parent: DF.Data | None
 		passport_number: DF.Data | None
 		permanent_accommodation_type: DF.Literal["", "Rented", "Owned"]
@@ -96,6 +98,7 @@ class Employee(NestedSet):
 		prefered_contact_email: DF.Literal["", "Company Email", "Personal Email", "User ID"]
 		prefered_email: DF.Data | None
 		reason_for_leaving: DF.SmallText | None
+		referrer: DF.Data | None
 		relation: DF.Data | None
 		relieving_date: DF.Date | None
 		reports_to: DF.Link | None

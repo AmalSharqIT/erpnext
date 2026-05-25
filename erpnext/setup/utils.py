@@ -145,7 +145,7 @@ def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=No
 		return flt(value)
 	except Exception:
 		frappe.log_error("Unable to fetch exchange rate")
-		frappe.msgprint(
+		frappe.throw(
 			_(
 				"Unable to find exchange rate for {0} to {1} for key date {2}. Please create a Currency Exchange record manually"
 			).format(from_currency, to_currency, transaction_date)
