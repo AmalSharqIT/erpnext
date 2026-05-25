@@ -19,6 +19,7 @@
   "report_type",
   "account_currency",
   "column_break1",
+  "description",
   "parent_account",
   "account_type",
   "tax_rate",
@@ -185,6 +186,12 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disable"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description",
+   "no_copy": 1
   }
  ],
  "icon": "fa fa-money",
@@ -256,7 +263,7 @@
    "role": "HR Manager"
   }
  ],
- "search_fields": "account_number",
+ "search_fields": "account_number,description",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",

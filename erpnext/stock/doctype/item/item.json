@@ -15,6 +15,7 @@
   "item_code",
   "item_name",
   "item_group",
+  "brand",
   "stock_uom",
   "column_break0",
   "disabled",
@@ -32,23 +33,24 @@
   "over_delivery_receipt_allowance",
   "over_billing_allowance",
   "image",
-  "section_break_11",
-  "description",
-  "brand",
+  "legacy_code",
+  "edari_item_number",
   "unit_of_measure_conversion",
   "uoms",
+  "section_break_11",
+  "description",
   "dashboard_tab",
   "inventory_section",
   "inventory_settings_section",
-  "shelf_life_in_days",
-  "end_of_life",
-  "default_material_request_type",
-  "valuation_method",
-  "column_break1",
   "warranty_period",
   "weight_per_unit",
   "weight_uom",
   "allow_negative_stock",
+  "column_break1",
+  "shelf_life_in_days",
+  "end_of_life",
+  "default_material_request_type",
+  "valuation_method",
   "sb_barcodes",
   "barcodes",
   "reorder_section",
@@ -78,6 +80,7 @@
   "item_defaults",
   "purchasing_tab",
   "purchase_uom",
+  "packet_filling",
   "min_order_qty",
   "safety_stock",
   "is_purchase_item",
@@ -88,7 +91,6 @@
   "customer",
   "supplier_details",
   "delivered_by_supplier",
-  "column_break2",
   "supplier_items",
   "foreign_trade_details",
   "country_of_origin",
@@ -120,10 +122,11 @@
  ],
  "fields": [
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
-   "options": "STO-ITEM-.YYYY.-",
+   "options": "ITEM-.######",
    "set_only_once": 1
   },
   {
@@ -159,6 +162,7 @@
    "label": "Item Name",
    "oldfieldname": "item_name",
    "oldfieldtype": "Data",
+   "reqd": 1,
    "search_index": 1
   },
   {
@@ -200,6 +204,7 @@
    "default": "0",
    "fieldname": "allow_alternative_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Alternative Item"
   },
   {
@@ -209,6 +214,7 @@
    "depends_on": "eval:!doc.is_fixed_asset",
    "fieldname": "is_stock_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Maintain Stock",
    "oldfieldname": "is_stock_item",
    "oldfieldtype": "Select"
@@ -225,12 +231,14 @@
    "depends_on": "eval:(doc.__islocal&&doc.is_stock_item && !doc.has_serial_no && !doc.has_batch_no)",
    "fieldname": "opening_stock",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Opening Stock"
   },
   {
    "depends_on": "is_stock_item",
    "fieldname": "valuation_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Valuation Rate"
   },
   {
@@ -238,6 +246,7 @@
    "depends_on": "eval:doc.__islocal",
    "fieldname": "standard_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Standard Selling Rate"
   },
   {
@@ -245,6 +254,7 @@
    "default": "0",
    "fieldname": "is_fixed_asset",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Fixed Asset"
   },
   {
@@ -272,7 +282,6 @@
    "print_hide": 1
   },
   {
-   "collapsible": 1,
    "fieldname": "section_break_11",
    "fieldtype": "Section Break",
    "label": "Description"
@@ -311,6 +320,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "inventory_section",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Inventory",
    "oldfieldtype": "Section Break",
    "options": "fa fa-truck"
@@ -318,6 +328,7 @@
   {
    "fieldname": "shelf_life_in_days",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Shelf Life In Days",
    "mandatory_depends_on": "eval:doc.has_batch_no && doc.has_expiry_date",
    "non_negative": 1
@@ -327,6 +338,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "end_of_life",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "End of Life",
    "oldfieldname": "end_of_life",
    "oldfieldtype": "Date"
@@ -335,6 +347,7 @@
    "default": "Purchase",
    "fieldname": "default_material_request_type",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Default Material Request Type",
    "options": "Purchase\nMaterial Transfer\nMaterial Issue\nManufacture\nCustomer Provided"
   },
@@ -343,6 +356,7 @@
    "documentation_url": "https://docs.frappe.io/erpnext/change-valuation-method",
    "fieldname": "valuation_method",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Valuation Method",
    "options": "\nFIFO\nMoving Average\nLIFO"
   },
@@ -381,6 +395,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "reorder_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Auto re-order",
    "options": "fa fa-rss"
   },
@@ -392,7 +407,6 @@
    "options": "Item Reorder"
   },
   {
-   "collapsible": 1,
    "fieldname": "unit_of_measure_conversion",
    "fieldtype": "Section Break",
    "label": "Units of Measure"
@@ -419,6 +433,7 @@
    "depends_on": "eval:doc.is_stock_item",
    "fieldname": "has_batch_no",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Has Batch No",
    "oldfieldname": "has_batch_no",
    "oldfieldtype": "Select"
@@ -468,6 +483,7 @@
    "depends_on": "eval:doc.is_stock_item",
    "fieldname": "has_serial_no",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Has Serial No",
    "oldfieldname": "has_serial_no",
    "oldfieldtype": "Select"
@@ -523,6 +539,7 @@
    "default": "1",
    "fieldname": "is_purchase_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Purchase"
   },
   {
@@ -537,6 +554,7 @@
    "description": "Minimum quantity should be as per Stock UOM",
    "fieldname": "min_order_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Minimum Order Qty",
    "non_negative": 1,
    "oldfieldname": "min_order_qty",
@@ -545,6 +563,7 @@
   {
    "fieldname": "safety_stock",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Safety Stock",
    "non_negative": 1
   },
@@ -556,6 +575,7 @@
    "description": "Average time taken by the supplier to deliver",
    "fieldname": "lead_time_days",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Lead Time in days",
    "non_negative": 1,
    "oldfieldname": "lead_time_days",
@@ -569,12 +589,14 @@
    "non_negative": 1,
    "oldfieldname": "last_purchase_rate",
    "oldfieldtype": "Currency",
+   "permlevel": 1,
    "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "is_customer_provided_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Customer Provided Item"
   },
   {
@@ -585,7 +607,6 @@
    "options": "Customer"
   },
   {
-   "collapsible": 1,
    "depends_on": "eval:!doc.is_fixed_asset",
    "fieldname": "supplier_details",
    "fieldtype": "Section Break",
@@ -595,14 +616,9 @@
    "default": "0",
    "fieldname": "delivered_by_supplier",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Delivered by Supplier (Drop Ship)",
    "print_hide": 1
-  },
-  {
-   "fieldname": "column_break2",
-   "fieldtype": "Column Break",
-   "oldfieldtype": "Column Break",
-   "width": "50%"
   },
   {
    "fieldname": "supplier_items",
@@ -611,7 +627,6 @@
    "options": "Item Supplier"
   },
   {
-   "collapsible": 1,
    "fieldname": "foreign_trade_details",
    "fieldtype": "Section Break",
    "label": "Foreign Trade Details"
@@ -636,6 +651,7 @@
    "collapsible": 1,
    "fieldname": "sales_details",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Sales",
    "oldfieldtype": "Section Break",
    "options": "fa fa-tag"
@@ -699,6 +715,7 @@
   {
    "fieldname": "customer_items",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Customer Items",
    "options": "Item Customer Detail"
   },
@@ -707,6 +724,7 @@
    "collapsible_depends_on": "taxes",
    "fieldname": "item_tax_section_break",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Tax",
    "oldfieldtype": "Section Break",
    "options": "fa fa-money"
@@ -746,6 +764,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "manufacturing",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Manufacturing",
    "oldfieldtype": "Section Break",
    "options": "fa fa-cogs"
@@ -794,6 +813,7 @@
    "depends_on": "eval:!doc.__islocal && !doc.is_fixed_asset",
    "fieldname": "over_delivery_receipt_allowance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Over Delivery/Receipt Allowance (%)",
    "oldfieldname": "tolerance",
    "oldfieldtype": "Currency"
@@ -802,6 +822,7 @@
    "depends_on": "eval:!doc.__islocal && !doc.is_fixed_asset",
    "fieldname": "over_billing_allowance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Over Billing Allowance (%)"
   },
   {
@@ -841,6 +862,7 @@
    "default": "0",
    "fieldname": "allow_negative_stock",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Negative Stock"
   },
   {
@@ -856,6 +878,7 @@
   {
    "fieldname": "quality_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Quality"
   },
   {
@@ -889,7 +912,23 @@
    "collapsible": 1,
    "fieldname": "deferred_accounting_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Deferred Accounting"
+  },
+  {
+   "fieldname": "legacy_code",
+   "fieldtype": "Data",
+   "label": "Legacy Code"
+  },
+  {
+   "fieldname": "edari_item_number",
+   "fieldtype": "Data",
+   "label": "Edari Item Number"
+  },
+  {
+   "fieldname": "packet_filling",
+   "fieldtype": "Int",
+   "label": "Packet Filling"
   }
  ],
  "icon": "fa fa-tag",
@@ -965,7 +1004,7 @@
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
- "search_fields": "item_name,description,item_group,customer_code",
+ "search_fields": "item_name,description,item_group,legacy_code",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",
