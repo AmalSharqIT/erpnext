@@ -26,7 +26,7 @@
   }
  ],
  "links": [],
- "modified": "2023-02-10 00:51:44.973957",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead Source",
@@ -41,7 +41,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },

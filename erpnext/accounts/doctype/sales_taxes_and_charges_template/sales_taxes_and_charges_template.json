@@ -79,7 +79,7 @@
  "icon": "fa fa-money",
  "idx": 1,
  "links": [],
- "modified": "2024-01-30 13:07:28.801104",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Taxes and Charges Template",
@@ -110,7 +110,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Master Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   }
