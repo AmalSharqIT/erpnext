@@ -165,8 +165,10 @@
    "reqd": 1
   },
   {
+   "columns": 1,
    "fieldname": "stock_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Stock UOM",
    "options": "UOM",
    "print_hide": 1,
@@ -563,7 +565,8 @@
    "in_list_view": 1,
    "label": "Supplier",
    "options": "Supplier",
-   "permlevel": 1
+   "permlevel": 1,
+   "read_only_depends_on": "ordered_qty"
   }
  ],
  "idx": 1,
