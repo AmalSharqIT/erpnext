@@ -190,8 +190,7 @@
   {
    "fieldname": "description",
    "fieldtype": "Data",
-   "label": "Description",
-   "no_copy": 1
+   "label": "Description"
   }
  ],
  "icon": "fa fa-money",

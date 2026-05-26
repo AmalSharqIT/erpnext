@@ -95,7 +95,7 @@
   "depreciation_cost_center",
   "capital_work_in_progress_account",
   "asset_received_but_not_billed",
-  "section_break_company_account_by_currency",
+  "company_account_by_currency_section",
   "company_account_by_currency",
   "buying_and_selling_tab",
   "sales_settings",
@@ -862,7 +862,7 @@
    "options": "Contact"
   },
   {
-   "fieldname": "section_break_company_account_by_currency",
+   "fieldname": "company_account_by_currency_section",
    "fieldtype": "Section Break"
   },
   {
