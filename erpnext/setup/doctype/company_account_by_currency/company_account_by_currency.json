@@ -21,7 +21,7 @@
       "fieldtype": "Link",
       "in_list_view": 1,
       "label": "Currency",
-      "link_filters": "[[\"Currency\",\"currency_name\",\"!=\",\"eval:parent.default_currency\"]]",
+      "link_filters": "[[\"Currency\",\"name\",\"!=\",\"eval:parent.default_currency\"]]",
       "options": "Currency",
       "reqd": 1
     },

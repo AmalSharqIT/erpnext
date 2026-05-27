@@ -366,8 +366,8 @@
   {
    "fieldname": "department",
    "fieldtype": "Link",
-   "hidden": 1,
    "in_list_view": 1,
+   "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Department",
    "oldfieldname": "department",
@@ -377,9 +377,9 @@
   {
    "fieldname": "designation",
    "fieldtype": "Link",
-   "hidden": 1,
    "in_global_search": 1,
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Designation",
    "oldfieldname": "designation",
    "oldfieldtype": "Link",
