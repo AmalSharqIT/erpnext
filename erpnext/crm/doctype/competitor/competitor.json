@@ -38,7 +38,7 @@
    "table_fieldname": "competitors"
   }
  ],
- "modified": "2024-12-10 08:26:38.496003",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Competitor",
@@ -53,17 +53,13 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Master Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
   {
    "read": 1,
    "role": "Sales User"
-  },
-  {
-   "read": 1,
-   "role": "Sales Manager"
   },
   {
    "read": 1,

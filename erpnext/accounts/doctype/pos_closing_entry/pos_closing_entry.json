@@ -236,7 +236,7 @@
    "link_fieldname": "pos_closing_entry"
   }
  ],
- "modified": "2023-08-10 16:25:49.322697",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Closing Entry",
@@ -253,19 +253,6 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "cancel": 1,
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Sales Manager",
    "share": 1,
    "submit": 1,
    "write": 1

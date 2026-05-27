@@ -1108,7 +1108,7 @@
  "idx": 82,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-31 17:23:48.875382",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Quotation",
@@ -1139,7 +1139,7 @@
    "permlevel": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager",
+   "role": "System Manager",
    "write": 1
   },
   {
@@ -1153,7 +1153,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager",
+   "role": "System Manager",
    "share": 1,
    "submit": 1,
    "write": 1
