@@ -492,6 +492,7 @@
   {
    "fieldname": "quality_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Quality"
   },
   {
@@ -539,7 +540,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-04-14 13:51:49.545114",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Settings",

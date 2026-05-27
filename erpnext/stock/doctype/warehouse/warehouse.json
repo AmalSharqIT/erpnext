@@ -104,6 +104,7 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "address_and_contact",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Address and Contact"
   },
   {
@@ -286,7 +287,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-02-05 18:17:11.035097",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Warehouse",
