@@ -823,6 +823,10 @@
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "column_break_99",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "feedback_section",
    "fieldtype": "Section Break",
    "label": "Feedback"
