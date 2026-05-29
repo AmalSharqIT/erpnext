@@ -176,7 +176,6 @@
    "fieldtype": "Link",
    "in_global_search": 1,
    "label": "Customer",
-   "no_copy": 1,
    "oldfieldname": "customer",
    "oldfieldtype": "Link",
    "options": "Customer",
@@ -191,7 +190,6 @@
    "fieldname": "sales_order",
    "fieldtype": "Link",
    "label": "Sales Order",
-   "no_copy": 1,
    "options": "Sales Order"
   },
   {
@@ -464,7 +462,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "max_attachments": 4,
- "modified": "2026-05-22 16:45:50.762759",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",
@@ -486,7 +484,7 @@
    "permlevel": 1,
    "read": 1,
    "report": 1,
-   "role": "Desk User"
+   "role": "System Manager"
   },
   {
    "create": 1,
@@ -505,7 +503,7 @@
    "export": 1,
    "print": 1,
    "report": 1,
-   "role": "Employee",
+   "role": "System Manager",
    "select": 1,
    "share": 1
   }
