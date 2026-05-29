@@ -40,6 +40,7 @@ def create_charts(
 						{
 							"doctype": "Account",
 							"account_name": child.get("account_name") if from_coa_importer else account_name,
+							"description": child.get("description"),
 							"company": company,
 							"parent_account": parent,
 							"is_group": is_group,
@@ -117,11 +118,17 @@ def get_chart(chart_template, existing_company=None):
 
 		return standard_chart_of_accounts_with_account_number.get()
 	else:
+		paths = []
 		folders = ("verified",)
 		if frappe.local.flags.allow_unverified_charts:
 			folders = ("verified", "unverified")
 		for folder in folders:
-			path = os.path.join(os.path.dirname(__file__), folder)
+			paths.append(os.path.join(os.path.dirname(__file__), folder))
+		for app in frappe.get_installed_apps():
+			path = frappe.get_app_path(app, "chart_of_accounts")
+			if os.path.isdir(path):
+				paths.append(path)
+		for path in paths:
 			for fname in os.listdir(path):
 				fname = frappe.as_unicode(fname)
 				if fname.endswith(".json"):
@@ -174,6 +181,7 @@ def get_account_tree_from_existing_company(existing_company):
 		fields=[
 			"name",
 			"account_name",
+			"description",
 			"parent_account",
 			"account_type",
 			"is_group",
@@ -281,6 +289,7 @@ def build_tree_from_json(chart_template, chart_data=None, from_coa_importer=Fals
 def get_chart_metadata_fields():
 	return [
 		"account_name",
+		"description",
 		"account_number",
 		"account_type",
 		"account_category",

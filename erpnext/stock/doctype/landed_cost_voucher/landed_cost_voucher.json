@@ -31,11 +31,11 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Series",
    "no_copy": 1,
    "options": "MAT-LCV-.YYYY.-",
    "print_hide": 1,
-   "reqd": 1,
    "set_only_once": 1
   },
   {
@@ -163,7 +163,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-27 00:41:53.537375",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Landed Cost Voucher",
