@@ -970,7 +970,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2026-04-17 17:11:46.586135",
+ "modified": "2026-05-28",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",
@@ -997,7 +997,7 @@
   },
   {
    "read": 1,
-   "role": "Employee"
+   "role": "HR User"
   },
   {
    "read": 1,
@@ -1032,14 +1032,8 @@
    "select": 1
   },
   {
-   "role": "HR User",
-   "select": 1
-  },
-  {
    "read": 1,
-   "report": 1,
-   "role": "HR Manager",
-   "write": 1
+   "role": "Cash Desk User"
   }
  ],
  "row_format": "Dynamic",

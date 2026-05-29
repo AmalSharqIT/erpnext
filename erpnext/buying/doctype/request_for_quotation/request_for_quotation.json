@@ -392,7 +392,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-04-28 06:18:05.661710",
+ "modified": "2026-05-28",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Request for Quotation",
@@ -428,17 +428,6 @@
    "write": 1
   },
   {
-   "amend": 1,
-   "create": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User",
-   "share": 1,
-   "write": 1
-  },
-  {
    "email": 1,
    "print": 1,
    "read": 1,
@@ -450,11 +439,6 @@
    "read": 1,
    "role": "Purchase Manager",
    "write": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "All"
   }
  ],
  "row_format": "Dynamic",
