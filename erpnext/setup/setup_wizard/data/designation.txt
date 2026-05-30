@@ -1,39 +1,31 @@
-الرئيس التنفيذي
-الرئيس التنفيذي للتكنولوجيا
-الرئيس التنفيذي للعمليات
-امين صندوق
-امين مستودع
-بائع
-تقني
-حارس
-خدمي
-سائق
-سائق شوكية
-سكرتير
-عامل
-عامل تجهيز
-عامل تحميل وتفريغ
-فني
-قانوني
-محاسب
-مدقق تسليم
-مدير المالية
-مدير الموارد البشرية
-مدير الوكلاء
-مدير مستودع
-مدير معمل
-مدير مواد
-مسؤول الشراء
-مسؤول عمال
-مسؤول قسم
-مسؤول مستودع
-مسؤول مواد
-مسؤول موقع
-مسجل طلبات
-مصمم
-مطور برمجيات
-مندوب
-موظف استعلامات
-موظف الموارد البشرية
-موظف شراء
-موظف مبيعات
+Accountant
+Administrative Assistant
+Administrative Officer
+Analyst
+Associate
+Business Analyst
+Business Development Manager
+Consultant
+Chief Executive Officer
+Chief Financial Officer
+Chief Operating Officer
+Chief Technology Officer
+Customer Service Representative
+Designer
+Engineer
+Executive Assistant
+Finance Manager
+HR Manager
+Head of Marketing and Sales
+Manager
+Managing Director
+Marketing Manager
+Marketing Specialist
+President
+Product Manager
+Project Manager
+Researcher
+Sales Representative
+Secretary
+Software Developer
+Vice President
