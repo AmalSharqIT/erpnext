@@ -501,6 +501,12 @@ def make_purchase_order(source_name, target_doc=None, args=None):
 	)
 
 	def postprocess(source, target_doc):
+		if frappe.flags.args and frappe.flags.args.default_supplier:
+			supplier_items = []
+			for d in target_doc.items:
+				if frappe.flags.args.default_supplier == d.get("supplier"):
+					supplier_items.append(d)
+			target_doc.items = supplier_items
 		target_doc.is_subcontracted = is_subcontracted
 		set_missing_values(source, target_doc)
 
