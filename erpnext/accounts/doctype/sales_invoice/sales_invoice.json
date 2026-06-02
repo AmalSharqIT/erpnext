@@ -33,8 +33,10 @@
   "is_created_using_pos",
   "pos_closing_entry",
   "has_subcontracted",
-  "section_break_qllv",
-  "title",
+  "accounting_dimensions_section",
+  "cost_center",
+  "dimension_col_break",
+  "project",
   "currency_and_price_list",
   "currency",
   "conversion_rate",
@@ -234,6 +236,7 @@
   "status",
   "remarks",
   "customer_group",
+  "title",
   "column_break_imbx",
   "is_internal_customer",
   "represents_company",
@@ -2372,10 +2375,6 @@
   {
    "fieldname": "column_break_iaso",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_qllv",
-   "fieldtype": "Section Break"
   },
   {
    "allow_on_submit": 1,

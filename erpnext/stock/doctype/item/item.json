@@ -243,7 +243,7 @@
    "fieldname": "is_stock_item",
    "fieldtype": "Check",
    "hidden": 1,
-   "in_list_view": 1,
+   "in_list_view": 0,
    "label": "Maintain Stock",
    "oldfieldname": "is_stock_item",
    "oldfieldtype": "Select",
@@ -290,7 +290,8 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Is Fixed Asset",
-   "read_only_depends_on": "eval:doc.is_stock_item"
+   "read_only_depends_on": "eval:doc.is_stock_item",
+   "in_list_view": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -612,7 +613,7 @@
    "oldfieldtype": "Currency"
   },
   {
-   "description": "Minimum stock level to maintain as a buffer. Used to calculate recommended reorder level: Reorder Level = Safety Stock + (Average Daily Consumption \u00d7 Lead Time).",
+   "description": "Minimum stock level to maintain as a buffer. Used to calculate recommended reorder level: Reorder Level = Safety Stock + (Average Daily Consumption × Lead Time).",
    "fieldname": "safety_stock",
    "fieldtype": "Float",
    "hidden": 1,
@@ -721,7 +722,8 @@
    "fieldname": "is_sales_item",
    "fieldtype": "Check",
    "label": "Allow Sales",
-   "show_description_on_click": 1
+   "show_description_on_click": 1,
+   "in_list_view": 1
   },
   {
    "fieldname": "column_break3",

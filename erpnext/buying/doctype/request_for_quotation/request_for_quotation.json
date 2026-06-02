@@ -16,8 +16,6 @@
   "status",
   "has_unit_price_items",
   "amended_from",
-  "section_break_mhyw",
-  "title",
   "suppliers_section",
   "suppliers",
   "items_section",
@@ -44,6 +42,7 @@
   "letter_head",
   "more_info",
   "opportunity",
+  "title",
   "address_and_contact_tab",
   "billing_address",
   "billing_address_display",
@@ -373,10 +372,6 @@
    "fieldtype": "Text Editor",
    "label": "Shipping Address Details",
    "read_only": 1
-  },
-  {
-   "fieldname": "section_break_mhyw",
-   "fieldtype": "Section Break"
   },
   {
    "allow_on_submit": 1,

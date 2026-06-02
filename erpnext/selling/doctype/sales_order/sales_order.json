@@ -26,8 +26,10 @@
   "has_unit_price_items",
   "is_subcontracted",
   "amended_from",
-  "section_break_zstt",
-  "title",
+  "accounting_dimensions_section",
+  "cost_center",
+  "dimension_col_break",
+  "project",
   "currency_and_price_list",
   "currency",
   "conversion_rate",
@@ -176,6 +178,7 @@
   "po_no",
   "po_date",
   "represents_company",
+  "title",
   "column_break_yvzv",
   "inter_company_order_reference",
   "party_account_currency",
@@ -1773,10 +1776,6 @@
    "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
-  },
-  {
-   "fieldname": "section_break_zstt",
-   "fieldtype": "Section Break"
   },
   {
    "allow_on_submit": 1,

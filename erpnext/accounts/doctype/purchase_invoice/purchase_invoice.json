@@ -27,8 +27,6 @@
   "update_billed_amount_in_purchase_receipt",
   "apply_tds",
   "amended_from",
-  "section_break_hzux",
-  "title",
   "supplier_invoice_details",
   "bill_no",
   "column_break_15",
@@ -201,6 +199,7 @@
   "hold_comment",
   "additional_info_section",
   "is_internal_supplier",
+  "title",
   "represents_company",
   "supplier_group",
   "sender",
@@ -1698,10 +1697,6 @@
    "fieldname": "automation_section",
    "fieldtype": "Section Break",
    "label": "Automation"
-  },
-  {
-   "fieldname": "section_break_hzux",
-   "fieldtype": "Section Break"
   },
   {
    "allow_on_submit": 1,
