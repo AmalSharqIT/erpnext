@@ -164,7 +164,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-04-14 02:59:22.503202",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Telephony",
  "name": "Call Log",
@@ -182,10 +182,6 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "role": "Employee"
   }
  ],
  "sort_field": "creation",

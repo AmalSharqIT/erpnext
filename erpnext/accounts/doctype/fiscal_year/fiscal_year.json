@@ -82,7 +82,7 @@
  "icon": "fa fa-calendar",
  "idx": 1,
  "links": [],
- "modified": "2024-05-27 17:29:55.560840",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Fiscal Year",
@@ -106,19 +106,11 @@
   },
   {
    "read": 1,
-   "role": "Purchase User"
-  },
-  {
-   "read": 1,
    "role": "Accounts User"
   },
   {
    "read": 1,
    "role": "Stock User"
-  },
-  {
-   "read": 1,
-   "role": "Employee"
   },
   {
    "read": 1,

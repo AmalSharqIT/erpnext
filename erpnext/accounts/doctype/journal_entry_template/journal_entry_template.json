@@ -86,7 +86,7 @@
   }
  ],
  "links": [],
- "modified": "2020-05-01 18:32:01.420488",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry Template",
@@ -124,6 +124,10 @@
    "report": 1,
    "role": "Auditor",
    "share": 1
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "search_fields": "voucher_type, company",
