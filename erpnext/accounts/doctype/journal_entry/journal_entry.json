@@ -673,7 +673,7 @@
    "table_fieldname": "payment_entries"
   }
  ],
- "modified": "2026-04-08 14:19:30.870894",
+ "modified": "2026-05-28",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Journal Entry",
@@ -716,6 +716,14 @@
    "read": 1,
    "report": 1,
    "role": "Auditor"
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "read": 1,
+   "role": "Cash Desk User",
+   "submit": 1,
+   "write": 1
   }
  ],
  "row_format": "Dynamic",

@@ -20,7 +20,7 @@
   }
  ],
  "links": [],
- "modified": "2026-04-14 21:31:18.260962",
+ "modified": "2026-05-29",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "UOM Category",
@@ -34,7 +34,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },

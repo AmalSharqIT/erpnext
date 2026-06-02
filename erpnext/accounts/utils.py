@@ -2071,8 +2071,6 @@ def get_payment_ledger_entries(gl_entries, cancel=0):
 					# create advance entry
 					base_amount, exchange_rate = (
 						(dr_or_cr, gle.transaction_exchange_rate)
-						if gle.advance_voucher_type == "Employee Advance"
-						else (None, None)
 					)
 					adv = get_advance_ledger_entry(
 						gle,

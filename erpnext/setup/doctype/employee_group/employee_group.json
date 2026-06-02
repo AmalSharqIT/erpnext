@@ -32,7 +32,7 @@
   }
  ],
  "links": [],
- "modified": "2026-03-26 17:22:45.737955",
+ "modified": "2026-05-29",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee Group",
@@ -48,22 +48,6 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "HR Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "read": 1,
-   "role": "HR User",
    "write": 1
   }
  ],
