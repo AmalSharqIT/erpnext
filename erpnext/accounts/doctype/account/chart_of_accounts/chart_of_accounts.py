@@ -50,8 +50,7 @@ def create_charts(
 							"account_type": child.get("account_type"),
 							"account_category": child.get("account_category"),
 							"account_currency": child.get("account_currency")
-							if custom_chart
-							else frappe.get_cached_value("Company", company, "default_currency"),
+							or frappe.get_cached_value("Company", company, "default_currency"),
 							"tax_rate": child.get("tax_rate"),
 						}
 					)
