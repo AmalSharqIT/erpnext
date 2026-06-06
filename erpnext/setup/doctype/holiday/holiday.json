@@ -54,6 +54,7 @@
    "default": "0",
    "fieldname": "is_half_day",
    "fieldtype": "Check",
+   "hidden": 1,
    "in_list_view": 1,
    "in_preview": 1,
    "label": "Is Half Day"
