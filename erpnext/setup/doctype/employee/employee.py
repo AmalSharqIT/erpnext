@@ -105,7 +105,7 @@ class Employee(NestedSet):
 		resignation_letter_date: DF.Date | None
 		rgt: DF.Int
 		salary_currency: DF.Link | None
-		salary_mode: DF.Literal["", "Bank", "Cash", "Cheque"]
+		salary_mode: DF.Literal["", "Bank", "Cash"]
 		salutation: DF.Link | None
 		scheduled_confirmation_date: DF.Date | None
 		status: DF.Literal["Active", "Inactive", "Suspended", "Left"]
