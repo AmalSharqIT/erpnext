@@ -103,7 +103,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2022-12-15 11:10:13.517742",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Appointment Booking Settings",
@@ -116,15 +116,6 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "role": "HR Manager",
    "share": 1,
    "write": 1
   },

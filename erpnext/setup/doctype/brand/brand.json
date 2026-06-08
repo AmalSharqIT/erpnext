@@ -56,7 +56,7 @@
  "idx": 1,
  "image_field": "image",
  "links": [],
- "modified": "2024-08-20 14:10:21.377962",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Brand",
@@ -72,7 +72,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
@@ -95,14 +95,11 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Purchase User"
+   "role": "Accounts User"
   },
   {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Accounts User"
+   "role": "Item Manager",
+   "select": 1
   }
  ],
  "quick_entry": 1,

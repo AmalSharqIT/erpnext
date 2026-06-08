@@ -191,7 +191,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2024-08-19 15:19:11.095045",
+ "modified": "2026-05-28",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
@@ -226,11 +226,8 @@
    "role": "Sales User"
   },
   {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "select": 1
   },
   {
    "create": 1,
@@ -244,6 +241,19 @@
    "role": "Accounts Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR Manager"
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
+  },
+  {
+   "permlevel": 9,
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "search_fields": "account_number",

@@ -89,7 +89,7 @@
  "icon": "icon-legal",
  "idx": 1,
  "links": [],
- "modified": "2026-04-29 22:51:49.285298",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Terms and Conditions",
@@ -112,10 +112,6 @@
   {
    "read": 1,
    "role": "Sales User"
-  },
-  {
-   "read": 1,
-   "role": "Purchase User"
   },
   {
    "create": 1,
