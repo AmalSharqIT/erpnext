@@ -123,7 +123,7 @@ class SalesInvoice(SellingController):
 		customer_address: DF.Link | None
 		customer_group: DF.Link | None
 		customer_name: DF.SmallText | None
-		debit_to: DF.Link
+		debit_to: DF.Link | None
 		disable_rounded_total: DF.Check
 		discount_amount: DF.Currency
 		dispatch_address: DF.TextEditor | None

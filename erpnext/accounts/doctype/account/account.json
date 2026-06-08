@@ -20,6 +20,7 @@
   "report_type",
   "account_currency",
   "column_break1",
+  "description",
   "parent_account",
   "account_category",
   "account_type",
@@ -197,6 +198,11 @@
    "fieldtype": "Link",
    "label": "Account Category",
    "options": "Account Category"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
   }
  ],
  "icon": "fa fa-money",
@@ -269,7 +275,7 @@
   }
  ],
  "row_format": "Dynamic",
- "search_fields": "account_number",
+ "search_fields": "account_number,description",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "creation",
