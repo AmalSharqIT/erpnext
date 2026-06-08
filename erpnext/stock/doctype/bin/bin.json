@@ -223,7 +223,7 @@
  "idx": 1,
  "in_create": 1,
  "links": [],
- "modified": "2026-02-05 17:34:44.541175",
+ "modified": "2026-05-28",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Bin",
@@ -236,13 +236,6 @@
    "read": 1,
    "report": 1,
    "role": "Sales User"
-  },
-  {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User"
   },
   {
    "email": 1,

@@ -75,7 +75,7 @@
  "icon": "fa fa-compass",
  "idx": 1,
  "links": [],
- "modified": "2026-04-14 21:20:16.983514",
+ "modified": "2026-05-28",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "UOM",
@@ -91,7 +91,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
@@ -126,6 +126,14 @@
    "report": 1,
    "role": "Sales Manager",
    "share": 1
+  },
+  {
+   "read": 1,
+   "role": "Item Manager"
+  },
+  {
+   "read": 1,
+   "role": "Purchase User"
   }
  ],
  "quick_entry": 1,
