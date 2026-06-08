@@ -1893,7 +1893,12 @@ def get_payment_ledger_entries(gl_entries, cancel=0):
 				if gle.advance_voucher_no:
 					# create advance entry
 					adv = get_advance_ledger_entry(
-						gle, against_voucher_type, against_voucher_no, dr_or_cr_account_currency, cancel
+						gle,
+						against_voucher_type,
+						against_voucher_no,
+						dr_or_cr_account_currency,
+						dr_or_cr,
+						cancel,
 					)
 
 					ple_map.append(adv)
@@ -1903,7 +1908,9 @@ def get_payment_ledger_entries(gl_entries, cancel=0):
 	return ple_map
 
 
-def get_advance_ledger_entry(gle, against_voucher_type, against_voucher_no, amount, cancel):
+def get_advance_ledger_entry(
+	gle, against_voucher_type, against_voucher_no, amount, base_amount, cancel
+):
 	event = (
 		"Submit"
 		if (against_voucher_type == gle.voucher_type and against_voucher_no == gle.voucher_no)
@@ -1921,6 +1928,7 @@ def get_advance_ledger_entry(gle, against_voucher_type, against_voucher_no, amou
 		currency=gle.account_currency,
 		event=event,
 		delinked=cancel,
+		base_amount=base_amount,
 	)
 
 
