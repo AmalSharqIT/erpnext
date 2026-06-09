@@ -62,7 +62,6 @@ class PaymentReconciliation(Document):
 		payment_limit: DF.Int
 		payment_name: DF.Data | None
 		payments: DF.Table[PaymentReconciliationPayment]
-		project: DF.Link | None
 		receivable_payable_account: DF.Link
 		to_invoice_date: DF.Date | None
 		to_payment_date: DF.Date | None
