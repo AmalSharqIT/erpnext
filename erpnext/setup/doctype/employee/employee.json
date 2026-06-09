@@ -439,6 +439,7 @@
    "fieldname": "bank_name",
    "fieldtype": "Link",
    "label": "Bank Name",
+   "mandatory_depends_on": "eval:doc.salary_mode=='Bank'",
    "oldfieldname": "bank_name",
    "oldfieldtype": "Link",
    "options": "Bank"
@@ -886,7 +887,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-06-07",
+ "modified": "2026-06-08",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
