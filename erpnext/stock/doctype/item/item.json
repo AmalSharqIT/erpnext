@@ -17,6 +17,7 @@
   "item_group",
   "brand",
   "stock_uom",
+  "image",
   "column_break0",
   "disabled",
   "is_stock_item",
@@ -141,6 +142,9 @@
   "inspection_required_before_delivery",
   "column_break_pxjh",
   "quality_inspection_template",
+  "pricing_tab",
+  "item_prices_column",
+  "prices_html",
   "dashboard_tab"
  ],
  "fields": [
@@ -1099,6 +1103,21 @@
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "prices_html",
+   "fieldtype": "HTML",
+   "label": "Prices HTML",
+   "options": "<div id=\\\"item-prices-container\\\"></div>"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "pricing_tab",
+   "fieldtype": "Tab Break",
+   "label": "Pricing"
+  },
+  {
+   "fieldname": "item_prices_column",
+   "fieldtype": "Column Break",
+   "label": "Item Prices"
    "fieldname": "legacy_code",
    "fieldtype": "Data",
    "label": "Legacy Code"
