@@ -698,33 +698,6 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 						);
 					}
 
-					// material request
-					if (
-						(!doc.order_type ||
-							((order_is_a_sale || order_is_a_custom_sale) && flt(doc.per_delivered) < 100)) &&
-						frappe.model.can_create("Material Request")
-					) {
-						this.frm.add_custom_button(
-							__("Material Request"),
-							() => this.make_material_request(),
-							__("Create")
-						);
-						this.frm.add_custom_button(
-							__("Request for Raw Materials"),
-							() => this.make_raw_material_request(),
-							__("Create")
-						);
-					}
-
-					// Make Purchase Order
-					if (!this.frm.doc.is_internal_customer && frappe.model.can_create("Purchase Order")) {
-						this.frm.add_custom_button(
-							__("Purchase Order"),
-							() => this.make_purchase_order(),
-							__("Create")
-						);
-					}
-
 					// maintenance
 					if (flt(doc.per_delivered) < 100 && (order_is_maintenance || order_is_a_custom_sale)) {
 						if (frappe.model.can_create("Maintenance Visit")) {
@@ -773,14 +746,6 @@ erpnext.selling.SalesOrderController = class SalesOrderController extends erpnex
 				}
 				// payment request
 				if (flt(doc.per_billed) < 100 + frappe.boot.sysdefaults.over_billing_allowance) {
-					if (frappe.boot.user.in_create.includes("Payment Request")) {
-						this.frm.add_custom_button(
-							__("Payment Request"),
-							() => this.make_payment_request(),
-							__("Create")
-						);
-					}
-
 					if (frappe.model.can_create("Payment Entry")) {
 						this.frm.add_custom_button(
 							__("Payment"),

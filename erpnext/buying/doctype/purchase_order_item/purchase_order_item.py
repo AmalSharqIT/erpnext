@@ -73,6 +73,7 @@ class PurchaseOrderItem(Document):
 		production_plan_sub_assembly_item: DF.Data | None
 		project: DF.Link | None
 		qty: DF.Float
+		qty_in_cargo: DF.Float
 		rate: DF.Currency
 		rate_with_margin: DF.Currency
 		received_qty: DF.Float
