@@ -393,7 +393,7 @@
  "icon": "fa fa-ticket",
  "idx": 7,
  "links": [],
- "modified": "2026-04-09 19:14:57.692236",
+ "modified": "2026-05-29",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "Issue",
@@ -410,14 +410,6 @@
    "role": "Support Team",
    "share": 1,
    "write": 1
-  },
-  {
-   "role": "HR Manager",
-   "select": 1
-  },
-  {
-   "role": "HR User",
-   "select": 1
   }
  ],
  "quick_entry": 1,

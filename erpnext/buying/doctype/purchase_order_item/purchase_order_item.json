@@ -25,12 +25,12 @@
   "image_view",
   "quantity_and_rate",
   "qty",
-  "stock_uom",
+  "uom",
   "subcontracted_qty",
   "col_break2",
-  "uom",
-  "conversion_factor",
   "stock_qty",
+  "stock_uom",
+  "conversion_factor",
   "sec_break1",
   "price_list_rate",
   "last_purchase_rate",
@@ -85,6 +85,7 @@
   "returned_qty",
   "column_break_60",
   "billed_amt",
+  "qty_in_cargo",
   "accounting_details",
   "expense_account",
   "column_break_fyqr",
@@ -112,6 +113,7 @@
   "production_plan_item",
   "production_plan_sub_assembly_item",
   "page_break",
+  "supplier",
   "column_break_pjyo",
   "job_card"
  ],
@@ -156,7 +158,6 @@
    "columns": 2,
    "fieldname": "schedule_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
    "label": "Required By",
    "oldfieldname": "schedule_date",
    "oldfieldtype": "Date",
@@ -168,6 +169,7 @@
    "bold": 1,
    "fieldname": "expected_delivery_date",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Expected Delivery Date",
    "search_index": 1
   },
@@ -224,9 +226,11 @@
    "width": "60px"
   },
   {
+   "columns": 1,
    "depends_on": "eval:doc.uom != doc.stock_uom",
    "fieldname": "stock_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Stock UOM",
    "oldfieldname": "stock_uom",
    "oldfieldtype": "Data",
@@ -317,7 +321,7 @@
   },
   {
    "bold": 1,
-   "columns": 2,
+   "columns": 1,
    "fieldname": "rate",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -327,7 +331,7 @@
    "options": "currency"
   },
   {
-   "columns": 2,
+   "columns": 1,
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -382,7 +386,8 @@
   },
   {
    "fieldname": "section_break_29",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "net_rate",
@@ -424,6 +429,7 @@
    "collapsible": 1,
    "fieldname": "item_weight_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Item Weight Details"
   },
   {
@@ -454,12 +460,12 @@
   {
    "fieldname": "warehouse_and_reference",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Warehouse Settings"
   },
   {
    "fieldname": "warehouse",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Target Warehouse",
    "oldfieldname": "warehouse",
    "oldfieldtype": "Link",
@@ -469,6 +475,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project",
    "print_hide": 1
@@ -504,6 +511,7 @@
   {
    "fieldname": "sales_order",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Sales Order",
    "no_copy": 1,
    "options": "Sales Order",
@@ -611,9 +619,11 @@
    "label": "Billed, Received & Returned"
   },
   {
+   "columns": 1,
    "depends_on": "eval:doc.uom != doc.stock_uom",
    "fieldname": "stock_qty",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Qty in Stock UOM",
    "no_copy": 1,
    "print_hide": 1,
@@ -672,6 +682,7 @@
    "collapsible": 1,
    "fieldname": "accounting_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Details"
   },
   {
@@ -702,6 +713,7 @@
   {
    "fieldname": "item_tax_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item Tax Template",
    "options": "Item Tax Template"
   },
@@ -713,6 +725,7 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Dimensions "
   },
   {
@@ -723,6 +736,7 @@
    "collapsible": 1,
    "fieldname": "manufacture_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Manufacture"
   },
   {
@@ -744,6 +758,7 @@
    "default": "0",
    "fieldname": "against_blanket_order",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Against Blanket Order"
   },
   {
@@ -792,6 +807,7 @@
    "collapsible_depends_on": "eval: doc.margin_type || doc.discount_amount || doc.distributed_discount_amount",
    "fieldname": "discount_and_margin_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Discount and Margin"
   },
   {
@@ -866,6 +882,7 @@
   {
    "fieldname": "sales_order_packed_item",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Sales Order Packed Item",
    "no_copy": 1,
    "print_hide": 1
@@ -908,6 +925,7 @@
   {
    "fieldname": "wip_composite_asset",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "WIP Composite Asset",
    "options": "Asset"
   },
@@ -944,6 +962,21 @@
    "non_negative": 1,
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "depends_on": "qty_in_cargo",
+   "fieldname": "qty_in_cargo",
+   "fieldtype": "Float",
+   "label": "Qty in Cargo",
+   "no_copy": 1,
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "is_virtual": 1
   }
  ],
  "grid_page_length": 50,
@@ -951,7 +984,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-05-14 12:16:16.192936",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",

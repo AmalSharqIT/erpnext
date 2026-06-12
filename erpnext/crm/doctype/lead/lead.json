@@ -543,19 +543,13 @@
  "idx": 5,
  "image_field": "image",
  "links": [],
- "modified": "2026-02-10 14:36:37.157961",
+ "modified": "2026-05-28",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
-  {
-   "permlevel": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Desk User"
-  },
   {
    "create": 1,
    "email": 1,

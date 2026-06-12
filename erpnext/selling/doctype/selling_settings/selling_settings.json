@@ -161,6 +161,7 @@
    "description": "Most Customers have a unique Tax ID that is fetched into selling transactions. Enable this setting if you do not want Customer Tax IDs to appear in sales transactions.",
    "fieldname": "hide_tax_id",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Hide Customer's Tax ID from sales transactions",
    "show_description_on_click": 1
   },
@@ -203,6 +204,7 @@
    "documentation_url": "https://docs.frappe.io/erpnext/selling-settings#7-calculate-product-bundle-price-based-on-child-items-rates",
    "fieldname": "editable_bundle_item_rates",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Calculate Product Bundle price based on child Item's rates",
    "show_description_on_click": 1
   },
@@ -218,6 +220,7 @@
    "description": "This allows creation of sales orders from quotations that have passed their expiration date, providing flexibility in processing orders despite outdated quotes.",
    "fieldname": "allow_sales_order_creation_for_expired_quotation",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Sales Order creation for expired Quotation"
   },
   {
@@ -239,6 +242,7 @@
    "description": "Percentage you are allowed to sell beyond the Blanket Order quantity.",
    "fieldname": "blanket_order_allowance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Blanket Order Allowance (%)"
   },
   {
@@ -263,6 +267,7 @@
    "default": "0",
    "fieldname": "allow_zero_qty_in_quotation",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Quotation with zero quantity"
   },
   {
@@ -412,7 +417,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-04-29 11:05:48.836362",
+ "modified": "2026-05-25",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling Settings",
