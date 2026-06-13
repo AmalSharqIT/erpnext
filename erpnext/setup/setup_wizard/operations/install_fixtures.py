@@ -34,37 +34,6 @@ def install(country=None):
 			"is_group": 1,
 			"parent_item_group": "",
 		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Products"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-			"show_in_website": 1,
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Raw Material"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Services"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Sub Assemblies"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Consumable"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
 		# Stock Entry Type
 		{
 			"doctype": "Stock Entry Type",
