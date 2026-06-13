@@ -143,7 +143,7 @@
   "column_break_pxjh",
   "quality_inspection_template",
   "pricing_tab",
-  "item_prices_column",
+  "",
   "prices_html",
   "dashboard_tab"
  ],
@@ -1118,6 +1118,8 @@
    "fieldname": "item_prices_column",
    "fieldtype": "Column Break",
    "label": "Item Prices"
+  },
+  {
    "fieldname": "legacy_code",
    "fieldtype": "Data",
    "label": "Legacy Code"
