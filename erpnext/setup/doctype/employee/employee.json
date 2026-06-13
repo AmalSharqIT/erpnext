@@ -887,7 +887,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-06-08",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -966,6 +966,7 @@
   },
   {
    "create": 1,
+   "print": 1,
    "read": 1,
    "role": "HR User - Branch",
    "write": 1
