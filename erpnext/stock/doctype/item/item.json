@@ -91,6 +91,7 @@
   "customer",
   "supplier_details",
   "delivered_by_supplier",
+  "column_break2",
   "supplier_items",
   "foreign_trade_details",
   "country_of_origin",
@@ -619,6 +620,12 @@
    "hidden": 1,
    "label": "Delivered by Supplier (Drop Ship)",
    "print_hide": 1
+  },
+  {
+   "fieldname": "column_break2",
+   "fieldtype": "Column Break",
+   "oldfieldtype": "Column Break",
+   "width": "50%"
   },
   {
    "fieldname": "supplier_items",
