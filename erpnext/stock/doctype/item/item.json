@@ -41,7 +41,6 @@
   "over_delivery_receipt_allowance",
   "column_break_wugd",
   "over_billing_allowance",
-  "image",
   "legacy_code",
   "edari_item_number",
   "section_break_11",
@@ -143,7 +142,7 @@
   "column_break_pxjh",
   "quality_inspection_template",
   "pricing_tab",
-  "",
+  "item_prices_column",
   "prices_html",
   "dashboard_tab"
  ],
