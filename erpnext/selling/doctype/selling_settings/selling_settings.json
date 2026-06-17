@@ -128,6 +128,7 @@
    "default": "0",
    "fieldname": "hide_tax_id",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Hide Customer's Tax ID from Sales Transactions"
   },
   {
@@ -173,6 +174,7 @@
    "default": "0",
    "fieldname": "editable_bundle_item_rates",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Calculate Product Bundle Price based on Child Items' Rates"
   },
   {
@@ -186,6 +188,7 @@
    "default": "0",
    "fieldname": "allow_sales_order_creation_for_expired_quotation",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Sales Order Creation For Expired Quotation"
   },
   {
@@ -204,6 +207,7 @@
    "description": "Percentage you are allowed to sell beyond the Blanket Order quantity.",
    "fieldname": "blanket_order_allowance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Blanket Order Allowance (%)"
   },
   {
@@ -218,6 +222,7 @@
    "description": "Allows users to submit Quotations with zero quantity. Useful when rates are fixed but the quantities are not. Eg. Rate Contracts.",
    "fieldname": "allow_zero_qty_in_quotation",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Quotation with Zero Quantity"
   },
   {
@@ -240,7 +245,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-01-24 00:04:33.105916",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling Settings",

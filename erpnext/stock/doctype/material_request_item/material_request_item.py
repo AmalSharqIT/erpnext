@@ -36,6 +36,7 @@ class MaterialRequestItem(Document):
 		manufacturer_part_no: DF.Data | None
 		material_request_plan_item: DF.Data | None
 		min_order_qty: DF.Float
+		note: DF.Data | None
 		ordered_qty: DF.Float
 		page_break: DF.Check
 		parent: DF.Data
@@ -53,6 +54,7 @@ class MaterialRequestItem(Document):
 		schedule_date: DF.Date
 		stock_qty: DF.Float
 		stock_uom: DF.Link
+		supplier: DF.Link | None
 		uom: DF.Link
 		warehouse: DF.Link | None
 		wip_composite_asset: DF.Link | None
