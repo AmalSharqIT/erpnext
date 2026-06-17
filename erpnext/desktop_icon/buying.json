@@ -10,12 +10,22 @@
  "label": "Buying",
  "link_to": "Buying",
  "link_type": "Workspace Sidebar",
- "modified": "2026-01-01 20:07:01.196163",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "name": "Buying",
  "owner": "Administrator",
  "parent_icon": "ERPNext",
  "restrict_removal": 0,
- "roles": [],
+ "roles": [
+  {
+   "role": "Purchase User"
+  },
+  {
+   "role": "Purchase Manager"
+  },
+  {
+   "role": "Purchase Master Manager"
+  }
+ ],
  "standard": 1
 }

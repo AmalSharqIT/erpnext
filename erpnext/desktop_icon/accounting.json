@@ -10,12 +10,19 @@
  "label": "Accounting",
  "link_to": "",
  "link_type": "Workspace Sidebar",
- "modified": "2026-01-27 17:04:04.351402",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "name": "Accounting",
  "owner": "Administrator",
  "parent_icon": "",
  "restrict_removal": 0,
- "roles": [],
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
  "standard": 1
 }

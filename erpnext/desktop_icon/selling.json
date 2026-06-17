@@ -10,12 +10,22 @@
  "label": "Selling",
  "link_to": "Selling",
  "link_type": "Workspace Sidebar",
- "modified": "2026-01-01 20:07:01.189446",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "name": "Selling",
  "owner": "Administrator",
  "parent_icon": "ERPNext",
  "restrict_removal": 0,
- "roles": [],
+ "roles": [
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Sales Master Manager"
+  }
+ ],
  "standard": 1
 }
