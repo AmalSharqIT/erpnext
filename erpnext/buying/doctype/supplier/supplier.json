@@ -77,13 +77,14 @@
  ],
  "fields": [
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
    "no_copy": 1,
    "oldfieldname": "naming_series",
    "oldfieldtype": "Select",
-   "options": "SUP-.YYYY.-",
+   "options": "SUP-",
    "set_only_once": 1
   },
   {
@@ -136,6 +137,7 @@
    "default": "0",
    "fieldname": "is_internal_supplier",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Supplier"
   },
   {
@@ -245,6 +247,7 @@
   {
    "fieldname": "default_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "ignore_user_permissions": 1,
    "label": "Price List",
    "options": "Price List"
@@ -252,6 +255,7 @@
   {
    "fieldname": "payment_terms",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Default Payment Terms Template",
    "options": "Payment Terms Template"
   },
@@ -362,19 +366,22 @@
    "fieldname": "supplier_primary_contact",
    "fieldtype": "Link",
    "label": "Supplier Primary Contact",
+   "no_copy": 1,
    "options": "Contact"
   },
   {
    "fetch_from": "supplier_primary_contact.mobile_no",
    "fieldname": "mobile_no",
    "fieldtype": "Read Only",
-   "label": "Mobile No"
+   "label": "Mobile No",
+   "no_copy": 1
   },
   {
    "fetch_from": "supplier_primary_contact.email_id",
    "fieldname": "email_id",
    "fieldtype": "Read Only",
-   "label": "Email Id"
+   "label": "Email Id",
+   "no_copy": 1
   },
   {
    "fieldname": "column_break_44",
@@ -384,6 +391,7 @@
    "fieldname": "primary_address",
    "fieldtype": "Text",
    "label": "Primary Address",
+   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -391,6 +399,7 @@
    "fieldname": "supplier_primary_address",
    "fieldtype": "Link",
    "label": "Supplier Primary Address",
+   "no_copy": 1,
    "options": "Address"
   },
   {
@@ -422,6 +431,7 @@
   {
    "fieldname": "tax_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Tax"
   },
   {
@@ -459,6 +469,7 @@
   {
    "fieldname": "portal_users_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Portal Users"
   },
   {

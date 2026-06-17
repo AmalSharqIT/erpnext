@@ -22,6 +22,7 @@
   "gender",
   "date_of_birth",
   "salutation",
+  "referrer",
   "column_break1",
   "date_of_joining",
   "image",
@@ -81,18 +82,21 @@
   "column_break_heye",
   "bank_ac_no",
   "iban",
-  "personal_details",
-  "marital_status",
-  "family_background",
-  "column_break6",
-  "blood_group",
-  "health_details",
+  "official_info_tab",
   "passport_details_section",
   "passport_number",
   "valid_upto",
   "column_break_73",
   "date_of_issue",
   "place_of_issue",
+  "personal_details",
+  "marital_status",
+  "number_of_sons",
+  "family_background",
+  "column_break6",
+  "blood_group",
+  "number_of_daughters",
+  "health_details",
   "profile_tab",
   "bio",
   "educational_qualification",
@@ -147,6 +151,7 @@
   {
    "fieldname": "salutation",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Salutation",
    "oldfieldname": "salutation",
    "oldfieldtype": "Select",
@@ -162,7 +167,8 @@
    "allow_in_quick_entry": 1,
    "fieldname": "middle_name",
    "fieldtype": "Data",
-   "label": "Middle Name"
+   "label": "Second Name",
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -223,6 +229,7 @@
    "oldfieldtype": "Data"
   },
   {
+   "default": "Male",
    "fieldname": "gender",
    "fieldtype": "Link",
    "label": "Gender",
@@ -283,13 +290,16 @@
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "label": "User ID",
-   "options": "User"
+   "no_copy": 1,
+   "options": "User",
+   "permlevel": 1
   },
   {
    "depends_on": "eval:(!doc.user_id)",
    "fieldname": "create_user",
    "fieldtype": "Button",
-   "label": "Create User"
+   "label": "Create User",
+   "permlevel": 1
   },
   {
    "default": "1",
@@ -297,13 +307,16 @@
    "description": "This will restrict user access to other employee records",
    "fieldname": "create_user_permission",
    "fieldtype": "Check",
-   "label": "Create User Permission"
+   "label": "Create User Permission",
+   "no_copy": 1,
+   "permlevel": 1
   },
   {
    "allow_in_quick_entry": 1,
    "collapsible": 1,
    "fieldname": "employment_details",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Joining"
   },
   {
@@ -341,6 +354,7 @@
   {
    "fieldname": "date_of_retirement",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Date Of Retirement",
    "oldfieldname": "date_of_retirement",
    "oldfieldtype": "Date"
@@ -348,6 +362,7 @@
   {
    "fieldname": "department",
    "fieldtype": "Link",
+   "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Department",
    "oldfieldname": "department",
@@ -359,6 +374,7 @@
    "fieldtype": "Link",
    "in_global_search": 1,
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Designation",
    "oldfieldname": "designation",
    "oldfieldtype": "Link",
@@ -370,6 +386,7 @@
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
    "label": "Reports to",
+   "mandatory_depends_on": "eval:!frappe.user.has_role('System Manager')",
    "oldfieldname": "reports_to",
    "oldfieldtype": "Link",
    "options": "Employee"
@@ -377,10 +394,13 @@
   {
    "fieldname": "branch",
    "fieldtype": "Link",
+   "in_preview": 1,
    "label": "Branch",
+   "mandatory_depends_on": "eval:frappe.perm.has_perm('Employee',2,'write')",
    "oldfieldname": "branch",
    "oldfieldtype": "Link",
-   "options": "Branch"
+   "options": "Branch",
+   "permlevel": 2
   },
   {
    "description": "Applicable Holiday List",
@@ -406,21 +426,24 @@
    "label": "Salary Mode",
    "oldfieldname": "salary_mode",
    "oldfieldtype": "Select",
-   "options": "\nBank\nCash\nCheque"
+   "options": "\nBank\nCash"
   },
   {
    "depends_on": "eval:doc.salary_mode == 'Bank'",
    "fieldname": "bank_name",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Bank Name",
+   "mandatory_depends_on": "eval:doc.salary_mode=='Bank'",
    "oldfieldname": "bank_name",
-   "oldfieldtype": "Link"
+   "oldfieldtype": "Link",
+   "options": "Bank"
   },
   {
    "depends_on": "eval:doc.salary_mode == 'Bank'",
    "fieldname": "bank_ac_no",
    "fieldtype": "Data",
    "label": "Bank A/C No.",
+   "mandatory_depends_on": "eval:doc.salary_mode=='Bank'",
    "oldfieldname": "bank_ac_no",
    "oldfieldtype": "Data"
   },
@@ -433,6 +456,7 @@
   {
    "fieldname": "cell_number",
    "fieldtype": "Data",
+   "in_preview": 1,
    "label": "Mobile",
    "options": "Phone"
   },
@@ -468,6 +492,7 @@
    "default": "0",
    "fieldname": "unsubscribed",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Unsubscribed"
   },
   {
@@ -629,6 +654,7 @@
   {
    "fieldname": "leave_encashed",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Leave Encashed?",
    "oldfieldname": "leave_encashed",
    "oldfieldtype": "Select",
@@ -693,9 +719,12 @@
   },
   {
    "fieldname": "attendance_device_id",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Attendance Device ID (Biometric/RF tag ID)",
+   "mandatory_depends_on": "eval:frappe.perm.has_perm('Employee',2,'write')",
    "no_copy": 1,
+   "non_negative": 1,
+   "permlevel": 2,
    "unique": 1
   },
   {
@@ -715,12 +744,14 @@
   {
    "fieldname": "salary_currency",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Salary Currency",
    "options": "Currency"
   },
   {
    "fieldname": "ctc",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Cost to Company (CTC)",
    "options": "salary_currency"
   },
@@ -814,8 +845,31 @@
    "depends_on": "eval:doc.salary_mode == 'Bank'",
    "fieldname": "iban",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "IBAN",
    "options": "IBAN"
+  },
+  {
+   "fieldname": "referrer",
+   "fieldtype": "Data",
+   "label": "Referrer"
+  },
+  {
+   "fieldname": "official_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "Official Info"
+  },
+  {
+   "depends_on": "eval:(doc.marital_status && doc.marital_status!='Single')",
+   "fieldname": "number_of_sons",
+   "fieldtype": "Int",
+   "label": "Number of Sons"
+  },
+  {
+   "depends_on": "eval:(doc.marital_status && doc.marital_status!='Single')",
+   "fieldname": "number_of_daughters",
+   "fieldtype": "Int",
+   "label": "Number of Daughters"
   }
  ],
  "icon": "fa fa-user",
@@ -911,6 +965,7 @@
  "row_format": "Dynamic",
  "search_fields": "employee_name",
  "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

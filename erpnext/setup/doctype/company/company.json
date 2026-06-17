@@ -95,6 +95,8 @@
   "depreciation_cost_center",
   "capital_work_in_progress_account",
   "asset_received_but_not_billed",
+  "company_account_by_currency_section",
+  "company_account_by_currency",
   "buying_and_selling_tab",
   "sales_settings",
   "default_buying_terms",
@@ -858,6 +860,16 @@
    "fieldtype": "Link",
    "label": "Default Sales Contact",
    "options": "Contact"
+  },
+  {
+   "fieldname": "company_account_by_currency_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company_account_by_currency",
+   "fieldtype": "Table",
+   "label": "Company Account By Currency",
+   "options": "Company Account By Currency"
   }
  ],
  "icon": "fa fa-building",

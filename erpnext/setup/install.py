@@ -136,6 +136,7 @@ def create_address_and_contact_custom_fields():
 					"fieldtype": "Link",
 					"options": "Tax Category",
 					"insert_after": "fax",
+					"hidden": 1,
 				},
 				{
 					"label": _("Is Your Company Address"),

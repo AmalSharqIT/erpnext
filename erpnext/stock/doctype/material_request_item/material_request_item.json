@@ -18,14 +18,15 @@
   "brand",
   "image",
   "quantity_and_warehouse",
-  "qty",
-  "stock_uom",
-  "from_warehouse",
   "warehouse",
+  "qty",
+  "from_warehouse",
   "col_break2",
   "uom",
   "conversion_factor",
   "stock_qty",
+  "stock_uom",
+  "note",
   "qty_info_sec_break",
   "min_order_qty",
   "projected_qty",
@@ -48,13 +49,14 @@
   "col_break_mfg",
   "bom_no",
   "accounting_dimensions_section",
-  "project",
-  "dimension_col_break",
   "cost_center",
+  "dimension_col_break",
+  "project",
   "more_info",
   "lead_time_date",
   "sales_order",
   "sales_order_item",
+  "supplier",
   "col_break4",
   "production_plan",
   "material_request_plan_item",
@@ -156,8 +158,10 @@
    "reqd": 1
   },
   {
+   "columns": 1,
    "fieldname": "stock_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Stock UOM",
    "options": "UOM",
    "print_hide": 1,
@@ -168,7 +172,6 @@
    "columns": 3,
    "fieldname": "warehouse",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Target Warehouse",
    "oldfieldname": "warehouse",
    "oldfieldtype": "Link",
@@ -186,7 +189,6 @@
    "columns": 2,
    "fieldname": "schedule_date",
    "fieldtype": "Date",
-   "in_list_view": 1,
    "label": "Required By",
    "oldfieldname": "schedule_date",
    "oldfieldtype": "Date",
@@ -210,8 +212,10 @@
    "read_only": 1
   },
   {
+   "columns": 1,
    "fieldname": "stock_qty",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Stock Qty",
    "no_copy": 1,
    "print_hide": 1,
@@ -277,6 +281,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project"
   },
@@ -384,6 +389,7 @@
    "collapsible": 1,
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Dimensions"
   },
   {
@@ -395,6 +401,7 @@
    "depends_on": "eval:in_list([\"Manufacture\", \"Purchase\"], parent.material_request_type)",
    "fieldname": "manufacture_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Manufacture"
   },
   {
@@ -415,7 +422,8 @@
   },
   {
    "fieldname": "rate_and_amount_section_break",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "col_break4",
@@ -440,7 +448,8 @@
   },
   {
    "fieldname": "section_break_46",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "fieldname": "col_break_mfg",
@@ -465,6 +474,7 @@
   {
    "fieldname": "accounting_details_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Details"
   },
   {
@@ -474,6 +484,7 @@
   {
    "fieldname": "wip_composite_asset",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "WIP Composite Asset",
    "options": "Asset"
   },
@@ -485,13 +496,30 @@
    "options": "currency",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "note",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Note"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "permlevel": 1,
+   "read_only_depends_on": "ordered_qty"
   }
  ],
  "idx": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-02-26 18:30:03.684872",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",
