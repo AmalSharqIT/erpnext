@@ -362,22 +362,19 @@
    "fieldname": "supplier_primary_contact",
    "fieldtype": "Link",
    "label": "Supplier Primary Contact",
-   "no_copy": 1,
    "options": "Contact"
   },
   {
    "fetch_from": "supplier_primary_contact.mobile_no",
    "fieldname": "mobile_no",
    "fieldtype": "Read Only",
-   "label": "Mobile No",
-   "no_copy": 1
+   "label": "Mobile No"
   },
   {
    "fetch_from": "supplier_primary_contact.email_id",
    "fieldname": "email_id",
    "fieldtype": "Read Only",
-   "label": "Email Id",
-   "no_copy": 1
+   "label": "Email Id"
   },
   {
    "fieldname": "column_break_44",
@@ -387,7 +384,6 @@
    "fieldname": "primary_address",
    "fieldtype": "Text",
    "label": "Primary Address",
-   "no_copy": 1,
    "read_only": 1
   },
   {
@@ -395,7 +391,6 @@
    "fieldname": "supplier_primary_address",
    "fieldtype": "Link",
    "label": "Supplier Primary Address",
-   "no_copy": 1,
    "options": "Address"
   },
   {
@@ -491,7 +486,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-05-29 16:52:59.441272",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",
@@ -499,11 +494,10 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "email": 1,
-   "print": 1,
+   "create": 1,
    "read": 1,
-   "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "write": 1
   },
   {
    "email": 1,
@@ -547,6 +541,10 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager"
+  },
+  {
+   "role": "Item Manager",
+   "select": 1
   }
  ],
  "quick_entry": 1,
