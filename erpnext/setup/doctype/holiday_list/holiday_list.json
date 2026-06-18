@@ -141,7 +141,7 @@
  "icon": "fa fa-calendar",
  "idx": 1,
  "links": [],
- "modified": "2023-07-14 13:28:53.156421",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Holiday List",
@@ -155,8 +155,21 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "HR Manager",
+   "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  },
+  {
+   "role": "HR User - Branch",
+   "select": 1
+  },
+  {
+   "read": 1,
+   "role": "HR Manager",
    "write": 1
   }
  ],
