@@ -91,6 +91,7 @@
   {
    "fieldname": "subcontract",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Subcontracting Settings"
   },
   {
@@ -186,6 +187,7 @@
    "description": "Percentage you are allowed to order beyond the Blanket Order quantity.",
    "fieldname": "blanket_order_allowance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Blanket Order Allowance (%)"
   },
   {
@@ -215,6 +217,7 @@
    "description": "How often should Project be updated of Total Purchase Cost ?",
    "fieldname": "project_update_frequency",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Update frequency of Project",
    "options": "Each Transaction\nManual"
   },
@@ -230,6 +233,7 @@
    "description": "Allows users to submit Request for Quotations with zero quantity. Useful when rates are fixed but the quantities are not. Eg. Rate Contracts.",
    "fieldname": "allow_zero_qty_in_request_for_quotation",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Request for Quotation with Zero Quantity"
   },
   {
@@ -262,6 +266,7 @@
   {
    "fieldname": "request_for_quotation_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Request for Quotation"
   },
   {
@@ -287,7 +292,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-11-20 12:59:09.925862",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying Settings",

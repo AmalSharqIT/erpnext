@@ -70,6 +70,7 @@ class Account(NestedSet):
 		]
 		balance_must_be: DF.Literal["", "Debit", "Credit"]
 		company: DF.Link
+		description: DF.Data | None
 		disabled: DF.Check
 		freeze_account: DF.Literal["No", "Yes"]
 		include_in_gross: DF.Check
