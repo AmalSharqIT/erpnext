@@ -2364,7 +2364,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2026-05-28 12:15:12.486443",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
@@ -2402,11 +2402,6 @@
    "read": 1,
    "role": "Accounts Manager",
    "write": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "All"
   }
  ],
  "quick_entry": 1,
