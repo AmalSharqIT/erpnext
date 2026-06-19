@@ -275,6 +275,7 @@
    "depends_on": "price_list_rate",
    "fieldname": "margin_type",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Margin Type",
    "options": "\nPercentage\nAmount",
    "print_hide": 1
@@ -303,6 +304,7 @@
    "depends_on": "price_list_rate",
    "fieldname": "discount_percentage",
    "fieldtype": "Percent",
+   "hidden": 1,
    "label": "Discount (%) on Price List Rate with Margin",
    "oldfieldname": "adj_rate",
    "oldfieldtype": "Float",
@@ -440,6 +442,7 @@
    "collapsible_depends_on": "eval:doc.delivered_by_supplier==1",
    "fieldname": "drop_ship",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Drop Ship"
   },
   {
@@ -454,6 +457,7 @@
    "collapsible": 1,
    "fieldname": "accounting",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Accounting Details"
   },
   {
@@ -485,6 +489,7 @@
   {
    "fieldname": "item_tax_template",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Item Tax Template",
    "options": "Item Tax Template",
    "print_hide": 1
@@ -529,6 +534,7 @@
    "default": "0",
    "fieldname": "enable_deferred_revenue",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Enable Deferred Revenue"
   },
   {
@@ -614,6 +620,7 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "quality_inspection",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Quality Inspection",
    "options": "Quality Inspection"
   },
@@ -633,6 +640,7 @@
    "depends_on": "eval:parent.update_stock",
    "fieldname": "allow_zero_valuation_rate",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Zero Valuation Rate",
    "no_copy": 1,
    "print_hide": 1
@@ -679,6 +687,7 @@
    "allow_on_submit": 1,
    "fieldname": "actual_batch_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Available Batch Qty at Warehouse",
    "no_copy": 1,
    "print_hide": 1,
@@ -827,6 +836,7 @@
    "allow_on_submit": 1,
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project",
    "search_index": 1
@@ -873,6 +883,7 @@
    "fetch_from": "item_code.grant_commission",
    "fieldname": "grant_commission",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Grant Commission",
    "print_hide": 1,
    "read_only": 1
@@ -932,6 +943,7 @@
    "default": "0",
    "fieldname": "use_serial_batch_fields",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Use Serial No / Batch Fields",
    "print_hide": 1
   },
@@ -986,6 +998,7 @@
   {
    "fieldname": "pos_invoice",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "POS Invoice",
    "no_copy": 1,
    "options": "POS Invoice",
@@ -1036,7 +1049,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-06-03 13:17:36.145788",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Item",
