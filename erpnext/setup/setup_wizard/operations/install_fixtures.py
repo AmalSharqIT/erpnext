@@ -34,37 +34,6 @@ def get_preset_records(country=None):
 			"is_group": 1,
 			"parent_item_group": "",
 		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Products"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-			"show_in_website": 1,
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Raw Material"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Services"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Sub Assemblies"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
-		{
-			"doctype": "Item Group",
-			"item_group_name": _("Consumable"),
-			"is_group": 0,
-			"parent_item_group": _("All Item Groups"),
-		},
 		# Stock Entry Type
 		{
 			"doctype": "Stock Entry Type",
@@ -248,16 +217,6 @@ def get_preset_records(country=None):
 			"is_group": 1,
 			"parent_sales_person": "",
 		},
-		# Mode of Payment
-		{
-			"doctype": "Mode of Payment",
-			"mode_of_payment": "Check" if country == "United States" else _("Cheque"),
-			"type": "Bank",
-		},
-		{"doctype": "Mode of Payment", "mode_of_payment": _("Cash"), "type": "Cash"},
-		{"doctype": "Mode of Payment", "mode_of_payment": _("Credit Card"), "type": "Bank"},
-		{"doctype": "Mode of Payment", "mode_of_payment": _("Wire Transfer"), "type": "Bank"},
-		{"doctype": "Mode of Payment", "mode_of_payment": _("Bank Draft"), "type": "Bank"},
 		# Activity Type
 		{"doctype": "Activity Type", "activity_type": _("Planning")},
 		{"doctype": "Activity Type", "activity_type": _("Research")},
@@ -535,7 +494,7 @@ def update_stock_settings():
 	stock_settings.item_naming_by = "Item Code"
 	stock_settings.valuation_method = "FIFO"
 	stock_settings.default_warehouse = frappe.db.get_value("Warehouse", {"warehouse_name": _("Stores")})
-	stock_settings.stock_uom = "Nos"
+	stock_settings.stock_uom = "قطعة"
 	stock_settings.auto_indent = 1
 	stock_settings.auto_insert_price_list_rate_if_missing = 1
 	stock_settings.update_price_list_based_on = "Rate"

@@ -85,13 +85,14 @@
  ],
  "fields": [
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
    "no_copy": 1,
    "oldfieldname": "naming_series",
    "oldfieldtype": "Select",
-   "options": "SUP-.YYYY.-",
+   "options": "SUP-",
    "set_only_once": 1
   },
   {
@@ -156,6 +157,7 @@
    "description": "Used for inter-company transactions",
    "fieldname": "is_internal_supplier",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Supplier",
    "show_description_on_click": 1
   },
@@ -269,6 +271,7 @@
   {
    "fieldname": "default_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "ignore_user_permissions": 1,
    "label": "Price List",
    "options": "Price List"
@@ -276,6 +279,7 @@
   {
    "fieldname": "payment_terms",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Payment Terms Template",
    "options": "Payment Terms Template"
   },
@@ -450,6 +454,7 @@
   {
    "fieldname": "tax_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Tax"
   },
   {
@@ -484,6 +489,7 @@
   {
    "fieldname": "portal_users_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Portal Users"
   },
   {
@@ -561,7 +567,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-06-22 12:23:09.241125",
+ "modified": "2026-06-22",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",
@@ -569,11 +575,10 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "email": 1,
-   "print": 1,
+   "create": 1,
    "read": 1,
-   "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "write": 1
   },
   {
    "email": 1,
@@ -617,6 +622,10 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager"
+  },
+  {
+   "role": "Item Manager",
+   "select": 1
   }
  ],
  "quick_entry": 1,
