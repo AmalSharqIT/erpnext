@@ -192,7 +192,7 @@
   }
  ],
  "links": [],
- "modified": "2024-03-27 13:10:39.518860",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "Service Level Agreement",
@@ -210,10 +210,6 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "role": "Desk User"
   }
  ],
  "sort_field": "creation",

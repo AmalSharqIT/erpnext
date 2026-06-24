@@ -31,7 +31,7 @@
  "icon": "fa fa-bookmark",
  "idx": 1,
  "links": [],
- "modified": "2026-04-14 18:19:34.405635",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Designation",
@@ -39,14 +39,8 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "email": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "HR User",
-   "share": 1,
-   "write": 1
+   "role": "HR User"
   },
   {
    "read": 1,
@@ -59,9 +53,13 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "HR Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "role": "Employee",
+   "select": 1
   }
  ],
  "quick_entry": 1,

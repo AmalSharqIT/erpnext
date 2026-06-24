@@ -695,7 +695,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-06-22 12:23:19.196991",
+ "modified": "2026-06-22",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
@@ -770,6 +770,10 @@
    "read": 1,
    "report": 1,
    "role": "Accounts Manager"
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "quick_entry": 1,
