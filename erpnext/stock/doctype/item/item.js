@@ -259,8 +259,6 @@ frappe.ui.form.on("Item", {
 			erpnext.item.make_dashboard(frm);
 		}
 
-		erpnext.item.render_item_prices(frm);
-
 		frm.add_custom_button(__("Duplicate"), function () {
 			var new_item = frappe.model.copy_doc(frm.doc);
 			// Duplicate item could have different name, causing "copy paste" error.
