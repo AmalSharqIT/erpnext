@@ -15,20 +15,23 @@
   "item_code",
   "item_name",
   "item_group",
+  "brand",
   "stock_uom",
   "image",
   "column_break0",
   "disabled",
   "is_stock_item",
+  "has_variants",
   "is_fixed_asset",
   "auto_create_assets",
   "is_grouped_asset",
   "asset_category",
   "asset_naming_series",
+  "legacy_code",
+  "edari_item_number",
   "section_break_zlmj",
   "is_sales_item",
   "allow_alternative_item",
-  "has_variants",
   "column_break_kpmi",
   "is_purchase_item",
   "is_customer_provided_item",
@@ -41,7 +44,6 @@
   "column_break_wugd",
   "over_billing_allowance",
   "section_break_11",
-  "brand",
   "description",
   "accounting",
   "section_break_wfkx",
@@ -101,6 +103,7 @@
   "attributes",
   "purchasing_tab",
   "purchase_uom",
+  "packet_filling",
   "min_order_qty",
   "safety_stock",
   "purchase_details_cb",
@@ -145,10 +148,11 @@
  ],
  "fields": [
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
-   "options": "STO-ITEM-.YYYY.-",
+   "options": "ITEM-.######",
    "set_only_once": 1
   },
   {
@@ -184,6 +188,7 @@
    "label": "Item Name",
    "oldfieldname": "item_name",
    "oldfieldtype": "Data",
+   "reqd": 1,
    "search_index": 1
   },
   {
@@ -229,6 +234,7 @@
    "description": "Allow substituting this item with an alternative from the Item Alternative list when stock is unavailable.",
    "fieldname": "allow_alternative_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Alternative Item",
    "show_description_on_click": 1
   },
@@ -239,6 +245,7 @@
    "description": "ERPNext will make a stock ledger entry for each transaction of this item. Keep unchecked for non-stock or service items.",
    "fieldname": "is_stock_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "in_list_view": 0,
    "label": "Maintain Stock",
    "oldfieldname": "is_stock_item",
@@ -266,6 +273,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "valuation_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Valuation Rate"
   },
   {
@@ -274,6 +282,7 @@
    "description": "Creates an Item Price automatically when the item is saved",
    "fieldname": "standard_rate",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Standard Selling Rate"
   },
   {
@@ -282,6 +291,7 @@
    "description": "Enable if this item is a company asset like machinery or furniture.",
    "fieldname": "is_fixed_asset",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Fixed Asset",
    "read_only_depends_on": "eval:doc.is_stock_item",
    "in_list_view": 1
@@ -311,7 +321,6 @@
    "print_hide": 1
   },
   {
-   "collapsible": 1,
    "fieldname": "section_break_11",
    "fieldtype": "Section Break",
    "label": "Description"
@@ -350,6 +359,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "inventory_section",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Inventory",
    "oldfieldtype": "Section Break",
    "options": "fa fa-truck"
@@ -358,6 +368,7 @@
    "depends_on": "has_expiry_date",
    "fieldname": "shelf_life_in_days",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Shelf Life In Days",
    "mandatory_depends_on": "eval:doc.has_batch_no && doc.has_expiry_date",
    "non_negative": 1
@@ -368,6 +379,7 @@
    "description": "Defines the date after which the item can no longer be used in transactions or manufacturing",
    "fieldname": "end_of_life",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "End of Life",
    "oldfieldname": "end_of_life",
    "oldfieldtype": "Date",
@@ -377,6 +389,7 @@
    "default": "Purchase",
    "fieldname": "default_material_request_type",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Default Material Request Type",
    "options": "Purchase\nMaterial Transfer\nMaterial Issue\nManufacture\nCustomer Provided"
   },
@@ -385,6 +398,7 @@
    "documentation_url": "https://docs.frappe.io/erpnext/change-valuation-method",
    "fieldname": "valuation_method",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Valuation Method",
    "options": "\nFIFO\nMoving Average\nLIFO"
   },
@@ -423,6 +437,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "reorder_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Auto re-order",
    "options": "fa fa-rss"
   },
@@ -458,6 +473,7 @@
    "description": "Track this item in batches. Cannot be changed after a stock transaction exists.",
    "fieldname": "has_batch_no",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Has Batch No",
    "oldfieldname": "has_batch_no",
    "oldfieldtype": "Select",
@@ -515,6 +531,7 @@
    "description": "Track each unit with a unique serial number for warranty and return tracking. Cannot be changed after a stock transaction exists.",
    "fieldname": "has_serial_no",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Has Serial No",
    "oldfieldname": "has_serial_no",
    "oldfieldtype": "Select",
@@ -574,6 +591,7 @@
    "description": "Allow this item to be used in purchase transactions.",
    "fieldname": "is_purchase_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Purchase",
    "read_only_depends_on": "eval: doc.is_customer_provided_item",
    "show_description_on_click": 1
@@ -591,6 +609,7 @@
    "description": "Minimum quantity should be as per Stock UOM\n\n",
    "fieldname": "min_order_qty",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Minimum Order Qty",
    "non_negative": 1,
    "oldfieldname": "min_order_qty",
@@ -600,6 +619,7 @@
    "description": "Minimum stock level to maintain as a buffer. Used to calculate recommended reorder level: Reorder Level = Safety Stock + (Average Daily Consumption × Lead Time).",
    "fieldname": "safety_stock",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Safety Stock",
    "non_negative": 1
   },
@@ -611,6 +631,7 @@
    "description": "Average time taken by the supplier to deliver",
    "fieldname": "lead_time_days",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "Lead Time in days",
    "non_negative": 1,
    "oldfieldname": "lead_time_days",
@@ -625,6 +646,7 @@
    "non_negative": 1,
    "oldfieldname": "last_purchase_rate",
    "oldfieldtype": "Currency",
+   "permlevel": 1,
    "read_only": 1
   },
   {
@@ -632,6 +654,7 @@
    "description": "Enable if this item is provided by a customer and received via Stock Entry.",
    "fieldname": "is_customer_provided_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Customer Provided Item",
    "read_only_depends_on": "eval: doc.is_purchase_item",
    "show_description_on_click": 1
@@ -648,6 +671,7 @@
    "description": "Enable for drop shipping - supplier delivers directly to the customer without passing through your warehouse.",
    "fieldname": "delivered_by_supplier",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Delivered by Supplier (Drop Ship)",
    "print_hide": 1
   },
@@ -658,7 +682,6 @@
    "options": "Item Supplier"
   },
   {
-   "collapsible": 1,
    "fieldname": "foreign_trade_details",
    "fieldtype": "Section Break",
    "label": "Foreign Trade Details"
@@ -684,6 +707,7 @@
    "depends_on": "eval: doc.is_sales_item",
    "fieldname": "sales_details",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Sales",
    "oldfieldtype": "Section Break",
    "options": "fa fa-tag"
@@ -700,6 +724,7 @@
    "description": "Allow this item to be used in sales transactions.",
    "fieldname": "is_sales_item",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Sales",
    "show_description_on_click": 1,
    "in_list_view": 1
@@ -753,6 +778,7 @@
   {
    "fieldname": "customer_items",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Customer Items",
    "options": "Item Customer Detail"
   },
@@ -761,6 +787,7 @@
    "collapsible_depends_on": "taxes",
    "fieldname": "item_tax_section_break",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Tax",
    "oldfieldtype": "Section Break",
    "options": "fa fa-money"
@@ -804,6 +831,7 @@
    "depends_on": "is_stock_item",
    "fieldname": "manufacturing",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Manufacturing",
    "oldfieldtype": "Section Break",
    "options": "fa fa-cogs"
@@ -853,6 +881,7 @@
    "description": "Percentage by which over-delivery or over-receipt is allowed against a Sales/Purchase Order for this item. If not set, value from Stock Settings will be used.",
    "fieldname": "over_delivery_receipt_allowance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Over Delivery/Receipt Allowance (%)",
    "oldfieldname": "tolerance",
    "oldfieldtype": "Currency"
@@ -862,6 +891,7 @@
    "description": "Percentage by which over-billing is allowed against a Sales/Purchase Order for this item. If not set, value from Accounts Settings will be used.",
    "fieldname": "over_billing_allowance",
    "fieldtype": "Float",
+   "hidden": 1,
    "label": "Over Billing Allowance (%)"
   },
   {
@@ -906,6 +936,7 @@
    "description": "Allow stock to go below zero for this item, even if negative stock is disabled in Stock Settings.",
    "fieldname": "allow_negative_stock",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Allow Negative Stock"
   },
   {
@@ -922,6 +953,7 @@
   {
    "fieldname": "quality_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Quality"
   },
   {
@@ -950,6 +982,7 @@
   {
    "fieldname": "deferred_accounting_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Deferred Accounting"
   },
   {
@@ -1058,7 +1091,7 @@
   {
    "fieldname": "uom_help_html",
    "fieldtype": "HTML",
-   "options": "<div style=\"margin-bottom:10px; color: var(--gray-500) !important;\">Define alternate units for this item. Eg: 1 Box = 12 Nos, set conversion factor as 12. (Will also apply for variants) <a href=\"https://docs.frappe.io/erpnext/uom\" target=\"_blank\">Learn more &#8594;</a></div>"
+   "options": "<div style=\"margin-bottom:10px; color: var(--gray-500) !important;\">Define alternate units for this item. Eg: 1 Box = 12 Nos, set conversion factor as 12. (Will also apply for variants)</div>"
   },
   {
    "fieldname": "section_break_zlmj",
@@ -1079,12 +1112,28 @@
    "depends_on": "eval:!doc.__islocal",
    "fieldname": "pricing_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Pricing"
   },
   {
    "fieldname": "item_prices_column",
    "fieldtype": "Column Break",
    "label": "Item Prices"
+  },
+  {
+   "fieldname": "legacy_code",
+   "fieldtype": "Data",
+   "label": "Legacy Code"
+  },
+  {
+   "fieldname": "edari_item_number",
+   "fieldtype": "Data",
+   "label": "Edari Item Number"
+  },
+  {
+   "fieldname": "packet_filling",
+   "fieldtype": "Int",
+   "label": "Packet Filling"
   }
  ],
  "icon": "fa fa-tag",
@@ -1092,7 +1141,7 @@
  "image_field": "image",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-05-27 10:18:46.862670",
+ "modified": "2026-06-23",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
@@ -1101,15 +1150,8 @@
  "permissions": [
   {
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "import": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
    "role": "Item Manager",
-   "share": 1,
    "write": 1
   },
   {
@@ -1147,18 +1189,22 @@
    "role": "Manufacturing User"
   },
   {
+   "create": 1,
+   "delete": 1,
    "email": 1,
    "export": 1,
+   "import": 1,
    "print": 1,
+   "read": 1,
    "report": 1,
-   "role": "Desk User",
-   "select": 1,
-   "share": 1
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
   }
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
- "search_fields": "item_name,description,item_group,customer_code",
+ "search_fields": "item_name,description,item_group,legacy_code",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "creation",

@@ -1,11 +1,7 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-
 from frappe.model.document import Document
 
 
-class UOMConversionDetail(Document):
+class CompanyAccountByCurrency(Document):
 	# begin: auto-generated types
 	# This code is auto-generated. Do not modify anything in this block.
 
@@ -14,12 +10,12 @@ class UOMConversionDetail(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		cbm: DF.Float
-		conversion_factor: DF.Float
+		account: DF.Link
+		currency: DF.Link
+		currency_account: DF.Link
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
-		uom: DF.Link
 	# end: auto-generated types
 
 	pass

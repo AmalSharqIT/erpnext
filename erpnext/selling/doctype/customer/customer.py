@@ -80,7 +80,7 @@ class Customer(TransactionBase):
 		loyalty_program_tier: DF.Data | None
 		market_segment: DF.Link | None
 		mobile_no: DF.ReadOnly | None
-		naming_series: DF.Literal["CUST-.YYYY.-"]
+		naming_series: DF.Literal["CUST-"]
 		opportunity_name: DF.Link | None
 		payment_terms: DF.Link | None
 		portal_users: DF.Table[PortalUser]
