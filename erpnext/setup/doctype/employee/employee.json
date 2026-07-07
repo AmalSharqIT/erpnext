@@ -312,7 +312,9 @@
    "description": "Creates a User account for this employee using the Preferred, Company, or Personal email.",
    "fieldname": "create_user_automatically",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Create User Automatically",
+   "permlevel": 1,
    "set_only_once": 1
   },
   {
@@ -887,7 +889,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-06-14",
+ "modified": "2026-07-07",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
