@@ -1124,6 +1124,7 @@
   {
    "fieldname": "legacy_code",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Legacy Code"
   },
   {
@@ -1142,7 +1143,7 @@
  "image_field": "image",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-07-04",
+ "modified": "2026-07-09",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
