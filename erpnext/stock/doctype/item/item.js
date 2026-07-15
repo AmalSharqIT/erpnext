@@ -134,6 +134,8 @@ frappe.ui.form.on("Item", {
 			erpnext.toggle_naming_series();
 		}
 
+		frm.toggle_display(["standard_rate"], frappe.model.can_create("Item Price"));
+
 		if (frm.is_new()) {
 			frm.toggle_display("disabled", false);
 			return;
@@ -258,6 +260,8 @@ frappe.ui.form.on("Item", {
 		if (!frm.doc.is_fixed_asset) {
 			erpnext.item.make_dashboard(frm);
 		}
+
+		erpnext.item.render_item_prices(frm);
 
 		frm.add_custom_button(__("Duplicate"), function () {
 			var new_item = frappe.model.copy_doc(frm.doc);
