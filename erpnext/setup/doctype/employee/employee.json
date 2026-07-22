@@ -545,22 +545,26 @@
   {
    "fieldname": "passport_number",
    "fieldtype": "Data",
-   "label": "Passport Number"
+   "label": "Passport Number",
+   "mandatory_depends_on": "eval:(!doc.national_id)"
   },
   {
    "fieldname": "date_of_issue",
    "fieldtype": "Date",
-   "label": "Date of Issue"
+   "label": "Date of Issue",
+   "mandatory_depends_on": "passport_number"
   },
   {
    "fieldname": "valid_upto",
    "fieldtype": "Date",
-   "label": "Valid Up To"
+   "label": "Valid Up To",
+   "mandatory_depends_on": "passport_number"
   },
   {
    "fieldname": "place_of_issue",
    "fieldtype": "Data",
-   "label": "Place of Issue"
+   "label": "Place of Issue",
+   "mandatory_depends_on": "passport_number"
   },
   {
    "fieldname": "column_break6",
