@@ -1702,7 +1702,7 @@
  "idx": 204,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-12 23:54:21.263951",
+ "modified": "2026-07-12",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
@@ -1721,13 +1721,6 @@
    "share": 1,
    "submit": 1,
    "write": 1
-  },
-  {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User"
   },
   {
    "amend": 1,

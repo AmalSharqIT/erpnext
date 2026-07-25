@@ -109,7 +109,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2025-12-02 13:57:57.814686",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Supplier Group",
@@ -125,10 +125,7 @@
    "role": "Purchase Manager"
   },
   {
-   "email": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
    "role": "Purchase User"
   },
   {
@@ -154,11 +151,6 @@
    "permlevel": 1,
    "read": 1,
    "role": "Purchase Manager"
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "Purchase User"
   },
   {
    "email": 1,
