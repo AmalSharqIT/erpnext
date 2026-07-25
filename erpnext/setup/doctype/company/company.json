@@ -95,6 +95,8 @@
   "depreciation_cost_center",
   "capital_work_in_progress_account",
   "asset_received_but_not_billed",
+  "company_account_by_currency_section",
+  "company_account_by_currency",
   "accounts_closing_tab",
   "accounts_closing_section",
   "accounts_frozen_till_date",
@@ -1004,6 +1006,16 @@
   {
    "fieldname": "accounts_closing_section",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company_account_by_currency_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company_account_by_currency",
+   "fieldtype": "Table",
+   "label": "Company Account By Currency",
+   "options": "Company Account By Currency"
   }
  ],
  "grid_page_length": 50,

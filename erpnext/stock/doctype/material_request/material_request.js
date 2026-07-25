@@ -137,14 +137,6 @@ frappe.ui.form.on("Material Request", {
 	},
 
 	make_custom_buttons: function (frm) {
-		if (frm.doc.docstatus == 0) {
-			frm.add_custom_button(
-				__("Bill of Materials"),
-				() => frm.events.get_items_from_bom(frm),
-				__("Get Items From")
-			);
-		}
-
 		if (frm.doc.docstatus == 1 && frm.doc.status != "Stopped") {
 			let precision = frappe.defaults.get_default("float_precision");
 
@@ -194,26 +186,6 @@ frappe.ui.form.on("Material Request", {
 					);
 				}
 
-				if (frm.doc.material_request_type === "Purchase") {
-					frm.add_custom_button(
-						__("Purchase Order"),
-						() => frm.events.make_purchase_order(frm),
-						__("Create")
-					);
-
-					frm.add_custom_button(
-						__("Request for Quotation"),
-						() => frm.events.make_request_for_quotation(frm),
-						__("Create")
-					);
-
-					frm.add_custom_button(
-						__("Supplier Quotation"),
-						() => frm.events.make_supplier_quotation(frm),
-						__("Create")
-					);
-				}
-
 				if (frm.doc.material_request_type === "Manufacture") {
 					frm.add_custom_button(
 						__("Work Order"),
@@ -232,14 +204,6 @@ frappe.ui.form.on("Material Request", {
 
 				frm.page.set_inner_btn_group_as_primary(__("Create"));
 			}
-		}
-
-		if (frm.doc.docstatus === 0) {
-			frm.add_custom_button(
-				__("Sales Order"),
-				() => frm.events.get_items_from_sales_order(frm),
-				__("Get Items From")
-			);
 		}
 
 		if (frm.doc.docstatus == 1 && frm.doc.status == "Stopped") {
@@ -558,6 +522,7 @@ frappe.ui.form.on("Material Request Item", {
 		const item = locals[doctype][name];
 		item.rate = 0;
 		item.uom = "";
+		item.supplier = "";
 		set_schedule_date(frm);
 		frm.events.get_item_data(frm, item, true);
 	},
