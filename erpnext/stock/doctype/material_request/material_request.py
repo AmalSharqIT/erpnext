@@ -58,6 +58,7 @@ class MaterialRequest(BuyingController):
 		status: DF.Literal[
 			"",
 			"Draft",
+			"Ready",
 			"Submitted",
 			"Stopped",
 			"Cancelled",
@@ -158,6 +159,7 @@ class MaterialRequest(BuyingController):
 			self.status,
 			[
 				"Draft",
+				"Ready",
 				"Submitted",
 				"Stopped",
 				"Cancelled",
