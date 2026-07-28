@@ -9,6 +9,7 @@
  "field_order": [
   "item_code",
   "item_name",
+  "legacy_code",
   "col_break1",
   "schedule_date",
   "section_break_4",
@@ -567,6 +568,13 @@
    "options": "Supplier",
    "permlevel": 1,
    "read_only_depends_on": "ordered_qty"
+  },
+  {
+   "fieldname": "legacy_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Legacy Code",
+   "read_only": 1
   }
  ],
  "idx": 1,

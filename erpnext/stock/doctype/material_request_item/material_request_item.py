@@ -32,6 +32,7 @@ class MaterialRequestItem(Document):
 		item_name: DF.Data | None
 		job_card_item: DF.Data | None
 		lead_time_date: DF.Date | None
+		legacy_code: DF.Data | None
 		manufacturer: DF.Link | None
 		manufacturer_part_no: DF.Data | None
 		material_request_plan_item: DF.Data | None
