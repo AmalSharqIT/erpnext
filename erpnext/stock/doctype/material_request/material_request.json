@@ -455,15 +455,6 @@
  "show_name_in_global_search": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": [
-  {
-   "color": "Orange",
-   "title": "Draft"
-  },
-  {
-   "color": "Light Blue",
-   "title": "Ready"
-  }
- ],
+ "states": [],
  "title_field": "title"
 }
