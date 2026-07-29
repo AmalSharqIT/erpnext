@@ -64,7 +64,7 @@
   }
  ],
  "links": [],
- "modified": "2024-03-27 13:09:54.784023",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Manufacturer",
@@ -102,7 +102,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   }

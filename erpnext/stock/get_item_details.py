@@ -460,6 +460,7 @@ def get_basic_details(ctx: ItemDetailsCtx, item, overwrite_warehouse=True) -> It
 		{
 			"item_code": item.name,
 			"item_name": item.item_name,
+			"legacy_code": item.get("legacy_code"),
 			"description": cstr(item.description).strip(),
 			"image": cstr(item.image).strip(),
 			"warehouse": warehouse,
