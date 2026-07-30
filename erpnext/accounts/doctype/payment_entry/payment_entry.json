@@ -797,7 +797,7 @@
    "table_fieldname": "payment_entries"
   }
  ],
- "modified": "2026-06-14",
+ "modified": "2026-07-30",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
@@ -837,6 +837,7 @@
    "write": 1
   },
   {
+   "cancel": 1,
    "create": 1,
    "read": 1,
    "role": "Cash Desk User",
