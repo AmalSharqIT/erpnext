@@ -77,7 +77,7 @@
  "icon": "fa fa-money",
  "idx": 1,
  "links": [],
- "modified": "2024-03-27 13:10:26.945131",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Taxes and Charges Template",
@@ -100,10 +100,6 @@
    "role": "Purchase Master Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "role": "Purchase User"
   }
  ],
  "show_title_field_in_link": 1,

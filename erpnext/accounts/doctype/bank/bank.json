@@ -101,7 +101,7 @@
   }
  ],
  "links": [],
- "modified": "2024-03-27 13:06:36.896195",
+ "modified": "2026-07-30",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank",
@@ -118,6 +118,14 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  },
+  {
+   "read": 1,
+   "role": "HR User - Branch"
   }
  ],
  "quick_entry": 1,
