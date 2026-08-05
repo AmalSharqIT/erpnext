@@ -12,6 +12,7 @@ from frappe.desk.doctype.global_search_settings.global_search_settings import (
 )
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
 from frappe.utils import cstr, getdate
+from frappe.utils.nestedset import get_root_of
 
 from erpnext.accounts.doctype.account.account import RootNotEditable
 from erpnext.regional.address_template.setup import set_up_address_templates
@@ -24,15 +25,17 @@ def read_lines(filename: str) -> list[str]:
 
 
 def get_preset_records(country=None):
+	root_item_group = get_root_of("Item Group") or _("All Item Groups")
 	records = [
 		# ensure at least an empty Address Template exists for this Country
 		{"doctype": "Address Template", "country": country},
 		# item group
 		{
 			"doctype": "Item Group",
-			"item_group_name": _("All Item Groups"),
+			"item_group_name": root_item_group,
 			"is_group": 1,
 			"parent_item_group": "",
+			"__condition": lambda: not frappe.db.exists("Item Group", root_item_group),
 		},
 		# Stock Entry Type
 		{
