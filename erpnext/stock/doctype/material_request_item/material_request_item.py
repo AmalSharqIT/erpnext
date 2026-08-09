@@ -24,6 +24,7 @@ class MaterialRequestItem(Document):
 		conversion_factor: DF.Float
 		cost_center: DF.Link | None
 		description: DF.TextEditor | None
+		edari_item_number: DF.Data | None
 		expense_account: DF.Link | None
 		from_warehouse: DF.Link | None
 		image: DF.AttachImage | None

@@ -10,6 +10,7 @@
   "item_code",
   "item_name",
   "legacy_code",
+  "edari_item_number",
   "col_break1",
   "schedule_date",
   "section_break_4",
@@ -575,13 +576,20 @@
    "in_list_view": 1,
    "label": "Legacy Code",
    "read_only": 1
+  },
+  {
+   "fieldname": "edari_item_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Edari Item Number",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-06-14",
+ "modified": "2026-08-09",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",
