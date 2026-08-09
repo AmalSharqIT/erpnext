@@ -434,7 +434,7 @@
    "label": "Salary Mode",
    "oldfieldname": "salary_mode",
    "oldfieldtype": "Select",
-   "options": "\nBank\nCash"
+   "options": "Cash\nBank"
   },
   {
    "depends_on": "eval:doc.salary_mode == 'Bank'",
@@ -893,7 +893,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-07-17",
+ "modified": "2026-08-09",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
