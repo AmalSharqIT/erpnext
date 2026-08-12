@@ -24,6 +24,7 @@ class MaterialRequestItem(Document):
 		conversion_factor: DF.Float
 		cost_center: DF.Link | None
 		description: DF.TextEditor | None
+		edari_item_number: DF.Data | None
 		expense_account: DF.Link | None
 		from_warehouse: DF.Link | None
 		image: DF.AttachImage | None
@@ -32,10 +33,12 @@ class MaterialRequestItem(Document):
 		item_name: DF.Data | None
 		job_card_item: DF.Data | None
 		lead_time_date: DF.Date | None
+		legacy_code: DF.Data | None
 		manufacturer: DF.Link | None
 		manufacturer_part_no: DF.Data | None
 		material_request_plan_item: DF.Data | None
 		min_order_qty: DF.Float
+		note: DF.Data | None
 		ordered_qty: DF.Float
 		packed_item: DF.Data | None
 		page_break: DF.Check
@@ -58,6 +61,7 @@ class MaterialRequestItem(Document):
 		schedule_date: DF.Date
 		stock_qty: DF.Float
 		stock_uom: DF.Link
+		supplier: DF.Link | None
 		uom: DF.Link
 		warehouse: DF.Link | None
 		wip_composite_asset: DF.Link | None

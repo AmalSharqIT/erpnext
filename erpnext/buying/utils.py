@@ -54,7 +54,7 @@ def validate_for_items(doc) -> None:
 		validate_stock_item_warehouse(row=d, item=item)
 		validate_end_of_life(d.item_code, item.end_of_life, item.disabled)
 
-		items.append(cstr(d.item_code))
+		items.append(f"{d.item_code}::{d.get('uom')}::{d.get('supplier')}")
 
 	if (
 		items
