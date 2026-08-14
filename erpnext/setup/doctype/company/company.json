@@ -1037,7 +1037,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2026-07-02 07:21:21.794533",
+ "modified": "2026-07-02",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",
@@ -1104,9 +1104,7 @@
   },
   {
    "read": 1,
-   "report": 1,
-   "role": "HR Manager",
-   "write": 1
+   "role": "HR Manager"
   }
  ],
  "row_format": "Dynamic",
