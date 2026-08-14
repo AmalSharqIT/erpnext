@@ -58,14 +58,7 @@ class MaterialRequest(BuyingController):
 		items: DF.Table[MaterialRequestItem]
 		job_card: DF.Link | None
 		letter_head: DF.Link | None
-		material_request_type: DF.Literal[
-			"Purchase",
-			"Material Transfer",
-			"Material Issue",
-			"Manufacture",
-			"Subcontracting",
-			"Customer Provided",
-		]
+		material_request_type: DF.Literal["Purchase", "Material Transfer", "Material Issue"]
 		naming_series: DF.Literal["MAT-MR-.YYYY.-"]
 		per_ordered: DF.Percent
 		per_received: DF.Percent
@@ -77,6 +70,7 @@ class MaterialRequest(BuyingController):
 		status: DF.Literal[
 			"",
 			"Draft",
+			"Ready",
 			"Submitted",
 			"Stopped",
 			"Cancelled",
@@ -177,6 +171,7 @@ class MaterialRequest(BuyingController):
 			self.status,
 			[
 				"Draft",
+				"Ready",
 				"Submitted",
 				"Stopped",
 				"Cancelled",
@@ -571,6 +566,12 @@ def make_purchase_order(source_name, target_doc=None, args=None):
 	requested_qty = args.get("requested_qty") or {}
 
 	def postprocess(source, target_doc):
+		if frappe.flags.args and frappe.flags.args.default_supplier:
+			supplier_items = []
+			for d in target_doc.items:
+				if frappe.flags.args.default_supplier == d.get("supplier"):
+					supplier_items.append(d)
+			target_doc.items = supplier_items
 		target_doc.is_subcontracted = is_subcontracted
 		if args.get("supplier"):
 			target_doc.supplier = args.get("supplier")
