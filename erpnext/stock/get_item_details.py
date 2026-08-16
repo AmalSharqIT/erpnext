@@ -81,7 +81,7 @@ def _preprocess_ctx(ctx):
 @frappe.whitelist()
 @erpnext.normalize_ctx_input(ItemDetailsCtx)
 def get_item_details(
-	ctx: ItemDetailsCtx,
+	ctx: ItemDetailsCtx | str,
 	doc: Document | str | None = None,
 	for_validate: bool | None = False,
 	overwrite_warehouse: bool = True,
