@@ -47,6 +47,9 @@ def update_last_purchase_rate(doc, is_submit) -> None:
 
 
 def validate_for_items(doc) -> None:
+	not_allow_multiple_items = not cint(
+		frappe.db.get_single_value("Buying Settings", "allow_multiple_items") or 0
+	)
 	items = []
 	for d in doc.get("items"):
 		set_stock_levels(row=d)  # update with latest quantities
@@ -54,14 +57,12 @@ def validate_for_items(doc) -> None:
 		validate_stock_item_warehouse(row=d, item=item)
 		validate_end_of_life(d.item_code, item.end_of_life, item.disabled)
 
-		items.append(f"{d.item_code}::{d.get('uom')}::{d.get('supplier')}")
-
-	if (
-		items
-		and len(items) != len(set(items))
-		and not cint(frappe.db.get_single_value("Buying Settings", "allow_multiple_items") or 0)
-	):
-		frappe.throw(_("Same item cannot be entered multiple times."))
+		key = f"{d.item_code}::{d.get('uom')}::{d.get('supplier')}"
+		if not_allow_multiple_items and key in items:
+			frappe.throw(
+				_("Row #{0}: Item {1} has already been ordered").format(d.idx, frappe.bold(d.item_code))
+			)
+		items.append(key)
 
 
 def set_stock_levels(row) -> None:
