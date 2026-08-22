@@ -16,6 +16,7 @@ class UOMConversionDetail(Document):
 
 		cbm: DF.Float
 		conversion_factor: DF.Float
+		kgs: DF.Float
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
