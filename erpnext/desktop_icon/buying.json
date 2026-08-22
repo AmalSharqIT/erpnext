@@ -10,7 +10,7 @@
  "label": "Buying",
  "link_to": "Buying",
  "link_type": "Workspace Sidebar",
- "modified": "2026-06-18",
+ "modified": "2026-08-22",
  "modified_by": "Administrator",
  "name": "Buying",
  "owner": "Administrator",
@@ -19,6 +19,9 @@
  "roles": [
   {
    "role": "Purchase User"
+  },
+  {
+   "role": "Material Request User"
   }
  ],
  "standard": 1

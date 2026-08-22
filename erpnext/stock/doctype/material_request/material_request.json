@@ -84,6 +84,7 @@
    "in_standard_filter": 1,
    "label": "Purpose",
    "options": "Purchase\nMaterial Transfer\nMaterial Issue",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -382,7 +383,7 @@
  "idx": 70,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-07-28",
+ "modified": "2026-08-22",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",
@@ -446,6 +447,12 @@
    "permlevel": 1,
    "read": 1,
    "role": "Purchase User",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Material Request User",
    "write": 1
   }
  ],
