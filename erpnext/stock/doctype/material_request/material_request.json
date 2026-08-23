@@ -27,6 +27,10 @@
   "set_warehouse",
   "items_section",
   "items",
+  "section_break_cbm_kgs",
+  "total_cbm",
+  "column_break_cbm_kgs",
+  "total_kgs",
   "terms_tab",
   "terms_section_break",
   "tc_name",
@@ -377,6 +381,26 @@
    "label": "Auto Created (Reorder)",
    "no_copy": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "total_cbm",
+   "fieldtype": "Float",
+   "label": "Total CBM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_kgs",
+   "fieldtype": "Float",
+   "label": "Total KGS",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_cbm_kgs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_cbm_kgs",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-ticket",

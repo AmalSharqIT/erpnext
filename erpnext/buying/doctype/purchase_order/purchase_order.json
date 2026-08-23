@@ -99,6 +99,10 @@
   "sec_tax_breakup",
   "other_charges_calculation",
   "item_wise_tax_details",
+  "section_break_cbm_kgs",
+  "total_cbm",
+  "column_break_cbm_kgs",
+  "total_kgs",
   "address_and_contact_tab",
   "section_addresses",
   "supplier_address",
@@ -1340,6 +1344,26 @@
    "label": "Title",
    "no_copy": 1,
    "print_hide": 1
+  },
+  {
+   "fieldname": "total_cbm",
+   "fieldtype": "Float",
+   "label": "Total CBM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_kgs",
+   "fieldtype": "Float",
+   "label": "Total KGS",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_cbm_kgs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_cbm_kgs",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,

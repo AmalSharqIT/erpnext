@@ -85,6 +85,8 @@ class MaterialRequest(BuyingController):
 		tc_name: DF.Link | None
 		terms: DF.TextEditor | None
 		title: DF.Data | None
+		total_cbm: DF.Float
+		total_kgs: DF.Float
 		transaction_date: DF.Date
 		transfer_status: DF.Literal["", "Not Started", "In Transit", "Completed"]
 		work_order: DF.Link | None
