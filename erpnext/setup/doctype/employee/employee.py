@@ -108,7 +108,7 @@ class Employee(NestedSet):
 		salary_mode: DF.Literal["Cash", "Bank"]
 		salutation: DF.Link | None
 		scheduled_confirmation_date: DF.Date | None
-		status: DF.Literal["Active", "Inactive", "Suspended", "Left"]
+		status: DF.Literal["Active", "Left"]
 		unsubscribed: DF.Check
 		user_id: DF.Link | None
 		valid_upto: DF.Date | None

@@ -217,7 +217,8 @@
    "label": "Status",
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Active\nInactive\nSuspended\nLeft",
+   "options": "Active\nLeft",
+   "permlevel": 5,
    "reqd": 1,
    "search_index": 1
   },
@@ -893,7 +894,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-08-09",
+ "modified": "2026-08-26",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -912,6 +913,11 @@
   },
   {
    "permlevel": 2,
+   "read": 1,
+   "role": "Employee"
+  },
+  {
+   "permlevel": 5,
    "read": 1,
    "role": "Employee"
   },
@@ -971,6 +977,12 @@
   },
   {
    "permlevel": 4,
+   "read": 1,
+   "role": "HR Manager",
+   "write": 1
+  },
+  {
+   "permlevel": 5,
    "read": 1,
    "role": "HR Manager",
    "write": 1
