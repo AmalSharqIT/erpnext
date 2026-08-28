@@ -80,9 +80,9 @@
   "reference_date",
   "clearance_date",
   "accounting_dimensions_section",
-  "project",
-  "dimension_col_break",
   "cost_center",
+  "dimension_col_break",
+  "project",
   "section_break_12",
   "status",
   "custom_remarks",
@@ -111,10 +111,10 @@
    "bold": 1,
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Series",
    "options": "ACC-PAY-.YYYY.-",
    "print_hide": 1,
-   "reqd": 1,
    "set_only_once": 1
   },
   {
@@ -453,6 +453,7 @@
    "allow_on_submit": 1,
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project",
    "print_hide": 1
@@ -742,6 +743,7 @@
    "depends_on": "eval:doc.party_type == 'Supplier'",
    "fieldname": "apply_tds",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Consider for Tax Withholding"
   },
   {
@@ -795,7 +797,7 @@
    "table_fieldname": "payment_entries"
   }
  ],
- "modified": "2026-05-15 13:31:01.166010",
+ "modified": "2026-07-30",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
@@ -831,6 +833,14 @@
    "report": 1,
    "role": "Accounts Manager",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "read": 1,
+   "role": "Cash Desk User",
    "submit": 1,
    "write": 1
   }
