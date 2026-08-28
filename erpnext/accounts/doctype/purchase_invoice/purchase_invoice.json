@@ -507,6 +507,7 @@
   },
   {
    "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.currency && doc.currency != erpnext.get_currency(doc.company)",
    "fieldname": "currency_and_price_list",
    "fieldtype": "Section Break",
    "label": "Currency and Price List",
@@ -1717,7 +1718,7 @@
  "idx": 204,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-05",
+ "modified": "2026-08-12",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",
