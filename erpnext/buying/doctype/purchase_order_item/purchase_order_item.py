@@ -37,6 +37,7 @@ class PurchaseOrderItem(Document):
 		discount_amount: DF.Currency
 		discount_percentage: DF.Percent
 		distributed_discount_amount: DF.Currency
+		edari_item_number: DF.Data | None
 		expected_delivery_date: DF.Date | None
 		expense_account: DF.Link | None
 		fg_item: DF.Link | None
@@ -53,6 +54,7 @@ class PurchaseOrderItem(Document):
 		item_tax_template: DF.Link | None
 		job_card: DF.Link | None
 		last_purchase_rate: DF.Currency
+		legacy_code: DF.Data | None
 		manufacturer: DF.Link | None
 		manufacturer_part_no: DF.Data | None
 		margin_rate_or_amount: DF.Float
