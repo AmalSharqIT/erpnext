@@ -568,10 +568,10 @@ def make_purchase_order(source_name, target_doc=None, args=None):
 	requested_qty = args.get("requested_qty") or {}
 
 	def postprocess(source, target_doc):
-		if frappe.flags.args and frappe.flags.args.default_supplier:
+		if target_doc.get("doctype") == "Purchase Order" and target_doc.get("supplier"):
 			supplier_items = []
 			for d in target_doc.items:
-				if frappe.flags.args.default_supplier == d.get("supplier"):
+				if target_doc.supplier == d.get("supplier"):
 					supplier_items.append(d)
 			target_doc.items = supplier_items
 		target_doc.is_subcontracted = is_subcontracted
