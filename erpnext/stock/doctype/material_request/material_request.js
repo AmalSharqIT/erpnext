@@ -525,9 +525,9 @@ frappe.ui.form.on("Material Request", {
 					);
 
 				if (dialog.get_value("supplier")) {
-				const missing_supplier = item_suppliers.find((row) => !row.supplier);
-				if (missing_supplier) {
-					frappe.throw(__("Select a Supplier for Item {0}", [item_link(missing_supplier)]));
+					const missing_supplier = item_suppliers.find((row) => !row.supplier);
+					if (missing_supplier) {
+						frappe.throw(__("Select a Supplier for Item {0}", [item_link(missing_supplier)]));
 					}
 				} else {
 					item_suppliers.forEach((row) => {
