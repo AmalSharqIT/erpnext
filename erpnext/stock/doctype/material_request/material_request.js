@@ -524,9 +524,15 @@ frappe.ui.form.on("Material Request", {
 						frappe.utils.escape_html(row.item_code)
 					);
 
+				if (dialog.get_value("supplier")) {
 				const missing_supplier = item_suppliers.find((row) => !row.supplier);
 				if (missing_supplier) {
 					frappe.throw(__("Select a Supplier for Item {0}", [item_link(missing_supplier)]));
+					}
+				} else {
+					item_suppliers.forEach((row) => {
+						row.supplier = null;
+					});
 				}
 
 				const invalid_qty = item_suppliers.find(
@@ -554,8 +560,9 @@ frappe.ui.form.on("Material Request", {
 						dialog.hide();
 
 						const purchase_orders = r.message || [];
-						if (purchase_orders.length === 1) {
-							frappe.set_route("Form", "Purchase Order", purchase_orders[0]);
+						if (purchase_orders) {
+							const doclist = frappe.model.sync(purchase_orders);
+							frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 						}
 					},
 				});

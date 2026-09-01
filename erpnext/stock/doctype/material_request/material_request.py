@@ -698,8 +698,6 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 
 		requested_items.add(row.material_request_item)
 
-		if not row.supplier:
-			frappe.throw(_("Select a Supplier for Item {0}").format(item_link))
 
 		if flt(row.qty) <= 0 or flt(row.qty) > flt(pending.pending_qty):
 			pending_qty = frappe.format_value(flt(pending.pending_qty), "Float")
@@ -727,8 +725,7 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 				item.schedule_date = nowdate()
 				is_rescheduled = True
 
-		purchase_order.insert()
-		purchase_orders.append(purchase_order.name)
+		purchase_orders.append(purchase_order)
 
 	if is_rescheduled:
 		frappe.toast(
@@ -745,7 +742,9 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 			)
 		)
 
-	return purchase_orders
+	if not item_suppliers[0].get("supplier"):
+		purchase_orders[0].supplier = None
+	return purchase_orders[0]
 
 
 @frappe.whitelist()
