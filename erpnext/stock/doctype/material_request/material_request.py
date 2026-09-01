@@ -668,7 +668,7 @@ def get_item_default_suppliers(source_name: str, filtered_children: str | list |
 				"item_name": item.item_name,
 				"pending_qty": (flt(item.stock_qty) - ordered_qty) / (flt(item.conversion_factor) or 1),
 				"uom": item.uom,
-				"supplier": get_default_supplier_for_item(item.item_code, material_request.company),
+				"supplier": item.supplier,
 			}
 		)
 

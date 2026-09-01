@@ -186,6 +186,14 @@ frappe.ui.form.on("Material Request", {
 					);
 				}
 
+				if (frm.doc.material_request_type === "Purchase") {
+					frm.add_custom_button(
+						__("Purchase Order"),
+						() => frm.events.make_purchase_order(frm),
+						__("Create"),
+					);
+				}
+
 				if (frm.doc.material_request_type === "Manufacture") {
 					frm.add_custom_button(
 						__("Work Order"),
@@ -416,13 +424,17 @@ frappe.ui.form.on("Material Request", {
 					fieldname: "supplier",
 					fieldtype: "Link",
 					options: "Supplier",
-					label: __("Set Supplier for All Items"),
+					label: __("Filter by Supplier"),
 					get_query: supplier_query,
 					onchange: function () {
 						const supplier = dialog.get_value("supplier");
-						if (!supplier) return;
-
-						rows.forEach((row) => (row.supplier = supplier));
+						if (!supplier) {
+							dialog.fields_dict.items.grid.df.data = rows;
+						} else {
+							dialog.fields_dict.items.grid.df.data = rows.filter(
+								(row) => supplier === row.supplier,
+							);
+						}
 						dialog.fields_dict.items.grid.refresh();
 					},
 				},
@@ -490,6 +502,7 @@ frappe.ui.form.on("Material Request", {
 							label: __("Supplier"),
 							get_query: supplier_query,
 							reqd: 1,
+							read_only: 1,
 							in_list_view: 1,
 							columns: 3,
 						},
