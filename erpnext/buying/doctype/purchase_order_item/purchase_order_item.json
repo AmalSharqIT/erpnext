@@ -463,7 +463,6 @@
   {
    "fieldname": "warehouse_and_reference",
    "fieldtype": "Section Break",
-   "hidden": 1,
    "label": "Warehouse Settings"
   },
   {
@@ -1005,7 +1004,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-08-31",
+ "modified": "2026-09-02",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",
