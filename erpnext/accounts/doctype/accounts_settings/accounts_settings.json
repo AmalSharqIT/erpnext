@@ -308,6 +308,7 @@
   {
    "fieldname": "tax_settings_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Tax Settings"
   },
   {
@@ -316,7 +317,6 @@
   },
   {
    "default": "0",
-   "description": "Learn about <a href=\"https://docs.frappe.io/erpnext/user/manual/en/common_party_accounting\" rel=\"noopener noreferrer\">Common Party</a>",
    "fieldname": "enable_common_party_accounting",
    "fieldtype": "Check",
    "label": "Enable Common Party Accounting"
@@ -797,7 +797,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-08-14 15:26:49.070889",
+ "modified": "2026-08-14",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts Settings",
@@ -815,10 +815,6 @@
   {
    "read": 1,
    "role": "Sales User"
-  },
-  {
-   "read": 1,
-   "role": "Purchase User"
   }
  ],
  "quick_entry": 1,

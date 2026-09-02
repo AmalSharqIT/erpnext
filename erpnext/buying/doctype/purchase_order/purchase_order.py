@@ -163,6 +163,8 @@ class PurchaseOrder(BuyingController):
 		title: DF.Data | None
 		to_date: DF.Date | None
 		total: DF.Currency
+		total_cbm: DF.Float
+		total_kgs: DF.Float
 		total_net_weight: DF.Float
 		total_qty: DF.Float
 		total_taxes_and_charges: DF.Currency

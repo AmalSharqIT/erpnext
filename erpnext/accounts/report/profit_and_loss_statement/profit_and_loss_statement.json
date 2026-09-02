@@ -17,7 +17,7 @@
  "generate_csv": 0,
  "idx": 2,
  "is_standard": "Yes",
- "modified": "2026-07-01 13:36:14.934965",
+ "modified": "2026-08-15",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Profit and Loss Statement",
@@ -28,13 +28,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Accounts User"
-  },
-  {
-   "role": "Accounts Manager"
-  },
-  {
-   "role": "Auditor"
+   "role": "System Manager"
   }
  ],
  "snapshot_report": 0,
