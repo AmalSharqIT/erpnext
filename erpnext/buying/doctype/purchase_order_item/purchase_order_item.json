@@ -569,6 +569,7 @@
    "fieldname": "blanket_order_rate",
    "fieldtype": "Currency",
    "label": "Blanket Order Rate",
+   "options": "currency",
    "print_hide": 1,
    "read_only": 1
   },
