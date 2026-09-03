@@ -726,7 +726,6 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 				is_rescheduled = True
 
 		purchase_orders.append(purchase_order)
-		break
 
 	if is_rescheduled:
 		frappe.toast(
@@ -743,9 +742,7 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 			)
 		)
 
-	if not item_suppliers[0].get("supplier"):
-		purchase_orders[0].supplier = None
-	return purchase_orders[0]
+	return purchase_orders
 
 
 @frappe.whitelist()

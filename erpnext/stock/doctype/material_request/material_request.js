@@ -557,6 +557,9 @@ frappe.ui.form.on("Material Request", {
 						const purchase_orders = r.message || [];
 						if (purchase_orders) {
 							const doclist = frappe.model.sync(purchase_orders);
+							if (!dialog.get_value("supplier")) {
+								doclist[0].supplier = null;
+							}
 							frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 						}
 					},
