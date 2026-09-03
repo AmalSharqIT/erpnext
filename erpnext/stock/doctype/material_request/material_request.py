@@ -726,6 +726,7 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 				is_rescheduled = True
 
 		purchase_orders.append(purchase_order)
+		break
 
 	if is_rescheduled:
 		frappe.toast(
