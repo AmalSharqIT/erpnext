@@ -711,6 +711,8 @@ frappe.ui.form.on("Material Request Item", {
 		item.rate = 0;
 		item.uom = "";
 		item.supplier = "";
+		item.legacy_code = "";
+		item.edari_item_number = "";
 		set_schedule_date(frm);
 		frm.events.get_item_data(frm, item, true);
 	},
