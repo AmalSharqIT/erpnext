@@ -52,7 +52,7 @@
  "hide_toolbar": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-16 13:28:20.597912",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Variant Settings",
@@ -64,15 +64,6 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "role": "Item Manager",
    "share": 1,
    "write": 1
   }

@@ -60,14 +60,7 @@ class MaterialRequest(BuyingController):
 		items: DF.Table[MaterialRequestItem]
 		job_card: DF.Link | None
 		letter_head: DF.Link | None
-		material_request_type: DF.Literal[
-			"Purchase",
-			"Material Transfer",
-			"Material Issue",
-			"Manufacture",
-			"Subcontracting",
-			"Customer Provided",
-		]
+		material_request_type: DF.Literal["Purchase", "Material Transfer", "Material Issue"]
 		naming_series: DF.Literal["MAT-MR-.YYYY.-"]
 		per_ordered: DF.Percent
 		per_received: DF.Percent
@@ -79,6 +72,7 @@ class MaterialRequest(BuyingController):
 		status: DF.Literal[
 			"",
 			"Draft",
+			"Ready",
 			"Submitted",
 			"Stopped",
 			"Cancelled",
@@ -93,6 +87,8 @@ class MaterialRequest(BuyingController):
 		tc_name: DF.Link | None
 		terms: DF.TextEditor | None
 		title: DF.Data | None
+		total_cbm: DF.Float
+		total_kgs: DF.Float
 		transaction_date: DF.Date
 		transfer_status: DF.Literal["", "Not Started", "In Transit", "Completed"]
 		work_order: DF.Link | None
@@ -196,6 +192,7 @@ class MaterialRequest(BuyingController):
 			self.status,
 			[
 				"Draft",
+				"Ready",
 				"Submitted",
 				"Stopped",
 				"Cancelled",
@@ -593,6 +590,12 @@ def make_purchase_order(source_name, target_doc=None, args=None):
 	requested_qty = args.get("requested_qty") or {}
 
 	def postprocess(source, target_doc):
+		if target_doc.get("doctype") == "Purchase Order" and target_doc.get("supplier"):
+			supplier_items = []
+			for d in target_doc.items:
+				if target_doc.supplier == d.get("supplier"):
+					supplier_items.append(d)
+			target_doc.items = supplier_items
 		target_doc.is_subcontracted = is_subcontracted
 		if args.get("supplier"):
 			target_doc.supplier = args.get("supplier")
@@ -687,7 +690,7 @@ def get_item_default_suppliers(source_name: str, filtered_children: str | list |
 				"item_name": item.item_name,
 				"pending_qty": (flt(item.stock_qty) - ordered_qty) / (flt(item.conversion_factor) or 1),
 				"uom": item.uom,
-				"supplier": get_default_supplier_for_item(item.item_code, material_request.company),
+				"supplier": item.supplier,
 			}
 		)
 
@@ -717,8 +720,6 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 
 		requested_items.add(row.material_request_item)
 
-		if not row.supplier:
-			frappe.throw(_("Select a Supplier for Item {0}").format(item_link))
 
 		if flt(row.qty) <= 0 or flt(row.qty) > flt(pending.pending_qty):
 			pending_qty = frappe.format_value(flt(pending.pending_qty), "Float")
@@ -746,8 +747,7 @@ def make_purchase_orders_by_supplier(source_name: str, item_suppliers: str | lis
 				item.schedule_date = nowdate()
 				is_rescheduled = True
 
-		purchase_order.insert()
-		purchase_orders.append(purchase_order.name)
+		purchase_orders.append(purchase_order)
 
 	if is_rescheduled:
 		frappe.toast(

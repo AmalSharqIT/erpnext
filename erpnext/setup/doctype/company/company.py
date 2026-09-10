@@ -40,6 +40,10 @@ class Company(NestedSet):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		from erpnext.setup.doctype.company_account_by_currency.company_account_by_currency import (
+			CompanyAccountByCurrency,
+		)
+
 		abbr: DF.Data
 		accounts_frozen_till_date: DF.Date | None
 		accumulated_depreciation_account: DF.Link | None
@@ -50,6 +54,7 @@ class Company(NestedSet):
 		book_advance_payments_in_separate_party_account: DF.Check
 		capital_work_in_progress_account: DF.Link | None
 		chart_of_accounts: DF.Literal[None]
+		company_account_by_currency: DF.Table[CompanyAccountByCurrency]
 		company_description: DF.TextEditor | None
 		company_logo: DF.AttachImage | None
 		company_name: DF.Data
@@ -444,84 +449,6 @@ class Company(NestedSet):
 				"parent_department": "",
 				"__condition": lambda: not frappe.db.exists("Department", _("All Departments")),
 			},
-			{
-				"doctype": "Department",
-				"department_name": _("Accounts"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Marketing"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Sales"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Purchase"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Operations"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Production"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Dispatch"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Customer Service"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Human Resources"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Management"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Quality Management"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Research & Development"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
-			{
-				"doctype": "Department",
-				"department_name": _("Legal"),
-				"parent_department": _("All Departments"),
-				"company": self.name,
-			},
 		]
 
 		# Make root department with NSM updation
@@ -721,7 +648,7 @@ class Company(NestedSet):
 				"parent_cost_center": None,
 			},
 			{
-				"cost_center_name": _("Main"),
+				"cost_center_name": "ادارة",
 				"company": self.name,
 				"is_group": 0,
 				"parent_cost_center": self.name + " - " + self.abbr,
@@ -735,10 +662,6 @@ class Company(NestedSet):
 			if cc.get("cost_center_name") == self.name:
 				cc_doc.flags.ignore_mandatory = True
 			cc_doc.insert()
-
-		self.db_set("cost_center", _("Main") + " - " + self.abbr)
-		self.db_set("round_off_cost_center", _("Main") + " - " + self.abbr)
-		self.db_set("depreciation_cost_center", _("Main") + " - " + self.abbr)
 
 	def after_rename(self, olddn, newdn, merge=False):
 		self.db_set("company_name", newdn)

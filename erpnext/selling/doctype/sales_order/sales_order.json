@@ -17,19 +17,15 @@
   "customer_name",
   "column_break_7",
   "order_type",
-  "transaction_date",
   "transaction_time",
   "delivery_date",
   "column_break1",
+  "transaction_date",
   "tax_id",
   "skip_delivery_note",
   "has_unit_price_items",
   "is_subcontracted",
   "amended_from",
-  "accounting_dimensions_section",
-  "cost_center",
-  "dimension_col_break",
-  "project",
   "currency_and_price_list",
   "currency",
   "conversion_rate",
@@ -84,6 +80,10 @@
   "base_rounded_total",
   "section_break_efew",
   "advance_paid",
+  "accounting_dimensions_section",
+  "cost_center",
+  "dimension_col_break",
+  "project",
   "additional_discount_section",
   "apply_discount_on",
   "base_discount_amount",
@@ -197,6 +197,7 @@
    "width": "50%"
   },
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hide_days": 1,
@@ -241,14 +242,14 @@
    "default": "Sales",
    "fieldname": "order_type",
    "fieldtype": "Select",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Order Type",
    "oldfieldname": "order_type",
    "oldfieldtype": "Select",
    "options": "\nSales\nMaintenance\nShopping Cart",
-   "print_hide": 1,
-   "reqd": 1
+   "print_hide": 1
   },
   {
    "fieldname": "column_break1",
@@ -319,6 +320,7 @@
    "allow_on_submit": 1,
    "fieldname": "po_no",
    "fieldtype": "Data",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Customer's Purchase Order",
@@ -417,6 +419,7 @@
   {
    "fieldname": "company_address_display",
    "fieldtype": "Text Editor",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Company Address",
@@ -425,6 +428,7 @@
   {
    "fieldname": "company_address",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Company Address Name",
@@ -560,6 +564,7 @@
    "default": "0",
    "fieldname": "ignore_pricing_rule",
    "fieldtype": "Check",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Ignore Pricing Rule",
@@ -709,6 +714,7 @@
   {
    "fieldname": "taxes_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Taxes",
@@ -718,6 +724,7 @@
   {
    "fieldname": "tax_category",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Tax Category",
@@ -733,6 +740,7 @@
   {
    "fieldname": "shipping_rule",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Shipping Rule",
@@ -743,6 +751,7 @@
   {
    "fieldname": "section_break_40",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_border": 1,
    "hide_days": 1,
    "hide_seconds": 1
@@ -815,6 +824,7 @@
   {
    "fieldname": "total_taxes_and_charges",
    "fieldtype": "Currency",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Total Taxes and Charges",
@@ -854,6 +864,7 @@
   {
    "fieldname": "coupon_code",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Coupon Code",
@@ -1123,6 +1134,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Project",
@@ -1147,6 +1159,7 @@
    "collapsible": 1,
    "fieldname": "printing_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Print Settings"
@@ -1254,6 +1267,7 @@
    "description": "% of materials delivered against this Sales Order",
    "fieldname": "per_delivered",
    "fieldtype": "Percent",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "in_list_view": 1,
@@ -1276,6 +1290,7 @@
    "description": "% of materials billed against this Sales Order",
    "fieldname": "per_billed",
    "fieldtype": "Percent",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "in_list_view": 1,
@@ -1304,6 +1319,7 @@
    "collapsible_depends_on": "commission_rate",
    "fieldname": "sales_team_section_break",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Commission",
@@ -1360,6 +1376,7 @@
    "collapsible_depends_on": "sales_team",
    "fieldname": "section_break1",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Sales Team",
@@ -1443,6 +1460,7 @@
    "fetch_from": "customer.is_internal_customer",
    "fieldname": "is_internal_customer",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Customer",
    "read_only": 1
   },
@@ -1466,6 +1484,7 @@
    "allow_on_submit": 1,
    "fieldname": "dispatch_address_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Dispatch Address Name",
    "options": "Address",
    "print_hide": 1
@@ -1475,6 +1494,7 @@
    "depends_on": "dispatch_address_name",
    "fieldname": "dispatch_address",
    "fieldtype": "Text Editor",
+   "hidden": 1,
    "label": "Dispatch Address",
    "read_only": 1
   },
@@ -1489,6 +1509,7 @@
   {
    "fieldname": "per_picked",
    "fieldtype": "Percent",
+   "hidden": 1,
    "label": "% Picked",
    "no_copy": 1,
    "read_only": 1
@@ -1530,6 +1551,7 @@
   {
    "fieldname": "payment_terms_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Payment Terms"
   },
   {
@@ -1567,6 +1589,7 @@
   {
    "fieldname": "incoterm",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Incoterm",
    "options": "Incoterm"
   },
@@ -1619,6 +1642,7 @@
   {
    "fieldname": "utm_source",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Source",
@@ -1630,6 +1654,7 @@
   {
    "fieldname": "utm_campaign",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Campaign",
@@ -1641,6 +1666,7 @@
   {
    "fieldname": "company_contact_person",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Company Contact Person",
    "options": "Contact",
    "print_hide": 1
@@ -1742,6 +1768,7 @@
    "collapsible": 1,
    "fieldname": "auto_repeat_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Auto Repeat",
@@ -1763,7 +1790,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-12 12:00:00.000000",
+ "modified": "2026-08-12",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",
