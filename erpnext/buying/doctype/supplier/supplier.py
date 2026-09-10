@@ -50,7 +50,7 @@ class Supplier(TransactionBase):
 		country: DF.Link | None
 		customer_numbers: DF.Table[CustomerNumberAtSupplier]
 		default_bank_account: DF.Link | None
-		default_currency: DF.Link | None
+		default_currency: DF.Link
 		default_price_list: DF.Link | None
 		disabled: DF.Check
 		email_id: DF.ReadOnly | None
