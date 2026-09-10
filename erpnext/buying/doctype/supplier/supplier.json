@@ -265,7 +265,8 @@
    "in_list_view": 1,
    "label": "Billing Currency",
    "no_copy": 1,
-   "options": "Currency"
+   "options": "Currency",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_10",
@@ -570,7 +571,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-08-22",
+ "modified": "2026-09-10",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",

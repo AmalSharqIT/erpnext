@@ -409,6 +409,7 @@
    "oldfieldtype": "Select",
    "options": "Currency",
    "print_hide": 1,
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -1371,7 +1372,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-02",
+ "modified": "2026-09-10",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
