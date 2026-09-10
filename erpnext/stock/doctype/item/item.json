@@ -885,6 +885,7 @@
    "fieldtype": "Float",
    "hidden": 1,
    "label": "Over Delivery/Receipt Allowance (%)",
+   "non_negative": 1,
    "oldfieldname": "tolerance",
    "oldfieldtype": "Currency"
   },
@@ -894,7 +895,8 @@
    "fieldname": "over_billing_allowance",
    "fieldtype": "Float",
    "hidden": 1,
-   "label": "Over Billing Allowance (%)"
+   "label": "Over Billing Allowance (%)",
+   "non_negative": 1
   },
   {
    "default": "0",
@@ -1144,7 +1146,7 @@
  "image_field": "image",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-08-22",
+ "modified": "2026-09-04",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
