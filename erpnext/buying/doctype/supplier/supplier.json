@@ -18,6 +18,7 @@
   "column_break0",
   "supplier_group",
   "country",
+  "uscc_no",
   "image",
   "defaults_section",
   "default_currency",
@@ -558,6 +559,12 @@
   {
    "fieldname": "section_break_pgad",
    "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.country=='China'",
+   "fieldname": "uscc_no",
+   "fieldtype": "Data",
+   "label": "USCC No."
   }
  ],
  "grid_page_length": 50,
@@ -571,7 +578,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-09-10",
+ "modified": "2026-09-12",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",

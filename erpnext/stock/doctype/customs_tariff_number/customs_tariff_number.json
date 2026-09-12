@@ -22,6 +22,7 @@
    "unique": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "description",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -32,6 +33,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "customs_duty_rate",
    "fieldtype": "Float",
    "in_list_view": 1,
@@ -39,7 +41,7 @@
   }
  ],
  "links": [],
- "modified": "2026-09-08",
+ "modified": "2026-09-12",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Customs Tariff Number",
