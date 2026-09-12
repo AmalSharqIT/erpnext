@@ -97,6 +97,7 @@
   "asset_received_but_not_billed",
   "company_account_by_currency_section",
   "company_account_by_currency",
+  "company_default_supplier_accounts",
   "accounts_closing_tab",
   "accounts_closing_section",
   "accounts_frozen_till_date",
@@ -1041,6 +1042,12 @@
    "fieldtype": "Table",
    "label": "Company Account By Currency",
    "options": "Company Account By Currency"
+  },
+  {
+   "fieldname": "company_default_supplier_accounts",
+   "fieldtype": "Table",
+   "label": "Company Default Supplier Accounts",
+   "options": "Company Default Supplier Accounts"
   }
  ],
  "grid_page_length": 50,
@@ -1049,7 +1056,7 @@
  "image_field": "company_logo",
  "is_tree": 1,
  "links": [],
- "modified": "2026-07-02",
+ "modified": "2026-09-10",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",

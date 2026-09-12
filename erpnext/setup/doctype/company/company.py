@@ -43,6 +43,9 @@ class Company(NestedSet):
 		from erpnext.setup.doctype.company_account_by_currency.company_account_by_currency import (
 			CompanyAccountByCurrency,
 		)
+		from erpnext.setup.doctype.company_default_supplier_accounts.company_default_supplier_accounts import (
+			CompanyDefaultSupplierAccounts,
+		)
 
 		abbr: DF.Data
 		accounts_frozen_till_date: DF.Date | None
@@ -55,6 +58,7 @@ class Company(NestedSet):
 		capital_work_in_progress_account: DF.Link | None
 		chart_of_accounts: DF.Literal[None]
 		company_account_by_currency: DF.Table[CompanyAccountByCurrency]
+		company_default_supplier_accounts: DF.Table[CompanyDefaultSupplierAccounts]
 		company_description: DF.TextEditor | None
 		company_logo: DF.AttachImage | None
 		company_name: DF.Data
