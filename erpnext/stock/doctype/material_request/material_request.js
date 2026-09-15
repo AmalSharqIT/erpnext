@@ -411,12 +411,8 @@ frappe.ui.form.on("Material Request", {
 			freeze: true,
 			callback: function (r) {
 				const items = r.message || [];
-				const suppliers = new Set(items.map((item) => item.supplier || ""));
-
-				if (suppliers.size > 1) {
-					frm.events.select_suppliers_for_items(frm, items);
-					return;
-				}
+				frm.events.select_suppliers_for_items(frm, items);
+				return;
 
 				frappe.model.open_mapped_doc({
 					method: "erpnext.stock.doctype.material_request.material_request.make_purchase_order",
