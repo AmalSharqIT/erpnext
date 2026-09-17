@@ -391,8 +391,7 @@ class Company(NestedSet):
 		for wh_detail in [
 			{"warehouse_name": _("All Warehouses"), "is_group": 1},
 			{"warehouse_name": _("Stores"), "is_group": 0},
-			{"warehouse_name": _("Work In Progress"), "is_group": 0},
-			{"warehouse_name": _("Finished Goods"), "is_group": 0},
+			{"warehouse_name": _("Purchase Staging"), "is_group": 0},
 			{"warehouse_name": _("Goods In Transit"), "is_group": 0, "warehouse_type": "Transit"},
 		]:
 			if frappe.db.exists(
