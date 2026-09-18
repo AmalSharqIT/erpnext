@@ -81,6 +81,7 @@ class Supplier(TransactionBase):
 		tax_id: DF.Data | None
 		tax_withholding_category: DF.Link | None
 		tax_withholding_group: DF.Link | None
+		use_official_exchange_rate: DF.Check
 		warn_pos: DF.Check
 		warn_rfqs: DF.Check
 		website: DF.Data | None
