@@ -1099,9 +1099,15 @@ class AccountsController(TransactionBase):
 				and frappe.db.get_single_value("Buying Settings", "use_transaction_date_exchange_rate")
 				and self.doctype == "Purchase Invoice"
 			):
+				supplier = (
+					self.supplier
+					if self.doctype
+					in ["Purchase Order", "Purchase Receipt", "Purchase Invoice", "Supplier Quotation"]
+					else None
+				)
 				self.use_transaction_date_exchange_rate = True
 				self.conversion_rate = get_exchange_rate(
-					self.currency, self.company_currency, transaction_date, args
+					self.currency, self.company_currency, transaction_date, args, supplier
 				)
 
 	def set_missing_item_details(self, for_validate=False):
