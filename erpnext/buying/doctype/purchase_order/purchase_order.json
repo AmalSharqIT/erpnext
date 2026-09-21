@@ -418,7 +418,6 @@
    "label": "Exchange Rate",
    "oldfieldname": "conversion_rate",
    "oldfieldtype": "Currency",
-   "permlevel": 0,
    "precision": "9",
    "print_hide": 1,
    "reqd": 1
