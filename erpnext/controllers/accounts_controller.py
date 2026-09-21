@@ -1083,8 +1083,14 @@ class AccountsController(TransactionBase):
 			elif self.currency == self.company_currency:
 				self.conversion_rate = 1.0
 			elif not self.conversion_rate:
+				supplier = (
+					self.supplier
+					if self.doctype
+					in ["Purchase Order", "Purchase Receipt", "Purchase Invoice", "Supplier Quotation"]
+					else None
+				)
 				self.conversion_rate = get_exchange_rate(
-					self.currency, self.company_currency, transaction_date, args
+					self.currency, self.company_currency, transaction_date, args, supplier
 				)
 
 			if (
