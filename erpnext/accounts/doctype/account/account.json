@@ -209,7 +209,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-06-14",
+ "modified": "2026-09-21",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
@@ -246,6 +246,11 @@
   {
    "role": "Purchase User",
    "select": 1
+  },
+  {
+   "permlevel": 9,
+   "read": 1,
+   "role": "Purchase User"
   },
   {
    "create": 1,
