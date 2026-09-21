@@ -418,7 +418,7 @@
    "label": "Exchange Rate",
    "oldfieldname": "conversion_rate",
    "oldfieldtype": "Currency",
-   "permlevel": 1,
+   "permlevel": 0,
    "precision": "9",
    "print_hide": 1,
    "reqd": 1
@@ -1373,7 +1373,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-21",
+ "modified": "2026-09-10",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
