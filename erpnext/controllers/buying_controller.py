@@ -43,7 +43,7 @@ class BuyingController(SubcontractingController):
 		}
 		if (
 			self.doctype in PURCHASE_DOCTYPES
-			and (self.has_value_changed("supplyer") or self.has_value_changed(date_fileds.get(self.doctype)))
+			and (self.has_value_changed("supplier") or self.has_value_changed(date_fileds.get(self.doctype)))
 			and not has_doctype_permlevel(self.doctype, 1, "write")
 		):
 			self.conversion_rate = None

@@ -380,6 +380,7 @@
    "label": "Exchange Rate",
    "oldfieldname": "conversion_rate",
    "oldfieldtype": "Currency",
+   "permlevel": 1,
    "precision": "9",
    "print_hide": 1,
    "reqd": 1
@@ -1314,7 +1315,7 @@
  "idx": 261,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-12",
+ "modified": "2026-09-22",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt",

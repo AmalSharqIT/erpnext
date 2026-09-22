@@ -333,6 +333,7 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 	supplier() {
 		var me = this;
 
+		frappe.ui.form.trigger(me.frm.doc.doctype, "currency");
 		// Do not update if inter company reference is there as the details will already be updated
 		if (this.frm.updating_party_details || this.frm.doc.inter_company_invoice_reference) return;
 
