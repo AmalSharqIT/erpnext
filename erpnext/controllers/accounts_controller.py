@@ -6,13 +6,12 @@ import json
 from collections import defaultdict
 
 import frappe
+from erpriva.utils import PURCHASE_DOCTYPES
 from frappe import _, bold, qb, throw
 from frappe.contacts.doctype.address.address import get_address_display
 from frappe.model.workflow import get_workflow_name
 from frappe.query_builder import Criterion, DocType
 from frappe.query_builder.custom import ConstantColumn
-
-PURCHASE_DOCTYPES = ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]
 from frappe.query_builder.functions import Abs, IfNull, Sum
 from frappe.utils import (
 	add_days,

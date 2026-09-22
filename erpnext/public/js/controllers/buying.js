@@ -155,6 +155,9 @@ erpnext.buying = {
 				erpnext.utils.get_party_details(this.frm, null, null, function () {
 					me.apply_price_list();
 				});
+				if (me.frm.doc.doctype.includes(["Purchase Order", "Purchase Receipt", "Purchase Invoice"])) {
+					frappe.ui.form.trigger(me.frm.doc.doctype, "currency");
+				}
 			}
 
 			company() {
