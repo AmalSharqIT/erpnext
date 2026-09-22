@@ -36,14 +36,13 @@ class BuyingController(SubcontractingController):
 		self.flags.ignore_permlevel_for_fields = ["buying_price_list", "price_list_currency"]
 
 	def validate(self):
-		date_fileds = {
-			"Purchase Order": "transaction_date",
-			"Purchase Receipt": "posting_date",
-			"Purchase Invoice": "posting_date",
-		}
 		if (
 			self.doctype in PURCHASE_DOCTYPES
-			and (self.has_value_changed("supplier") or self.has_value_changed(date_fileds.get(self.doctype)))
+			and (
+				self.has_value_changed("supplier")
+				or self.has_value_changed("transaction_date")
+				or self.has_value_changed("posting_date")
+			)
 			and not has_doctype_permlevel(self.doctype, 1, "write")
 		):
 			self.conversion_rate = None

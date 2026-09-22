@@ -1606,11 +1606,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		var args;
 		if (["Quotation", "Sales Order", "Delivery Note", "Sales Invoice"].includes(this.frm.doctype)) {
 			args = "for_selling";
-		} else if (
-			["Purchase Order", "Purchase Receipt", "Purchase Invoice", "Supplier Quotation"].includes(
-				this.frm.doctype,
-			)
-		) {
+		} else if (["Purchase Order", "Purchase Receipt", "Purchase Invoice"].includes(this.frm.doctype)) {
 			args = "for_buying";
 			supplier = this.frm.doc.supplier;
 		}
