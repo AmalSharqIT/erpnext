@@ -41,7 +41,7 @@
   }
  ],
  "links": [],
- "modified": "2026-09-12",
+ "modified": "2026-09-22",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Customs Tariff Number",
@@ -69,8 +69,10 @@
    "share": 1
   },
   {
-   "role": "Item Manager",
-   "select": 1
+   "create": 1,
+   "read": 1,
+   "role": "Imports User",
+   "write": 1
   }
  ],
  "quick_entry": 1,
