@@ -56,7 +56,7 @@ def validate_for_items(doc) -> None:
 		validate_end_of_life(d.item_code, item.end_of_life, item.disabled)
 
 		if not allow_multiple_items:
-			key = f"{d.item_code}::{d.get('uom')}::{d.get('material_request')}"
+			key = f"{d.item_code}::{d.get('uom')}::{d.get('material_request')}::{d.get('purchase_order')}::{d.get('purchase_invoice')}::{d.get('purchase_receipt')}"
 			if key in items:
 				frappe.throw(
 					_("Row #{0}: Item {1} cannot be entered multiple times.").format(
