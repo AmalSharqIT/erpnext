@@ -433,7 +433,7 @@ frappe.ui.form.on("Material Request", {
 
 		const dialog = new frappe.ui.Dialog({
 			title: __("Select Supplier for Items"),
-			size: "large",
+			size: "extra-large",
 			fields: [
 				{
 					fieldname: "supplier",
@@ -479,6 +479,13 @@ frappe.ui.form.on("Material Request", {
 							read_only: 1,
 							in_list_view: 1,
 							columns: 3,
+						},
+						{
+							fieldtype: "Data",
+							fieldname: "legacy_code",
+							label: __("Legacy Code"),
+							read_only: 1,
+							in_list_view: 1,
 						},
 						{
 							fieldtype: "Data",
