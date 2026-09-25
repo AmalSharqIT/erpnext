@@ -1857,6 +1857,14 @@
    "read": 1,
    "role": "Sales Manager",
    "write": 1
+  },
+  {
+   "role": "Projects Manager",
+   "select": 1
+  },
+  {
+   "role": "Projects User",
+   "select": 1
   }
  ],
  "row_format": "Dynamic",

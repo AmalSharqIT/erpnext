@@ -160,6 +160,14 @@
    "report": 1,
    "role": "Accounts User",
    "share": 1
+  },
+  {
+   "role": "Sales Manager",
+   "select": 1
+  },
+  {
+   "role": "Website Manager",
+   "select": 1
   }
  ],
  "row_format": "Dynamic",

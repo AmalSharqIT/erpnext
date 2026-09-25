@@ -333,6 +333,34 @@
    "role": "Manufacturing User"
   },
   {
+   "role": "Delivery Manager",
+   "select": 1
+  },
+  {
+   "role": "Delivery User",
+   "select": 1
+  },
+  {
+   "role": "HR Manager",
+   "select": 1
+  },
+  {
+   "role": "Maintenance Manager",
+   "select": 1
+  },
+  {
+   "role": "Maintenance User",
+   "select": 1
+  },
+  {
+   "role": "Quality Manager",
+   "select": 1
+  },
+  {
+   "role": "Website Manager",
+   "select": 1
+  },
+  {
    "role": "Item Manager",
    "select": 1
   },

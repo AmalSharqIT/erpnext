@@ -1675,6 +1675,14 @@
    "read": 1,
    "role": "Accounts Manager",
    "write": 1
+  },
+  {
+   "role": "Sales Manager",
+   "select": 1
+  },
+  {
+   "role": "Sales User",
+   "select": 1
   }
  ],
  "row_format": "Dynamic",

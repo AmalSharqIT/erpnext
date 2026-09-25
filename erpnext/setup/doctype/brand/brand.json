@@ -98,6 +98,10 @@
    "role": "Accounts User"
   },
   {
+   "role": "Website Manager",
+   "select": 1
+  },
+  {
    "role": "Item Manager",
    "select": 1
   }

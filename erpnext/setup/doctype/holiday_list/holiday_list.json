@@ -177,6 +177,26 @@
    "role": "HR User"
   },
   {
+   "role": "Accounts Manager",
+   "select": 1
+  },
+  {
+   "role": "Manufacturing User",
+   "select": 1
+  },
+  {
+   "role": "Projects Manager",
+   "select": 1
+  },
+  {
+   "role": "Projects User",
+   "select": 1
+  },
+  {
+   "role": "Sales Manager",
+   "select": 1
+  },
+  {
    "role": "HR User - Branch",
    "select": 1
   },

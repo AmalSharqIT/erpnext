@@ -123,6 +123,10 @@
   {
    "read": 1,
    "role": "Auditor"
+  },
+  {
+   "role": "Sales Master Manager",
+   "select": 1
   }
  ],
  "show_name_in_global_search": 1,
