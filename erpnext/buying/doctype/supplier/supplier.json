@@ -562,7 +562,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-09-16",
+ "modified": "2026-09-18",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",
@@ -641,6 +641,10 @@
   },
   {
    "role": "Website Manager",
+   "select": 1
+  },
+  {
+   "role": "Item Manager",
    "select": 1
   }
  ],

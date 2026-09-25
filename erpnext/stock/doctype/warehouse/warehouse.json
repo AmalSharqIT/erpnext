@@ -365,6 +365,14 @@
   {
    "role": "Website Manager",
    "select": 1
+  },
+  {
+   "role": "Item Manager",
+   "select": 1
+  },
+  {
+   "role": "Material Request User",
+   "select": 1
   }
  ],
  "row_format": "Dynamic",
