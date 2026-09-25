@@ -76,6 +76,7 @@
   {
    "fieldname": "countries",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Applicable for Countries",
    "options": "Price List Country"
   }
@@ -106,11 +107,6 @@
    "role": "Sales Master Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User"
   },
   {
    "create": 1,

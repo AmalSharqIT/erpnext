@@ -50,7 +50,7 @@ class Supplier(TransactionBase):
 		country: DF.Link | None
 		customer_numbers: DF.Table[CustomerNumberAtSupplier]
 		default_bank_account: DF.Link | None
-		default_currency: DF.Link | None
+		default_currency: DF.Link
 		default_price_list: DF.Link | None
 		disabled: DF.Check
 		email_id: DF.ReadOnly | None
@@ -62,7 +62,7 @@ class Supplier(TransactionBase):
 		is_transporter: DF.Check
 		language: DF.Link | None
 		mobile_no: DF.ReadOnly | None
-		naming_series: DF.Literal["SUP-.YYYY.-"]
+		naming_series: DF.Literal["SUP-"]
 		on_hold: DF.Check
 		payment_terms: DF.Link | None
 		portal_users: DF.Table[PortalUser]
@@ -81,6 +81,7 @@ class Supplier(TransactionBase):
 		tax_id: DF.Data | None
 		tax_withholding_category: DF.Link | None
 		tax_withholding_group: DF.Link | None
+		use_official_exchange_rate: DF.Check
 		warn_pos: DF.Check
 		warn_rfqs: DF.Check
 		website: DF.Data | None

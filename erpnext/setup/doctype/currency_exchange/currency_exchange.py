@@ -23,6 +23,7 @@ class CurrencyExchange(Document):
 		for_buying: DF.Check
 		for_selling: DF.Check
 		from_currency: DF.Link
+		official_exchange_rate: DF.Check
 		to_currency: DF.Link
 	# end: auto-generated types
 

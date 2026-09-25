@@ -108,6 +108,7 @@
    "description": "Set Item Group-wise budgets on this Territory. You can also include seasonality by setting the Distribution.",
    "fieldname": "target_details_section_break",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Territory Targets",
    "oldfieldtype": "Section Break"
   },
