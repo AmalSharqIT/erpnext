@@ -203,7 +203,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-21",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Account",
@@ -238,10 +238,12 @@
    "role": "Sales User"
   },
   {
-   "email": 1,
-   "print": 1,
+   "role": "Purchase User",
+   "select": 1
+  },
+  {
+   "permlevel": 9,
    "read": 1,
-   "report": 1,
    "role": "Purchase User"
   },
   {
@@ -258,12 +260,8 @@
    "write": 1
   },
   {
-   "role": "HR User",
-   "select": 1
-  },
-  {
-   "role": "HR Manager",
-   "select": 1
+   "read": 1,
+   "role": "HR Manager"
   },
   {
    "role": "Delivery Manager",
@@ -304,6 +302,15 @@
   {
    "role": "Stock Manager",
    "select": 1
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
+  },
+  {
+   "permlevel": 9,
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "row_format": "Dynamic",

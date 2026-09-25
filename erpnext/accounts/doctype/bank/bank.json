@@ -101,7 +101,7 @@
   }
  ],
  "links": [],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-16",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank",
@@ -126,6 +126,14 @@
   {
    "role": "Accounts User",
    "select": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  },
+  {
+   "read": 1,
+   "role": "HR User - Branch"
   }
  ],
  "quick_entry": 1,
