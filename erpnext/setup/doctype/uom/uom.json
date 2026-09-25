@@ -75,7 +75,7 @@
  "icon": "fa fa-compass",
  "idx": 1,
  "links": [],
- "modified": "2026-09-16",
+ "modified": "2026-09-25",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "UOM",
@@ -126,10 +126,6 @@
    "report": 1,
    "role": "Sales Manager",
    "share": 1
-  },
-  {
-   "role": "Desk User",
-   "select": 1
   },
   {
    "read": 1,

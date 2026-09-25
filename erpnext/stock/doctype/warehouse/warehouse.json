@@ -287,7 +287,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-09-16",
+ "modified": "2026-09-25",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Warehouse",
@@ -338,10 +338,6 @@
   },
   {
    "role": "Delivery User",
-   "select": 1
-  },
-  {
-   "role": "HR Manager",
    "select": 1
   },
   {
