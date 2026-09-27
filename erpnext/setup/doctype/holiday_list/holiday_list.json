@@ -197,13 +197,13 @@
    "select": 1
   },
   {
-   "role": "HR User - Branch",
-   "select": 1
-  },
-  {
    "read": 1,
    "role": "HR Manager",
    "write": 1
+  },
+  {
+   "role": "HR User - Branch",
+   "select": 1
   }
  ],
  "row_format": "Dynamic",

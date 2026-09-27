@@ -798,8 +798,8 @@
    "select": 1
   },
   {
-   "role": "Purchase Manager",
-   "select": 1
+   "read": 1,
+   "role": "Purchase Manager"
   },
   {
    "role": "Sales Manager",
@@ -810,8 +810,12 @@
    "select": 1
   },
   {
-   "role": "Stock Manager",
-   "select": 1
+   "read": 1,
+   "role": "Stock Manager"
+  },
+  {
+   "read": 1,
+   "role": "Stock User"
   }
  ],
  "row_format": "Dynamic",

@@ -468,6 +468,12 @@
    "write": 1
   },
   {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Purchase User",
+   "write": 1
+  },
+  {
    "read": 1,
    "report": 1,
    "role": "Manufacturing Manager"
@@ -483,12 +489,6 @@
   {
    "role": "Maintenance User",
    "select": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "Purchase User",
-   "write": 1
   },
   {
    "create": 1,
