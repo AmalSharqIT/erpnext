@@ -59,7 +59,7 @@ def get_pegged_rate(pegged_map, from_currency, to_currency, transaction_date=Non
 
 
 @frappe.whitelist()
-def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=None):
+def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=None, supplier=None):
 	if not (from_currency and to_currency):
 		# manqala 19/09/2016: Should this be an empty return or should it throw and exception?
 		return
@@ -73,6 +73,11 @@ def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=No
 	allow_stale_rates = currency_settings.get("allow_stale")
 
 	filters = [
+		[
+			"official_exchange_rate",
+			"=",
+			frappe.get_value("Supplier", supplier, "use_official_exchange_rate") if supplier else 0,
+		],
 		["date", "<=", get_datetime_str(transaction_date)],
 		["from_currency", "=", from_currency],
 		["to_currency", "=", to_currency],
