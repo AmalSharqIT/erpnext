@@ -32,12 +32,8 @@ class CurrencyExchange(Document):
 		if not self.date:
 			self.date = nowdate()
 
-		# If both selling and buying enabled
-		purpose = "Selling-Buying"
-		if cint(self.for_buying) == 0 and cint(self.for_selling) == 1:
-			purpose = "Selling"
-		if cint(self.for_buying) == 1 and cint(self.for_selling) == 0:
-			purpose = "Buying"
+		if self.official_exchange_rate:
+			purpose = "Official"
 
 		self.name = "{}-{}-{}{}".format(
 			formatdate(get_datetime_str(self.date), "yyyy-MM-dd"),
