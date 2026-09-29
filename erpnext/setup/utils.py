@@ -73,6 +73,11 @@ def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=No
 	allow_stale_rates = currency_settings.get("allow_stale")
 
 	filters = [
+		[
+			"official_exchange_rate",
+			"=",
+			frappe.get_value("Supplier", supplier, "use_official_exchange_rate") if supplier else 0,
+		],
 		["date", "<=", get_datetime_str(transaction_date)],
 		["from_currency", "=", from_currency],
 		["to_currency", "=", to_currency],
@@ -80,14 +85,6 @@ def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=No
 
 	if args == "for_buying":
 		filters.append(["for_buying", "=", "1"])
-		if supplier:
-			filters.append(
-				[
-					"official_exchange_rate",
-					"=",
-					frappe.get_value("Supplier", supplier, "use_official_exchange_rate"),
-				]
-			)
 	elif args == "for_selling":
 		filters.append(["for_selling", "=", "1"])
 

@@ -5,7 +5,7 @@
 import json
 
 import frappe
-from erpriva.utils import PURCHASE_DOCTYPES, has_doctype_permlevel
+from erpriva.utils import has_doctype_permlevel
 from frappe import ValidationError, _, msgprint
 from frappe.contacts.doctype.address.address import render_address
 from frappe.utils import cint, flt, format_date, get_link_to_form, getdate
@@ -37,13 +37,13 @@ class BuyingController(SubcontractingController):
 
 	def validate(self):
 		if (
-			self.doctype in PURCHASE_DOCTYPES
+			self.doctype in ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]
+			and not has_doctype_permlevel(self.doctype, 1, "write")
 			and (
 				self.has_value_changed("supplier")
-				or self.has_value_changed("transaction_date")
 				or self.has_value_changed("posting_date")
+				or self.has_value_changed("transaction_date")
 			)
-			and not has_doctype_permlevel(self.doctype, 1, "write")
 		):
 			self.conversion_rate = None
 		self.set_rate_for_standalone_debit_note()

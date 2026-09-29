@@ -6,7 +6,6 @@ import json
 from collections import defaultdict
 
 import frappe
-from erpriva.utils import PURCHASE_DOCTYPES
 from frappe import _, bold, qb, throw
 from frappe.contacts.doctype.address.address import get_address_display
 from frappe.model.workflow import get_workflow_name
@@ -1078,13 +1077,17 @@ class AccountsController(TransactionBase):
 					)
 
 			# currency
+			supplier = (
+				self.supplier
+				if self.doctype in ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]
+				else None
+			)
 			if not self.currency:
 				self.currency = self.price_list_currency
 				self.conversion_rate = self.plc_conversion_rate
 			elif self.currency == self.company_currency:
 				self.conversion_rate = 1.0
 			elif not self.conversion_rate:
-				supplier = self.supplier if self.doctype in PURCHASE_DOCTYPES else None
 				self.conversion_rate = get_exchange_rate(
 					self.currency, self.company_currency, transaction_date, args, supplier
 				)
@@ -1095,7 +1098,6 @@ class AccountsController(TransactionBase):
 				and frappe.db.get_single_value("Buying Settings", "use_transaction_date_exchange_rate")
 				and self.doctype == "Purchase Invoice"
 			):
-				supplier = self.supplier if self.doctype in PURCHASE_DOCTYPES else None
 				self.use_transaction_date_exchange_rate = True
 				self.conversion_rate = get_exchange_rate(
 					self.currency, self.company_currency, transaction_date, args, supplier
