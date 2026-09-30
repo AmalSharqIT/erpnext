@@ -745,6 +745,7 @@ frappe.ui.form.on("Payment Entry", {
 				transaction_date: frm.doc.posting_date,
 				from_currency: from_currency,
 				to_currency: to_currency,
+				supplier: frm.doc.party_type == "Supplier" ? frm.doc.party : null,
 			},
 			callback: function (r, rt) {
 				const ex_rate = flt(r.message, frm.get_field(exchange_rate_field).get_precision());
@@ -1402,24 +1403,6 @@ frappe.ui.form.on("Payment Entry", {
 		if (!frm.doc.company || !frm.doc[field]) return;
 
 		frm.set_company_bank_account_based_on_coa = true;
-
-		frappe.call({
-			method: "frappe.client.get_value",
-			args: {
-				doctype: "Bank Account",
-				filters: {
-					company: frm.doc.company,
-					account: frm.doc[field],
-					disabled: 0,
-				},
-				fieldname: ["name"],
-			},
-			callback: async function (r) {
-				if (r.message) await frm.set_value("bank_account", r.message.name);
-
-				frm.set_company_bank_account_based_on_coa = false;
-			},
-		});
 	},
 
 	sales_taxes_and_charges_template: function (frm) {

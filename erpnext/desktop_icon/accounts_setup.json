@@ -10,12 +10,16 @@
  "label": "Accounts Setup",
  "link_to": "Accounts Setup",
  "link_type": "Workspace Sidebar",
- "modified": "2026-01-27 18:34:57.092350",
+ "modified": "2026-06-17",
  "modified_by": "Administrator",
  "name": "Accounts Setup",
  "owner": "Administrator",
  "parent_icon": "Accounting",
  "restrict_removal": 0,
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
  "standard": 1
 }

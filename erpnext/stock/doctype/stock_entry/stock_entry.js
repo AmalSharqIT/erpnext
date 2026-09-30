@@ -556,8 +556,6 @@ frappe.ui.form.on("Stock Entry", {
 			);
 		}
 
-		frm.events.show_bom_custom_button(frm);
-
 		if (frm.doc.company) {
 			frm.trigger("toggle_display_account_head");
 		}
@@ -632,7 +630,6 @@ frappe.ui.form.on("Stock Entry", {
 
 	stock_entry_type: function (frm) {
 		frm.remove_custom_button("Bill of Materials", "Get Items From");
-		frm.events.show_bom_custom_button(frm);
 		frm.trigger("add_to_transit");
 		frm.trigger("toggle_warehouse_fields");
 
@@ -771,24 +768,6 @@ frappe.ui.form.on("Stock Entry", {
 					}
 				},
 			});
-		}
-	},
-
-	show_bom_custom_button: function (frm) {
-		if (
-			frm.doc.docstatus === 0 &&
-			["Material Issue", "Material Receipt", "Material Transfer", "Send to Subcontractor"].includes(
-				frm.doc.purpose
-			) &&
-			!frm.doc.subcontracting_inward_order
-		) {
-			frm.add_custom_button(
-				__("Bill of Materials"),
-				function () {
-					frm.events.get_items_from_bom(frm);
-				},
-				__("Get Items From")
-			);
 		}
 	},
 

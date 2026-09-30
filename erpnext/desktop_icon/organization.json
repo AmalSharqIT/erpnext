@@ -10,12 +10,16 @@
  "label": "Organization",
  "link_to": "Organization",
  "link_type": "Workspace Sidebar",
- "modified": "2026-02-24 17:59:39.885360",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "name": "Organization",
  "owner": "Administrator",
  "parent_icon": "",
  "restrict_removal": 0,
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
  "standard": 1
 }

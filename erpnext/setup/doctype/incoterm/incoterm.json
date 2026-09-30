@@ -87,7 +87,7 @@
    "link_fieldname": "incoterm"
   }
  ],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-16",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Incoterm",
@@ -141,10 +141,6 @@
    "role": "Stock Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "role": "Purchase User"
   },
   {
    "read": 1,
