@@ -745,6 +745,7 @@ frappe.ui.form.on("Payment Entry", {
 				transaction_date: frm.doc.posting_date,
 				from_currency: from_currency,
 				to_currency: to_currency,
+				supplier: frm.doc.party_type == "Supplier" ? frm.doc.party : null,
 			},
 			callback: function (r, rt) {
 				const ex_rate = flt(r.message, frm.get_field(exchange_rate_field).get_precision());
