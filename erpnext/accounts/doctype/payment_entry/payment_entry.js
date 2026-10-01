@@ -722,7 +722,13 @@ frappe.ui.form.on("Payment Entry", {
 			frm,
 			"source_exchange_rate",
 			frm.doc.paid_from_account_currency,
-			company_currency
+			company_currency,
+		);
+		frm.events.set_current_exchange_rate(
+			frm,
+			"target_exchange_rate",
+			frm.doc.paid_to_account_currency,
+			company_currency,
 		);
 	},
 
@@ -734,11 +740,31 @@ frappe.ui.form.on("Payment Entry", {
 			frm,
 			"target_exchange_rate",
 			frm.doc.paid_to_account_currency,
-			company_currency
+			company_currency,
+		);
+		frm.events.set_current_exchange_rate(
+			frm,
+			"source_exchange_rate",
+			frm.doc.paid_from_account_currency,
+			company_currency,
 		);
 	},
 
 	set_current_exchange_rate: function (frm, exchange_rate_field, from_currency, to_currency) {
+		if (!frm.doc.paid_from_account_currency || !frm.doc.paid_to_account_currency) return;
+		let reverse_rate = false;
+		if (
+			frm.doc.paid_from_account_currency != frm.doc.paid_to_account_currency &&
+			((frm.doc.paid_from_account_currency != to_currency &&
+				frm.doc.paid_to_account_currency == to_currency &&
+				frm.doc.payment_type === "Receive") ||
+				(frm.doc.paid_to_account_currency == to_currency &&
+					frm.doc.paid_from_account_currency != to_currency &&
+					frm.doc.payment_type === "Pay"))
+		) {
+			[from_currency, to_currency] = [to_currency, from_currency];
+			reverse_rate = true;
+		}
 		frappe.call({
 			method: "erpnext.setup.utils.get_exchange_rate",
 			args: {
@@ -749,7 +775,7 @@ frappe.ui.form.on("Payment Entry", {
 			},
 			callback: function (r, rt) {
 				const ex_rate = flt(r.message, frm.get_field(exchange_rate_field).get_precision());
-				frm.set_value(exchange_rate_field, ex_rate);
+				frm.set_value(exchange_rate_field, reverse_rate ? 1 / ex_rate : ex_rate);
 			},
 		});
 	},
