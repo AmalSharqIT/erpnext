@@ -86,6 +86,7 @@
   {
    "fieldname": "sec_break_taxes",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Item Tax"
   },
   {

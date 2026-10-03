@@ -8,7 +8,9 @@
  "engine": "InnoDB",
  "field_order": [
   "tariff_number",
-  "description"
+  "description",
+  "column_break_1",
+  "customs_duty_rate"
  ],
  "fields": [
   {
@@ -20,10 +22,22 @@
    "unique": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "description",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Description"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "customs_duty_rate",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Customs Duty Rate"
   }
  ],
  "links": [],

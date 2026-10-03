@@ -37,6 +37,7 @@ class PurchaseReceiptItem(Document):
 		discount_amount: DF.Currency
 		discount_percentage: DF.Percent
 		distributed_discount_amount: DF.Currency
+		edari_item_number: DF.Data | None
 		expense_account: DF.Link | None
 		from_warehouse: DF.Link | None
 		has_item_scanned: DF.Check
@@ -51,6 +52,7 @@ class PurchaseReceiptItem(Document):
 		item_tax_rate: DF.Code | None
 		item_tax_template: DF.Link | None
 		landed_cost_voucher_amount: DF.Currency
+		legacy_code: DF.Data | None
 		manufacturer: DF.Link | None
 		manufacturer_part_no: DF.Data | None
 		margin_rate_or_amount: DF.Float
