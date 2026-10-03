@@ -95,6 +95,8 @@
   "depreciation_cost_center",
   "capital_work_in_progress_account",
   "asset_received_but_not_billed",
+  "company_account_by_currency_section",
+  "company_account_by_currency",
   "accounts_closing_tab",
   "accounts_closing_section",
   "accounts_frozen_till_date",
@@ -105,6 +107,7 @@
   "default_buying_terms",
   "sales_monthly_history",
   "monthly_sales_target",
+  "default_purchase_warehouse",
   "total_monthly_sales",
   "column_break_goals",
   "default_selling_terms",
@@ -1029,6 +1032,22 @@
   {
    "fieldname": "accounts_closing_section",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company_account_by_currency_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company_account_by_currency",
+   "fieldtype": "Table",
+   "label": "Company Account By Currency",
+   "options": "Company Account By Currency"
+  },
+  {
+   "fieldname": "default_purchase_warehouse",
+   "fieldtype": "Link",
+   "label": "Default Purchase Warehouse",
+   "options": "Warehouse"
   }
  ],
  "grid_page_length": 50,

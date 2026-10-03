@@ -59,15 +59,27 @@ def validate_for_items(doc) -> None:
 
 
 def validate_duplicate_items(doc) -> None:
-	rows = [
-		(row.item_code, row.get("purchase_receipt"), row.get("purchase_order"))
-		for row in doc.get("items")
-		if row.item_code
-	]
-	if len(rows) != len(set(rows)) and not cint(
-		frappe.db.get_single_value("Buying Settings", "allow_multiple_items")
-	):
-		frappe.throw(_("Same item cannot be entered multiple times."))
+	if cint(frappe.db.get_single_value("Buying Settings", "allow_multiple_items") or 0):
+		return
+	items = set()
+	for row in doc.get("items"):
+		if not row.item_code:
+			continue
+		key = (
+			row.item_code,
+			row.get("uom"),
+			row.get("material_request"),
+			row.get("purchase_order"),
+			row.get("purchase_invoice"),
+			row.get("purchase_receipt"),
+		)
+		if key in items:
+			frappe.throw(
+				_("Row #{0}: Item {1} cannot be entered multiple times.").format(
+					row.idx, frappe.bold(row.item_code)
+				)
+			)
+		items.add(key)
 
 
 def set_stock_levels(row) -> None:

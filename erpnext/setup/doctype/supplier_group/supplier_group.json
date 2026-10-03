@@ -52,6 +52,7 @@
    "collapsible": 1,
    "fieldname": "section_credit_limit",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Credit Limit"
   },
   {

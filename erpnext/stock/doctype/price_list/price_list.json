@@ -76,6 +76,7 @@
   {
    "fieldname": "countries",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Applicable for Countries",
    "options": "Price List Country"
   }
