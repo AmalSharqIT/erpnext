@@ -10,7 +10,7 @@
  "filters": [],
  "idx": 3,
  "is_standard": "Yes",
- "modified": "2026-05-22 14:35:34.353508",
+ "modified": "2026-08-15",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Cash Flow",
@@ -21,13 +21,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Accounts User"
-  },
-  {
-   "role": "Accounts Manager"
-  },
-  {
-   "role": "Auditor"
+   "role": "System Manager"
   }
  ],
  "timeout": 0

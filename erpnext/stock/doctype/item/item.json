@@ -1106,7 +1106,7 @@
  "image_field": "image",
  "links": [],
  "make_attachments_public": 1,
- "modified": "2026-09-16 12:00:00.000000",
+ "modified": "2026-09-16",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
@@ -1122,7 +1122,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
@@ -1161,13 +1161,14 @@
    "role": "Manufacturing User"
   },
   {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "report": 1,
-   "role": "Desk User",
-   "select": 1,
-   "share": 1
+   "create": 1,
+   "read": 1,
+   "role": "Item Manager",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Material Request User"
   }
  ],
  "quick_entry": 1,
