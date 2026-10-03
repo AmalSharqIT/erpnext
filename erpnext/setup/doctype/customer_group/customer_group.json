@@ -140,7 +140,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-16",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Customer Group",
@@ -207,10 +207,6 @@
    "report": 1,
    "role": "Accounts User",
    "share": 1
-  },
-  {
-   "role": "Item Manager",
-   "select": 1
   },
   {
    "role": "Maintenance Manager",

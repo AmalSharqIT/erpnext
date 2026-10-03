@@ -17,7 +17,7 @@
  "generate_csv": 0,
  "idx": 3,
  "is_standard": "Yes",
- "modified": "2026-06-22 13:38:25.236839",
+ "modified": "2026-08-15",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Balance Sheet",
@@ -28,13 +28,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Accounts User"
-  },
-  {
-   "role": "Accounts Manager"
-  },
-  {
-   "role": "Auditor"
+   "role": "System Manager"
   }
  ],
  "synced_report": 0,

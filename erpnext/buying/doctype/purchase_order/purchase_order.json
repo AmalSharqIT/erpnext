@@ -1324,7 +1324,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-12 12:00:00.000000",
+ "modified": "2026-10-03",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
@@ -1351,16 +1351,11 @@
    "write": 1
   },
   {
-   "amend": 1,
    "cancel": 1,
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
    "read": 1,
    "report": 1,
    "role": "Purchase User",
-   "share": 1,
    "submit": 1,
    "write": 1
   },

@@ -562,7 +562,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-18",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",
@@ -570,11 +570,10 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "email": 1,
-   "print": 1,
+   "create": 1,
    "read": 1,
-   "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "write": 1
   },
   {
    "email": 1,
@@ -641,6 +640,10 @@
   },
   {
    "role": "Website Manager",
+   "select": 1
+  },
+  {
+   "role": "Item Manager",
    "select": 1
   }
  ],
