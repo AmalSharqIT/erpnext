@@ -10,12 +10,16 @@
  "label": "Invoicing",
  "link_to": "Invoicing",
  "link_type": "Workspace Sidebar",
- "modified": "2026-01-23 15:17:23.564795",
+ "modified": "2026-06-17",
  "modified_by": "Administrator",
  "name": "Invoicing",
  "owner": "Administrator",
  "parent_icon": "Accounting",
  "restrict_removal": 0,
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
  "standard": 1
 }
