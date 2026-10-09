@@ -7,6 +7,7 @@
  "creation": "2022-02-21 11:54:09.632218",
  "doctype": "DocType",
  "document_type": "Setup",
+ "documentation": "https://docs.frappe.io/erpnext/user/manual/en/employee",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
@@ -175,6 +176,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "last_name",
    "fieldtype": "Data",
+   "in_import_template": 1,
    "label": "Last Name"
   },
   {
@@ -369,6 +371,7 @@
   {
    "fieldname": "department",
    "fieldtype": "Link",
+   "in_import_template": 1,
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
@@ -380,7 +383,7 @@
   {
    "fieldname": "designation",
    "fieldtype": "Link",
-   "in_global_search": 1,
+   "in_import_template": 1,
    "in_list_view": 1,
    "in_preview": 1,
    "label": "Designation",
@@ -393,6 +396,7 @@
    "fieldname": "reports_to",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
+   "in_import_template": 1,
    "label": "Reports to",
    "mandatory_depends_on": "eval:!frappe.user.has_role('System Manager')",
    "oldfieldname": "reports_to",
@@ -402,6 +406,7 @@
   {
    "fieldname": "branch",
    "fieldtype": "Link",
+   "in_import_template": 1,
    "in_list_view": 1,
    "in_preview": 1,
    "label": "Branch",
@@ -416,6 +421,7 @@
    "fieldname": "holiday_list",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
+   "in_import_template": 1,
    "label": "Holiday List",
    "oldfieldname": "holiday_list",
    "oldfieldtype": "Link",
@@ -466,6 +472,8 @@
    "fieldname": "cell_number",
    "fieldtype": "Data",
    "in_preview": 1,
+   "in_global_search": 1,
+   "in_import_template": 1,
    "label": "Mobile",
    "options": "Phone"
   },
@@ -486,6 +494,8 @@
    "description": "Provide Email Address registered in company",
    "fieldname": "company_email",
    "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_import_template": 1,
    "label": "Company Email",
    "oldfieldname": "company_email",
    "oldfieldtype": "Data",
@@ -494,6 +504,8 @@
   {
    "fieldname": "personal_email",
    "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_import_template": 1,
    "label": "Personal Email",
    "options": "Email"
   },
@@ -889,7 +901,7 @@
    "label": "Number of Daughters"
   }
  ],
- "icon": "fa fa-user",
+ "icon": "user",
  "idx": 24,
  "image_field": "image",
  "is_tree": 1,

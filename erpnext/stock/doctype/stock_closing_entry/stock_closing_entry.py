@@ -249,6 +249,7 @@ class StockClosingEntry(Document):
 			if row.fifo_queue is not None:
 				row.fifo_queue = json.dumps(row.fifo_queue)
 
+			set_stock_value_and_valuation_rate(row)
 			new_doc = frappe.new_doc("Stock Closing Balance")
 			new_doc.update(row)
 			new_doc.posting_date = self.to_date
@@ -270,6 +271,11 @@ class StockClosingEntry(Document):
 			return parse_json(data)
 
 		return frappe._dict({})
+
+
+def set_stock_value_and_valuation_rate(row):
+	row.stock_value = flt(row.stock_value_difference)
+	row.valuation_rate = flt(row.stock_value / row.actual_qty) if row.actual_qty else 0.0
 
 
 def prepare_closing_stock_balance(name):
@@ -306,15 +312,19 @@ class StockClosing:
 					value_difference = self.get_value_difference(row, dimension_fields, key, counted_sles)
 
 					if key in closing_stock:
-						actual_qty = row.sabb_qty or row.actual_qty
+						actual_qty = row.sabb_qty if row.sabb_qty is not None else row.actual_qty
 						closing_stock[key].actual_qty += actual_qty
 						closing_stock[key].stock_value_difference += value_difference
 
-						if not row.actual_qty and row.qty_after_transaction is not None:
+						if (
+							row.sabb_qty is None
+							and not row.actual_qty
+							and row.qty_after_transaction is not None
+						):
 							closing_stock[key].actual_qty = row.qty_after_transaction
 
 						fifo_queue = closing_stock[key].fifo_queue
-						if fifo_queue:
+						if fifo_queue is not None:
 							self.update_fifo_queue(fifo_queue, actual_qty, row.posting_date)
 							closing_stock[key].fifo_queue = fifo_queue
 					else:
@@ -334,7 +344,9 @@ class StockClosing:
 		from a batch total that already nets out and strand a phantom balance value in the closing.
 		"""
 		if dimension_fields != ("item_code", "warehouse"):
-			return flt(row.sabb_stock_value_difference or row.stock_value_difference)
+			if row.sabb_stock_value_difference is not None:
+				return flt(row.sabb_stock_value_difference)
+			return flt(row.stock_value_difference)
 
 		# Only the first of an entry's fanned out rows carries the entry level value.
 		if row.name:
@@ -348,17 +360,27 @@ class StockClosing:
 	def update_fifo_queue(self, fifo_queue, actual_qty, posting_date):
 		if actual_qty > 0:
 			fifo_queue.append([actual_qty, get_date_str(posting_date)])
-		else:
-			remaining_qty = actual_qty
-			for idx, queue in enumerate(fifo_queue):
-				if queue[0] + remaining_qty >= 0:
-					queue[0] += remaining_qty
-					if queue[0] == 0:
-						fifo_queue.pop(idx)
-					break
-				else:
-					remaining_qty += queue[0]
-					fifo_queue.pop(0)
+			return
+
+		qty_to_consume = abs(actual_qty)
+		while qty_to_consume > 0 and fifo_queue:
+			if fifo_queue[0][0] > qty_to_consume:
+				fifo_queue[0][0] -= qty_to_consume
+				break
+
+			qty_to_consume -= fifo_queue[0][0]
+			fifo_queue.pop(0)
+
+	def get_initial_fifo_queue(self, row, actual_qty, has_serial_no):
+		if has_serial_no:
+			return None
+
+		if row.from_closing_balance and row.fifo_queue:
+			fifo_queue = json.loads(row.fifo_queue)
+			if not flt(sum(slot[0] for slot in fifo_queue) - actual_qty, 6):
+				return fifo_queue
+
+		return [[actual_qty, get_date_str(row.posting_date)]] if actual_qty else []
 
 	def get_initialized_entry(self, row, dimension_fields, value_difference):
 		item_details = frappe.get_cached_value(
@@ -372,7 +394,9 @@ class StockClosing:
 		# A carried forward Stock Closing Balance row has no qty_after_transaction, so an item that
 		# closed at zero qty (what an is_adjustment_entry write-off leaves behind) would seed the
 		# entry with None and break the next closing's `actual_qty +=`.
-		actual_qty = flt(row.sabb_qty or row.actual_qty or row.qty_after_transaction)
+		actual_qty = flt(
+			row.sabb_qty if row.sabb_qty is not None else row.actual_qty or row.qty_after_transaction
+		)
 
 		entry = frappe._dict(
 			{
@@ -384,9 +408,7 @@ class StockClosing:
 				"item_name": item_details.item_name,
 				"stock_uom": item_details.stock_uom,
 				"inventory_dimension_key": inventory_dimension_key,
-				"fifo_queue": [[actual_qty, get_date_str(row.posting_date)]]
-				if not item_details.has_serial_no
-				else [],
+				"fifo_queue": self.get_initial_fifo_queue(row, actual_qty, item_details.has_serial_no),
 			}
 		)
 
@@ -419,6 +441,7 @@ class StockClosing:
 					"valuation_rate",
 					"stock_value",
 					"stock_value_difference",
+					"fifo_queue",
 				],
 				filters={
 					"company": self.company,

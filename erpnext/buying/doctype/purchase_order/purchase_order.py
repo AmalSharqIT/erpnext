@@ -797,6 +797,7 @@ def close_or_unclose_purchase_orders(names, status):
 
 
 def set_missing_values(source, target):
+	target.set_transaction_date_exchange_rate()
 	target.run_method("set_missing_values")
 	target.run_method("calculate_taxes_and_totals")
 	target.run_method("set_use_serial_batch_fields")
@@ -879,7 +880,9 @@ def make_purchase_invoice(source_name, target_doc=None, args=None):
 @frappe.whitelist()
 def make_purchase_invoice_from_portal(purchase_order_name):
 	doc = get_mapped_purchase_invoice(purchase_order_name, ignore_permissions=True)
-	if frappe.session.user not in frappe.get_all("Portal User", {"parent": doc.supplier}, pluck="user"):
+	if frappe.session.user not in frappe.get_all(
+		"Portal User", {"parenttype": "Supplier", "parent": doc.supplier}, pluck="user"
+	):
 		frappe.throw(_("Not Permitted"), frappe.PermissionError)
 	doc.save()
 	if not frappe.in_test:

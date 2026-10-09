@@ -6,8 +6,10 @@ import json
 from collections import defaultdict
 
 import frappe
-from frappe import _, bold, qb, throw
+from frappe import _, _dict, bold, qb, throw
+from frappe.automation.doctype.auto_repeat.auto_repeat import month_map
 from frappe.contacts.doctype.address.address import get_address_display
+from frappe.model.document import Document
 from frappe.model.workflow import get_workflow_name
 from frappe.query_builder import Criterion, DocType
 from frappe.query_builder.custom import ConstantColumn
@@ -17,6 +19,8 @@ from frappe.utils import (
 	add_months,
 	cint,
 	comma_and,
+	cstr,
+	date_diff,
 	flt,
 	fmt_money,
 	formatdate,
@@ -29,6 +33,7 @@ from frappe.utils import (
 )
 
 import erpnext
+from erpnext import _refuse, require_permission
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
 	get_dimensions,
@@ -63,18 +68,18 @@ from erpnext.controllers.print_settings import (
 )
 from erpnext.controllers.sales_and_purchase_return import validate_return
 from erpnext.exceptions import InvalidCurrency
-from erpnext.selling.doctype.party_specific_item.party_specific_item import get_party_item_restrictions
+from erpnext.selling.doctype.party_specific_item.party_specific_item import get_restricted_items_condition
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.stock.doctype.item.item import get_uom_conv_factor
 from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 from erpnext.stock.get_item_details import (
 	NOT_APPLICABLE_TAX,
 	ItemDetailsCtx,
+	_get_item_details,
 	_get_item_tax_template,
 	_get_item_tax_template_from_item_group,
 	get_bin_details,
 	get_conversion_factor,
-	get_item_details,
 	get_item_tax_map,
 	get_item_warehouse_,
 )
@@ -788,6 +793,52 @@ class AccountsController(TransactionBase):
 		elif self.doctype in ("Quotation", "Purchase Order", "Sales Order"):
 			self.validate_non_invoice_documents_schedule()
 
+	def shift_service_dates(self, reference_doc, auto_repeat_doc):
+		"""Move item service dates into the new invoice period (used by Auto Repeat)."""
+		if not (self.from_date and self.to_date and reference_doc.from_date and reference_doc.to_date):
+			return
+
+		from_date = getdate(self.from_date)
+		reference_from_date = getdate(reference_doc.from_date)
+		months = (
+			(from_date.year - reference_from_date.year) * 12 + from_date.month - reference_from_date.month
+		)
+		days = date_diff(from_date, reference_from_date)
+		shift_by_months = auto_repeat_doc.frequency in month_map
+
+		reference_to_date = getdate(reference_doc.to_date)
+		to_date = getdate(self.to_date)
+
+		def shift(date):
+			# Keep the period end aligned, e.g. 1-28 Feb becomes 1-31 Mar.
+			if getdate(date) == reference_to_date:
+				return to_date
+			if not shift_by_months:
+				return add_days(date, days)
+			# Whole months never reverse a period, e.g. 29-31 Jan becomes 28-28 Feb.
+			shifted_date = getdate(add_months(date, months))
+			# Month ends stay month ends, e.g. 1-28 Feb becomes 1-31 Mar.
+			if getdate(date) == get_last_day(date):
+				shifted_date = get_last_day(shifted_date)
+			# Dates inside the reference period stay inside the new period, which can end earlier in the month.
+			if getdate(date) < reference_to_date:
+				return min(shifted_date, to_date)
+			return shifted_date
+
+		for item, reference_item in zip(self.items, reference_doc.items, strict=True):
+			if reference_item.service_start_date:
+				item.service_start_date = shift(reference_item.service_start_date)
+			if reference_item.service_end_date:
+				item.service_end_date = shift(reference_item.service_end_date)
+			# The new period can end later in the month, e.g. 30 Jan-26 Feb becomes 27 Feb-29 Mar.
+			# A start date moved to the period end can then pass the end date, so move the end date after it.
+			if (
+				item.service_start_date
+				and item.service_end_date
+				and getdate(item.service_end_date) < getdate(item.service_start_date)
+			):
+				item.service_end_date = add_days(to_date, 1)
+
 	def before_print(self, settings=None):
 		self.set_missing_terms()
 
@@ -1122,17 +1173,6 @@ class AccountsController(TransactionBase):
 					self.currency, self.company_currency, transaction_date, args, supplier
 				)
 
-			if (
-				self.currency
-				and buying_or_selling == "Buying"
-				and frappe.db.get_single_value("Buying Settings", "use_transaction_date_exchange_rate")
-				and self.doctype == "Purchase Invoice"
-			):
-				self.use_transaction_date_exchange_rate = True
-				self.conversion_rate = get_exchange_rate(
-					self.currency, self.company_currency, transaction_date, args, supplier
-				)
-
 	def set_missing_item_details(self, for_validate=False):
 		"""set missing item values"""
 		from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
@@ -1179,7 +1219,7 @@ class AccountsController(TransactionBase):
 					if self.get("is_subcontracted"):
 						ctx.is_subcontracted = self.is_subcontracted
 
-					ret = get_item_details(ctx, self, for_validate=for_validate, overwrite_warehouse=False)
+					ret = _get_item_details(ctx, self, for_validate=for_validate, overwrite_warehouse=False)
 					for fieldname, value in ret.items():
 						if item.meta.get_field(fieldname) and value is not None:
 							if (
@@ -1382,7 +1422,7 @@ class AccountsController(TransactionBase):
 		if self.get("taxes_and_charges"):
 			if not tax_master_doctype:
 				tax_master_doctype = self.meta.get_field("taxes_and_charges").options
-			self.extend("taxes", get_taxes_and_charges(tax_master_doctype, self.get("taxes_and_charges")))
+			self.extend("taxes", _get_taxes_and_charges(tax_master_doctype, self.get("taxes_and_charges")))
 
 	def append_taxes_from_item_tax_template(self):
 		if not frappe.get_single_value("Accounts Settings", "add_taxes_from_item_tax_template"):
@@ -2553,16 +2593,18 @@ class AccountsController(TransactionBase):
 		if not party:
 			return
 
-		restrictions = get_party_item_restrictions(party_type, party)
-		rows = self.get_rows_for_item_restrictions() if restrictions else []
+		restricted_items_condition = get_restricted_items_condition(party_type, party)
+		rows = self.get_rows_for_item_restrictions() if restricted_items_condition is not None else []
 		if not rows:
 			return
 
-		restricted_items = frappe.get_all(
-			"Item",
-			filters={"name": ("in", list({row.item_code for row in rows}))},
-			or_filters={field: ("in", list(values)) for field, values in restrictions.items()},
-			pluck="name",
+		item = frappe.qb.DocType("Item")
+		restricted_items = (
+			frappe.qb.from_(item)
+			.select(item.name)
+			.where(item.name.isin(list({row.item_code for row in rows})))
+			.where(restricted_items_condition)
+			.run(pluck=True)
 		)
 		for row in rows:
 			if row.item_code in restricted_items:
@@ -2771,7 +2813,7 @@ class AccountsController(TransactionBase):
 				if self.get("payment_terms_template"):
 					self.ignore_default_payment_terms_template = 1
 			elif self.get("payment_terms_template"):
-				data = get_payment_terms(
+				data = _get_payment_terms(
 					self.payment_terms_template, posting_date, grand_total, base_grand_total
 				)
 				for item in data:
@@ -3207,7 +3249,6 @@ class AccountsController(TransactionBase):
 
 		return False
 
-	@frappe.whitelist()
 	def repost_accounting_entries(self):
 		repost_ledger = frappe.new_doc("Repost Accounting Ledger")
 		repost_ledger.company = self.company
@@ -3345,6 +3386,13 @@ def validate_tax_master(master_doctype, master_name=None):
 
 @frappe.whitelist()
 def get_default_taxes_and_charges(master_doctype, tax_template=None, company=None):
+	default = _get_default_taxes_and_charges(master_doctype, tax_template, company)
+	if default and default.get("taxes_and_charges"):
+		require_permission(master_doctype, default["taxes_and_charges"], "select")
+	return default
+
+
+def _get_default_taxes_and_charges(master_doctype, tax_template=None, company=None):
 	if not company:
 		return {}
 
@@ -3359,12 +3407,18 @@ def get_default_taxes_and_charges(master_doctype, tax_template=None, company=Non
 
 	return {
 		"taxes_and_charges": default_tax,
-		"taxes": get_taxes_and_charges(master_doctype, default_tax),
+		"taxes": _get_taxes_and_charges(master_doctype, default_tax),
 	}
 
 
 @frappe.whitelist()
 def get_taxes_and_charges(master_doctype, master_name):
+	if master_name:
+		require_permission(master_doctype, master_name, "select")
+	return _get_taxes_and_charges(master_doctype, master_name)
+
+
+def _get_taxes_and_charges(master_doctype, master_name):
 	if not master_name:
 		return
 
@@ -3789,6 +3843,23 @@ def update_invoice_status():
 
 @frappe.whitelist()
 def get_payment_terms(
+	terms_template: str | None,
+	posting_date: str | None = None,
+	grand_total: float | int | str | None = None,
+	base_grand_total: float | int | str | None = None,
+	bill_date: str | None = None,
+):
+	if not terms_template:
+		return
+
+	terms_template = cstr(terms_template)
+	if not frappe.has_permission("Payment Terms Template", "read", doc=terms_template):
+		_refuse()
+
+	return _get_payment_terms(terms_template, posting_date, grand_total, base_grand_total, bill_date)
+
+
+def _get_payment_terms(
 	terms_template, posting_date=None, grand_total=None, base_grand_total=None, bill_date=None
 ):
 	if not terms_template:
@@ -3806,11 +3877,19 @@ def get_payment_terms(
 
 @frappe.whitelist()
 def get_payment_term_details(
-	term, posting_date=None, grand_total=None, base_grand_total=None, bill_date=None
+	term: str | _dict | Document,
+	posting_date: str | None = None,
+	grand_total: float | int | str | None = None,
+	base_grand_total: float | int | str | None = None,
+	bill_date: str | None = None,
 ):
 	term_details = frappe._dict()
 	if isinstance(term, str):
+		if not term or not frappe.has_permission("Payment Term", "select", doc=term):
+			_refuse()
 		term = frappe.get_doc("Payment Term", term)
+	elif not hasattr(term, "payment_term"):
+		_refuse()
 	else:
 		term_details.payment_term = term.payment_term
 
@@ -3993,7 +4072,7 @@ def get_new_child_item_warehouse(p_doc, item, trans_item: dict, child_doctype: s
 		if is_warehouse_required_for_new_child_item(child_doctype, item, trans_item):
 			frappe.throw(
 				_(
-					"Cannot find a default warehouse for item {0}. Please select one in the Update Items dialog, or set a default in the Item Master or in Stock Settings."
+					"Cannot find a default warehouse for item {0}. Please select one in the Update Items dialog, or set a default in the Item Master or in the Company."
 				).format(frappe.bold(item.item_code))
 			)
 		return None
@@ -4589,14 +4668,12 @@ def update_gl_dict_with_app_based_fields(doc, gl_dict):
 
 
 @frappe.whitelist()
-def get_missing_company_details(doctype, docname):
+def get_missing_company_details(doctype: str, docname: str):
 	from frappe.contacts.doctype.address.address import get_address_display_list
 
 	company = frappe.db.get_value(doctype, docname, "company")
-	if doctype in ["Purchase Order", "Purchase Invoice"]:
+	if doctype in ["Purchase Order", "Purchase Invoice", "Request for Quotation"]:
 		company_address = frappe.db.get_value(doctype, docname, "billing_address")
-	elif doctype in ["Request for Quotation"]:
-		company_address = frappe.db.get_value(doctype, docname, "shipping_address")
 	else:
 		company_address = frappe.db.get_value(doctype, docname, "company_address")
 
@@ -4725,7 +4802,7 @@ def update_doc_company_address(current_doctype, docname, company_address, detail
 		"Delivery Note": ("company_address", "company_address_display"),
 		"POS Invoice": ("company_address", "company_address_display"),
 		"Quotation": ("company_address", "company_address_display"),
-		"Request for Quotation": ("shipping_address", "shipping_address_display"),
+		"Request for Quotation": ("billing_address", "billing_address_display"),
 	}
 
 	address_field, display_field = address_field_map.get(

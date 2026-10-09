@@ -7,7 +7,7 @@ from frappe import _, bold, throw
 from frappe.utils import cint, flt, get_link_to_form, nowtime
 
 from erpnext.accounts.party import render_address
-from erpnext.controllers.accounts_controller import get_taxes_and_charges
+from erpnext.controllers.accounts_controller import _get_taxes_and_charges
 from erpnext.controllers.sales_and_purchase_return import get_rate_for_return, is_batch_expired
 from erpnext.controllers.stock_controller import StockController
 from erpnext.stock.doctype.item.item import set_item_default
@@ -153,7 +153,7 @@ class SellingController(StockController):
 			)
 
 		if self.get("taxes_and_charges") and not self.get("taxes") and not for_validate:
-			taxes = get_taxes_and_charges("Sales Taxes and Charges Template", self.taxes_and_charges)
+			taxes = _get_taxes_and_charges("Sales Taxes and Charges Template", self.taxes_and_charges)
 			for tax in taxes:
 				self.append("taxes", tax)
 
@@ -888,8 +888,8 @@ class SellingController(StockController):
 		if self.get("is_return"):
 			return
 
-		sample_retention_warehouse = frappe.db.get_single_value(
-			"Stock Settings", "sample_retention_warehouse"
+		sample_retention_warehouse = frappe.get_cached_value(
+			"Company", self.company, "sample_retention_warehouse"
 		)
 		if not sample_retention_warehouse:
 			return
@@ -1172,7 +1172,7 @@ def set_default_income_account_for_item(obj):
 	    obj: Transaction document containing items table with income_account field
 	"""
 	company_default = frappe.get_cached_value("Company", obj.company, "default_income_account")
-	for d in obj.get("items", default=[]):
+	for d in sorted(obj.get("items", default=[]), key=lambda row: row.item_code or ""):
 		income_account = getattr(d, "income_account", None)
 		if d.item_code and income_account and income_account != company_default:
 			set_item_default(d.item_code, obj.company, "income_account", income_account)
