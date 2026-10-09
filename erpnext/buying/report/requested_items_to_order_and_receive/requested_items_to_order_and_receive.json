@@ -7,7 +7,7 @@
  "doctype": "Report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2020-07-10 14:28:21.041310",
+ "modified": "2026-08-24",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Requested Items to Order and Receive",
@@ -29,6 +29,9 @@
   },
   {
    "role": "Purchase User"
+  },
+  {
+   "role": "Material Request User"
   }
  ]
 }

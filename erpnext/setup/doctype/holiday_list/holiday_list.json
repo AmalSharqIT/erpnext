@@ -156,7 +156,7 @@
  "icon": "calendar-off",
  "idx": 1,
  "links": [],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-16",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Holiday List",
@@ -170,13 +170,13 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "HR Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
   {
-   "role": "HR User",
-   "select": 1
+   "read": 1,
+   "role": "HR User"
   },
   {
    "role": "Accounts Manager",
@@ -196,6 +196,15 @@
   },
   {
    "role": "Sales Manager",
+   "select": 1
+  },
+  {
+   "read": 1,
+   "role": "HR Manager",
+   "write": 1
+  },
+  {
+   "role": "HR User - Branch",
    "select": 1
   }
  ],

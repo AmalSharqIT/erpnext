@@ -1158,6 +1158,11 @@ class AccountsController(TransactionBase):
 					)
 
 			# currency
+			supplier = (
+				self.supplier
+				if self.doctype in ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]
+				else None
+			)
 			if not self.currency:
 				self.currency = self.price_list_currency
 				self.conversion_rate = self.plc_conversion_rate
@@ -1165,7 +1170,7 @@ class AccountsController(TransactionBase):
 				self.conversion_rate = 1.0
 			elif not self.conversion_rate:
 				self.conversion_rate = get_exchange_rate(
-					self.currency, self.company_currency, transaction_date, args
+					self.currency, self.company_currency, transaction_date, args, supplier
 				)
 
 	def set_missing_item_details(self, for_validate=False):

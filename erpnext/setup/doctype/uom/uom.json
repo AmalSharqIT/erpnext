@@ -78,7 +78,7 @@
  "icon": "ruler",
  "idx": 1,
  "links": [],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-25",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "UOM",
@@ -94,7 +94,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
@@ -131,8 +131,12 @@
    "share": 1
   },
   {
-   "role": "Desk User",
-   "select": 1
+   "read": 1,
+   "role": "Item Manager"
+  },
+  {
+   "read": 1,
+   "role": "Purchase User"
   }
  ],
  "quick_entry": 1,

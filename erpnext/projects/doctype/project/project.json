@@ -493,7 +493,7 @@
  "index_web_pages_for_search": 1,
  "links": [],
  "max_attachments": 4,
- "modified": "2026-09-30 23:24:44.044604",
+ "modified": "2026-09-30",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",
@@ -527,7 +527,7 @@
    "permlevel": 1,
    "read": 1,
    "report": 1,
-   "role": "Desk User"
+   "role": "System Manager"
   },
   {
    "create": 1,
@@ -546,17 +546,9 @@
    "export": 1,
    "print": 1,
    "report": 1,
-   "role": "Employee",
+   "role": "System Manager",
    "select": 1,
    "share": 1
-  },
-  {
-   "role": "HR User",
-   "select": 1
-  },
-  {
-   "role": "HR Manager",
-   "select": 1
   },
   {
    "role": "Accounts Manager",
@@ -596,10 +588,6 @@
   },
   {
    "role": "Purchase Master Manager",
-   "select": 1
-  },
-  {
-   "role": "Purchase User",
    "select": 1
   },
   {

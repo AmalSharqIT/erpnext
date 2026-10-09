@@ -14,6 +14,7 @@ class CustomsTariffNumber(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		customs_duty_rate: DF.Float
 		description: DF.Data | None
 		tariff_number: DF.Data
 	# end: auto-generated types

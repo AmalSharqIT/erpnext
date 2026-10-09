@@ -7,7 +7,6 @@ frappe.ui.form.on("Customer", {
 			Opportunity: "Opportunity",
 			Quotation: "Quotation",
 			"Sales Order": "Sales Order",
-			"Pricing Rule": "Pricing Rule",
 			"Payment Entry": "Payment Entry",
 		};
 		frm.make_methods = {
@@ -32,7 +31,6 @@ frappe.ui.form.on("Customer", {
 					method: "erpnext.selling.doctype.customer.customer.make_payment_entry",
 					frm: frm,
 				}),
-			"Pricing Rule": () => frm.trigger("make_pricing_rule"),
 			"Bank Account": () => erpnext.utils.make_bank_account(frm.doc.doctype, frm.doc.name),
 		};
 
