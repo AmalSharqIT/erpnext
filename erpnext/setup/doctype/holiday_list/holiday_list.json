@@ -150,13 +150,14 @@
    "default": "0",
    "fieldname": "is_half_day",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Half Day"
   }
  ],
  "icon": "calendar-off",
  "idx": 1,
  "links": [],
- "modified": "2026-09-16",
+ "modified": "2026-10-11",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Holiday List",
