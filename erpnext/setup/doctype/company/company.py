@@ -484,7 +484,7 @@ class Company(NestedSet):
 		)
 
 	def create_default_departments(self):
-		root = get_root_of("Department") or "All Departments"
+		root = get_root_of("Department") or _("All Departments")
 		records = [
 			# Department
 			{
