@@ -36,14 +36,14 @@
   {
    "allow_in_quick_entry": 1,
    "fieldname": "customs_duty_rate",
-   "fieldtype": "Float",
+   "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "Customs Duty Rate"
   }
  ],
  "icon": "hash",
  "links": [],
- "modified": "2026-09-22",
+ "modified": "2026-10-12",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Customs Tariff Number",
