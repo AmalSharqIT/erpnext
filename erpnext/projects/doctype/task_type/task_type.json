@@ -13,7 +13,8 @@
   {
    "fieldname": "weight",
    "fieldtype": "Float",
-   "label": "Weight"
+   "label": "Weight",
+   "non_negative": 1
   },
   {
    "fieldname": "description",
@@ -23,7 +24,7 @@
  ],
  "icon": "tag",
  "links": [],
- "modified": "2026-06-14",
+ "modified": "2026-10-05",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task Type",
