@@ -256,8 +256,13 @@ class BuyingController(SubcontractingController):
 			return
 
 		self.use_transaction_date_exchange_rate = 1
+		supplier = (
+			self.supplier
+			if self.doctype in ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]
+			else None
+		)
 		self.conversion_rate = get_exchange_rate(
-			self.currency, self.company_currency, self.posting_date, "for_buying"
+			self.currency, self.company_currency, self.posting_date, "for_buying", supplier
 		)
 
 	def set_supplier_from_item_default(self):
