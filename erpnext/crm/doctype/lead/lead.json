@@ -555,19 +555,13 @@
  "idx": 5,
  "image_field": "image",
  "links": [],
- "modified": "2026-09-30 23:24:44.044604",
+ "modified": "2026-09-30",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
-  {
-   "permlevel": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Desk User"
-  },
   {
    "create": 1,
    "email": 1,

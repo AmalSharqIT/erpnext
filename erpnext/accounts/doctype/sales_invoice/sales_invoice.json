@@ -252,6 +252,7 @@
   },
   {
    "bold": 1,
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "hide_days": 1,
@@ -308,6 +309,7 @@
    "allow_on_submit": 1,
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Project",
@@ -321,6 +323,7 @@
    "default": "0",
    "fieldname": "is_pos",
    "fieldtype": "Check",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Include Payment (POS)",
@@ -471,6 +474,7 @@
    "collapsible_depends_on": "po_no",
    "fieldname": "customer_po_details",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Customer PO Details"
@@ -598,6 +602,7 @@
   {
    "fieldname": "company_address",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Company Address Name",
@@ -607,6 +612,7 @@
   {
    "fieldname": "company_address_display",
    "fieldtype": "Text Editor",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Company Address",
@@ -693,6 +699,7 @@
    "default": "0",
    "fieldname": "ignore_pricing_rule",
    "fieldtype": "Check",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Ignore Pricing Rule",
@@ -724,6 +731,7 @@
    "description": "If checked, updates inventory; stock and accounting entries are created together. Leave unchecked if a Delivery Note is created separately.",
    "fieldname": "update_stock",
    "fieldtype": "Check",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Update Stock",
@@ -801,6 +809,7 @@
    "collapsible_depends_on": "eval:doc.total_billing_amount > 0 || doc.total_billing_hours > 0",
    "fieldname": "time_sheet_list",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_border": 1,
    "hide_days": 1,
    "hide_seconds": 1,
@@ -911,6 +920,7 @@
   {
    "fieldname": "taxes_and_charges",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Sales Taxes and Charges Template",
@@ -928,6 +938,7 @@
   {
    "fieldname": "shipping_rule",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Shipping Rule",
@@ -938,6 +949,7 @@
   {
    "fieldname": "tax_category",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Tax Category",
@@ -954,6 +966,7 @@
   {
    "fieldname": "taxes",
    "fieldtype": "Table",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Sales Taxes and Charges",
@@ -989,6 +1002,7 @@
   {
    "fieldname": "base_total_taxes_and_charges",
    "fieldtype": "Currency",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Total Taxes and Charges (Company Currency)",
@@ -1007,6 +1021,7 @@
   {
    "fieldname": "total_taxes_and_charges",
    "fieldtype": "Currency",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Total Taxes and Charges",
@@ -1048,6 +1063,7 @@
    "default": "0",
    "fieldname": "redeem_loyalty_points",
    "fieldtype": "Check",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Redeem Loyalty Points",
@@ -1314,6 +1330,7 @@
   {
    "fieldname": "payment_schedule_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Payment Terms"
@@ -1551,6 +1568,7 @@
    "collapsible": 1,
    "fieldname": "edit_printing_settings",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Print Settings"
@@ -1677,6 +1695,7 @@
   {
    "fieldname": "debit_to",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Debit To",
@@ -1684,7 +1703,6 @@
    "oldfieldtype": "Link",
    "options": "Account",
    "print_hide": 1,
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -1791,6 +1809,7 @@
    "collapsible": 1,
    "fieldname": "subscription_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Subscription"
@@ -1882,6 +1901,7 @@
    "fetch_from": "customer.is_internal_customer",
    "fieldname": "is_internal_customer",
    "fieldtype": "Check",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Is Internal Customer",
@@ -1910,6 +1930,7 @@
    "fetch_from": "customer.represents_company",
    "fieldname": "represents_company",
    "fieldtype": "Link",
+   "hidden": 1,
    "ignore_user_permissions": 1,
    "label": "Represents Company",
    "options": "Company",
@@ -1929,6 +1950,7 @@
    "description": "Issue a debit note against an existing Sales Invoice to adjust the rate. The quantity will be retained from the original invoice.",
    "fieldname": "is_debit_note",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Rate Adjustment Entry (Debit Note)"
   },
   {
@@ -1949,6 +1971,7 @@
    "allow_on_submit": 1,
    "fieldname": "dispatch_address_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Dispatch Address Name",
    "options": "Address",
    "print_hide": 1
@@ -1957,6 +1980,7 @@
    "allow_on_submit": 1,
    "fieldname": "dispatch_address",
    "fieldtype": "Text Editor",
+   "hidden": 1,
    "label": "Dispatch Address",
    "read_only": 1
   },
@@ -1993,6 +2017,7 @@
    "depends_on": "eval: doc.apply_discount_on == \"Grand Total\"",
    "fieldname": "is_cash_or_non_trade_discount",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Cash or Non Trade Discount"
   },
   {
@@ -2085,6 +2110,7 @@
   {
    "fieldname": "incoterm",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Incoterm",
    "options": "Incoterm"
   },
@@ -2159,6 +2185,7 @@
   {
    "fieldname": "utm_campaign",
    "fieldtype": "Link",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Campaign",
@@ -2181,6 +2208,7 @@
   {
    "fieldname": "company_contact_person",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Company Contact Person",
    "options": "Contact",
    "print_hide": 1
@@ -2299,6 +2327,7 @@
    "collapsible_depends_on": "sales_team",
    "fieldname": "sales_team_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Sales Team",
@@ -2309,6 +2338,7 @@
    "collapsible_depends_on": "sales_partner",
    "fieldname": "commission_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Commission",
@@ -2368,7 +2398,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2026-09-30 23:24:44.044604",
+ "modified": "2026-09-30",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
@@ -2406,11 +2436,6 @@
    "read": 1,
    "role": "Accounts Manager",
    "write": 1
-  },
-  {
-   "permlevel": 1,
-   "read": 1,
-   "role": "All"
   }
  ],
  "quick_entry": 1,
