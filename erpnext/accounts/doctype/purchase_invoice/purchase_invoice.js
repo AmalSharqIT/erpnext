@@ -140,22 +140,6 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 			}
 		}
 
-		if (
-			doc.docstatus == 1 &&
-			doc.outstanding_amount > 0 &&
-			!cint(doc.is_return) &&
-			!doc.on_hold &&
-			frappe.boot.user.in_create.includes("Payment Request")
-		) {
-			this.frm.add_custom_button(
-				__("Payment Request"),
-				function () {
-					me.make_payment_request_with_schedule();
-				},
-				__("Create")
-			);
-		}
-
 		if (doc.docstatus === 0) {
 			this.frm.add_custom_button(
 				__("Purchase Order"),
@@ -358,6 +342,7 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 	supplier() {
 		var me = this;
 
+		frappe.ui.form.trigger(me.frm.doc.doctype, "currency");
 		// Do not update if inter company reference is there as the details will already be updated
 		if (this.frm.updating_party_details || this.frm.doc.inter_company_invoice_reference) return;
 

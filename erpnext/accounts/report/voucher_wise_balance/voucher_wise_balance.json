@@ -10,7 +10,7 @@
  "is_standard": "Yes",
  "json": "{}",
  "letter_head": "LetterHead",
- "modified": "2023-06-27 16:40:32.493725",
+ "modified": "2026-08-15",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Voucher-wise Balance",
@@ -21,13 +21,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Accounts User"
-  },
-  {
-   "role": "Accounts Manager"
-  },
-  {
-   "role": "Auditor"
+   "role": "System Manager"
   }
  ]
 }
