@@ -9,7 +9,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letterhead": null,
- "modified": "2024-09-09 12:31:25.295976",
+ "modified": "2026-08-15",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Invalid Ledger Entries",
@@ -18,6 +18,10 @@
  "ref_doctype": "GL Entry",
  "report_name": "Invalid Ledger Entries",
  "report_type": "Script Report",
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
  "timeout": 0
 }
