@@ -10,16 +10,12 @@
  "label": "Projects",
  "link_to": "Projects",
  "link_type": "Workspace Sidebar",
- "modified": "2026-07-03",
+ "modified": "2026-07-03 20:07:01.226383",
  "modified_by": "Administrator",
  "name": "Projects",
  "owner": "Administrator",
- "parent_icon": "",
+ "parent_icon": "ERPNext",
  "restrict_removal": 0,
- "roles": [
-  {
-   "role": "System Manager"
-  }
- ],
+ "roles": [],
  "standard": 1
 }
