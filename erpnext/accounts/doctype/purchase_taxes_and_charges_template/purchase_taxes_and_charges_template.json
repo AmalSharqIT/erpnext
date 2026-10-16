@@ -78,7 +78,7 @@
  "icon": "badge-percent",
  "idx": 1,
  "links": [],
- "modified": "2026-10-05 12:00:00.000000",
+ "modified": "2026-10-05",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Taxes and Charges Template",
@@ -101,10 +101,6 @@
    "role": "Purchase Master Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "role": "Purchase User"
   },
   {
    "role": "Accounts Manager",
