@@ -766,7 +766,7 @@
  "image_field": "image",
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-30 23:24:44.044604",
+ "modified": "2026-09-30",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "BOM",
@@ -805,10 +805,6 @@
   {
    "read": 1,
    "role": "Purchase Manager"
-  },
-  {
-   "read": 1,
-   "role": "Purchase User"
   },
   {
    "role": "Sales Manager",
