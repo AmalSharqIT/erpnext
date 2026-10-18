@@ -55,6 +55,7 @@ class PurchaseReceiptItem(Document):
 		legacy_code: DF.Data | None
 		manufacturer: DF.Link | None
 		manufacturer_part_no: DF.Data | None
+		mapped_additional_discount_amount: DF.Currency
 		margin_rate_or_amount: DF.Float
 		margin_type: DF.Literal["", "Percentage", "Amount"]
 		material_request: DF.Link | None
