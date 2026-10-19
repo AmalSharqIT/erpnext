@@ -5,6 +5,7 @@
 import json
 
 import frappe
+from erpriva.utils import has_doctype_permlevel
 from frappe import ValidationError, _, msgprint
 from frappe.contacts.doctype.address.address import render_address
 from frappe.utils import cint, flt, format_date, get_link_to_form, getdate
@@ -36,6 +37,16 @@ class BuyingController(SubcontractingController):
 		self.flags.ignore_permlevel_for_fields = ["buying_price_list", "price_list_currency"]
 
 	def validate(self):
+		if (
+			self.doctype in ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]
+			and not has_doctype_permlevel(self.doctype, 1, "write")
+			and (
+				self.has_value_changed("supplier")
+				or self.has_value_changed("posting_date")
+				or self.has_value_changed("transaction_date")
+			)
+		):
+			self.conversion_rate = None
 		self.set_rate_for_standalone_debit_note()
 
 		super().validate()
@@ -245,8 +256,13 @@ class BuyingController(SubcontractingController):
 			return
 
 		self.use_transaction_date_exchange_rate = 1
+		supplier = (
+			self.supplier
+			if self.doctype in ["Purchase Order", "Purchase Receipt", "Purchase Invoice"]
+			else None
+		)
 		self.conversion_rate = get_exchange_rate(
-			self.currency, self.company_currency, self.posting_date, "for_buying"
+			self.currency, self.company_currency, self.posting_date, "for_buying", supplier
 		)
 
 	def set_supplier_from_item_default(self):
