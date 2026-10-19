@@ -462,6 +462,9 @@ class StockController(AccountsController):
 		if table_name == "packed_items":
 			parent_details = self.get_parent_details_for_packed_items()
 
+		auto_pick_outward = self.auto_picks_outward_serial_batch()
+		picked_serial_nos = self.get_serial_nos_used_in_rows() if auto_pick_outward else None
+
 		for row in self.get(table_name):
 			item_code = row.get("rm_item_code") or row.get("item_code")
 			if not item_code or not self.is_serial_batch_item(item_code):
@@ -475,7 +478,8 @@ class StockController(AccountsController):
 				self.validate_serial_nos_and_batches_with_bundle(row)
 
 			if not row.serial_no and not row.batch_no and not row.get("rejected_serial_no"):
-				continue
+				if not (auto_pick_outward and row.get("use_serial_batch_fields") and flt(row.get("qty")) > 0):
+					continue
 
 			if not row.use_serial_batch_fields and (
 				row.serial_no or row.batch_no or row.get("rejected_serial_no")
@@ -508,11 +512,52 @@ class StockController(AccountsController):
 
 				if row.get("qty") or row.get("consumed_qty") or row.get("stock_qty"):
 					self.update_bundle_details(bundle_details, table_name, row, parent_details=parent_details)
-					self.create_serial_batch_bundle(bundle_details, row)
+					self.create_auto_picked_bundle(bundle_details, row, picked_serial_nos)
 
 				if row.get("rejected_qty"):
 					self.update_bundle_details(bundle_details, table_name, row, is_rejected=True)
 					self.create_serial_batch_bundle(bundle_details, row)
+
+	def get_serial_nos_used_in_rows(self):
+		from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
+
+		picked_serial_nos = defaultdict(list)
+		bundle_items = {}
+		for table_name in ("items", "packed_items"):
+			for row in self.get(table_name) or []:
+				item_code = row.get("rm_item_code") or row.item_code
+				if row.get("serial_no"):
+					picked_serial_nos[item_code].extend(get_serial_nos(row.serial_no))
+				elif row.get("serial_and_batch_bundle"):
+					bundle_items[row.serial_and_batch_bundle] = item_code
+
+		if bundle_items:
+			for entry in frappe.get_all(
+				"Serial and Batch Entry",
+				filters={"parent": ("in", list(bundle_items)), "serial_no": ("is", "set")},
+				fields=["parent", "serial_no"],
+			):
+				picked_serial_nos[bundle_items[entry.parent]].append(entry.serial_no)
+
+		return picked_serial_nos
+
+	def create_auto_picked_bundle(self, bundle_details, row, picked_serial_nos):
+		if picked_serial_nos is None or row.serial_no:
+			self.create_serial_batch_bundle(bundle_details, row)
+			return
+
+		item_code = bundle_details["item_code"]
+		bundle_details["ignore_serial_nos"] = list(picked_serial_nos[item_code])
+		sn_doc = self.create_serial_batch_bundle(bundle_details, row)
+		picked_serial_nos[item_code].extend(d.serial_no for d in sn_doc.get("entries") or [] if d.serial_no)
+
+	def auto_picks_outward_serial_batch(self):
+		if self.doctype not in ("Delivery Note", "Sales Invoice", "POS Invoice") or self.get("is_return"):
+			return False
+
+		return bool(
+			frappe.get_single_value("Stock Settings", "auto_create_serial_and_batch_bundle_for_outward")
+		)
 
 	def get_parent_details_for_packed_items(self):
 		parent_details = frappe._dict()
@@ -752,6 +797,8 @@ class StockController(AccountsController):
 
 		row.set(field, sn_doc.name)
 		row.db_set({field: sn_doc.name})
+
+		return sn_doc
 
 	def validate_serial_nos_and_batches_with_bundle(self, row):
 		from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
@@ -1816,7 +1863,7 @@ class StockController(AccountsController):
 			frappe.throw(_("Internal transfers can only be done in company's default currency"))
 
 	def validate_packed_items(self):
-		if self.doctype in ("Sales Invoice", "Delivery Note Item") and self.get("packed_items"):
+		if self.doctype == "Sales Invoice" and self.get("packed_items"):
 			frappe.throw(_("Packed Items cannot be transferred internally"))
 
 	def validate_internal_transfer_qty(self):
@@ -1824,9 +1871,9 @@ class StockController(AccountsController):
 			return
 
 		self.__inter_company_reference = (
-			self.get("inter_company_reference")
+			self.get("inter_company_invoice_reference")
 			if self.doctype == "Purchase Invoice"
-			else self.get("inter_company_invoice_reference")
+			else self.get("inter_company_reference")
 		)
 
 		item_wise_transfer_qty = self.get_item_wise_inter_transfer_qty()
@@ -1851,13 +1898,16 @@ class StockController(AccountsController):
 				)
 
 			if recevied_qty > flt(transferred_qty, precision):
+				from erpnext.controllers.status_updater import OverAllowanceError
+
 				frappe.throw(
 					_("For Item {0} cannot be received more than {1} qty against the {2} {3}").format(
 						bold(key[1]),
 						bold(flt(transferred_qty, precision)),
 						bold(parent_doctype),
 						get_link_to_form(parent_doctype, self.__inter_company_reference),
-					)
+					),
+					OverAllowanceError,
 				)
 
 	def get_item_wise_inter_transfer_qty(self):
@@ -1882,13 +1932,34 @@ class StockController(AccountsController):
 			)
 			.where((parent_tab.name == self.__inter_company_reference) & (parent_tab.docstatus == 1))
 		)
+		if parent_doctype == "Delivery Note":
+			query = query.select(child_tab.returned_qty, child_tab.stock_qty, child_tab.conversion_factor)
 
 		data = query.run(as_dict=True)
 		item_wise_transfer_qty = defaultdict(float)
 		for row in data:
-			item_wise_transfer_qty[(row.name, row.item_code)] += flt(row.qty)
+			returned_qty = flt(row.get("returned_qty")) / (flt(row.get("conversion_factor")) or 1)
+			item_wise_transfer_qty[(row.name, row.item_code)] += flt(row.qty) - returned_qty
+
+		if parent_doctype == "Delivery Note":
+			self.add_component_transfer_qty(item_wise_transfer_qty, self.__inter_company_reference, data)
 
 		return item_wise_transfer_qty
+
+	def add_component_transfer_qty(self, item_wise_transfer_qty, delivery_note, bundle_rows):
+		from erpnext.stock.doctype.delivery_note.delivery_note import get_pending_component_qty
+
+		bundle_rows = {row.name: row for row in bundle_rows}
+		for packed in frappe.get_all(
+			"Packed Item",
+			filters={"parent": delivery_note, "parenttype": "Delivery Note"},
+			fields=["name", "item_code", "qty", "parent_detail_docname"],
+		):
+			if bundle_row := bundle_rows.get(packed.parent_detail_docname):
+				item_wise_transfer_qty.pop((bundle_row.name, bundle_row.item_code), None)
+				item_wise_transfer_qty[(packed.name, packed.item_code)] += get_pending_component_qty(
+					packed, bundle_row
+				)
 
 	def get_item_wise_inter_received_qty(self):
 		child_doctype = self.doctype + " Item"
@@ -1918,16 +1989,24 @@ class StockController(AccountsController):
 		else:
 			query = query.select(
 				child_tab.delivery_note_item.as_("name"),
+				child_tab.delivery_note_packed_item,
 			)
 
 			query = query.where(parent_tab.inter_company_reference == self.inter_company_reference)
 
-		data = query.run(as_dict=True)
-		item_wise_transfer_qty = defaultdict(float)
-		for row in data:
-			item_wise_transfer_qty[(row.name, row.item_code)] += flt(row.qty)
+		query = query.where(parent_tab.name != self.name)
+		item_wise_received_qty = defaultdict(float)
+		for row in query.run(as_dict=True):
+			item_wise_received_qty[(row.get("delivery_note_packed_item") or row.name, row.item_code)] += flt(
+				row.qty
+			)
 
-		return item_wise_transfer_qty
+		reference_field = "sales_invoice_item" if self.doctype == "Purchase Invoice" else "delivery_note_item"
+		for row in self.items:
+			reference = row.get("delivery_note_packed_item") or row.get(reference_field)
+			item_wise_received_qty[(reference, row.item_code)] += flt(row.qty)
+
+		return item_wise_received_qty
 
 	def validate_putaway_capacity(self):
 		# if over receipt is attempted while 'apply putaway rule' is disabled
