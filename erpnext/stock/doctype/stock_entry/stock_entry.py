@@ -12,7 +12,7 @@ from frappe import _, bold
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from frappe.query_builder import DocType
-from frappe.query_builder.functions import Coalesce, Max, Sum
+from frappe.query_builder.functions import Coalesce, Max, NullIf, Sum
 from frappe.utils import (
 	cint,
 	comma_or,
@@ -65,6 +65,7 @@ from erpnext.stock.stock_ledger import (
 	get_previous_sle,
 	get_valuation_rate,
 	make_sl_entries,
+	run_pending_dimension_checks,
 )
 from erpnext.stock.utils import _get_incoming_rate, get_bin, get_combine_datetime
 
@@ -862,7 +863,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 					flt(item.qty) * flt(item.conversion_factor), self.precision("transfer_qty", item)
 				)
 
-			if self.purpose == "Subcontracting Delivery":
+			if self.purpose in ["Subcontracting Delivery", "Subcontracting Return"]:
 				item.expense_account = frappe.get_value("Company", self.company, "default_expense_account")
 
 	def validate_fg_completed_qty(self):
@@ -969,7 +970,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 				)
 
 			if (
-				self.purpose not in ["Material Issue", "Subcontracting Delivery"]
+				self.purpose not in ["Material Issue", "Subcontracting Delivery", "Subcontracting Return"]
 				and acc_details.account_type == "Cost of Goods Sold"
 			):
 				frappe.msgprint(
@@ -2100,6 +2101,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 			subcontract_order = frappe.get_doc(
 				self.subcontract_data.order_doctype, self.get(self.subcontract_data.order_field)
 			)
+			qty_in_entry = defaultdict(float)
 			for se_item in self.items:
 				item_code = se_item.original_item or se_item.item_code
 				precision = cint(frappe.db.get_default("float_precision")) or 3
@@ -2158,17 +2160,14 @@ class StockEntry(StockController, SubcontractingInwardController):
 					.where(
 						(se.purpose == "Send to Subcontractor")
 						& (se.docstatus == 1)
-						& (se_detail.item_code == se_item.item_code)
+						& (Coalesce(NullIf(se_detail.original_item, ""), se_detail.item_code) == item_code)
 						& (
 							(
 								(se.purchase_order == self.purchase_order)
 								& (se_detail.po_detail == se_item.po_detail)
 							)
 							if self.subcontract_data.order_doctype == "Purchase Order"
-							else (
-								(se.subcontracting_order == self.subcontracting_order)
-								& (se_detail.sco_rm_detail == se_item.sco_rm_detail)
-							)
+							else (se.subcontracting_order == self.subcontracting_order)
 						)
 					)
 				).run()[0][0] or 0
@@ -2184,15 +2183,20 @@ class StockEntry(StockController, SubcontractingInwardController):
 							(se.purpose == "Material Transfer")
 							& (se.docstatus == 1)
 							& (se.is_return == 1)
-							& (se_detail.item_code == se_item.item_code)
-							& (se_detail.sco_rm_detail == se_item.sco_rm_detail)
+							& (
+								Coalesce(NullIf(se_detail.original_item, ""), se_detail.item_code)
+								== item_code
+							)
 							& (se.subcontracting_order == self.subcontracting_order)
 						)
 					).run()[0][0] or 0
 
-				if flt(total_supplied + se_item.transfer_qty - total_returned, precision) > flt(
-					total_allowed, precision
-				):
+				transferred_qty = (
+					total_supplied + qty_in_entry[item_code] + se_item.transfer_qty - total_returned
+				)
+				qty_in_entry[item_code] += se_item.transfer_qty
+
+				if flt(transferred_qty, precision) > flt(total_allowed, precision):
 					frappe.throw(
 						_("Row #{0}: Item {1} cannot be transferred more than {2} against {3} {4}").format(
 							se_item.idx,
@@ -2206,7 +2210,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 					filters = {
 						"parent": self.get(self.subcontract_data.order_field),
 						"docstatus": 1,
-						"rm_item_code": se_item.item_code,
+						"rm_item_code": se_item.original_item or se_item.item_code,
 						"main_item_code": se_item.subcontracted_item,
 					}
 
@@ -2239,7 +2243,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 					filters = {
 						"parent": self.get(self.subcontract_data.order_field),
 						"docstatus": 1,
-						"rm_item_code": row.item_code,
+						"rm_item_code": row.original_item or row.item_code,
 						"main_item_code": row.subcontracted_item,
 					}
 
@@ -2382,7 +2386,9 @@ class StockEntry(StockController, SubcontractingInwardController):
 			)
 			return
 
-		make_sl_entries(source_entries, allow_negative_stock, via_landed_cost_voucher)
+		make_sl_entries(
+			source_entries, allow_negative_stock, via_landed_cost_voucher, defer_dimension_checks=True
+		)
 		if self.recalculate_for_bundles_picked_while_posting():
 			valuation_rates = {d.name: flt(d.valuation_rate) for d in self.items}
 			for sle in target_entries:
@@ -2393,6 +2399,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 			allow_negative_stock=allow_negative_stock,
 			via_landed_cost_voucher=via_landed_cost_voucher,
 		)
+		run_pending_dimension_checks(self.doctype, self.name)
 
 	def recalculate_for_bundles_picked_while_posting(self) -> bool:
 		"""Reload first: posting wrote the picked bundles and their outgoing rates to the rows."""
