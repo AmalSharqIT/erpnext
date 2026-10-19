@@ -515,15 +515,17 @@
    "link_to": "Buying Settings",
    "link_type": "DocType",
    "open_in_new_tab": 0,
+   "roles": "System Manager",
    "show_arrow": 0,
    "type": "Link"
   }
  ],
- "modified": "2026-10-18",
+ "modified": "2026-10-19",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",
  "owner": "Administrator",
+ "roles": "System Manager\nImports User\nPurchase User\nMaterial Request User",
  "standard": 1,
  "title": "Buying"
 }
