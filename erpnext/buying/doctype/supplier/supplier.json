@@ -21,7 +21,6 @@
   "country",
   "image",
   "defaults_section",
-  "default_currency",
   "default_bank_account",
   "column_break_10",
   "default_price_list",
@@ -39,6 +38,9 @@
   "mobile_no",
   "email_id",
   "accounting_tab",
+  "default_currency",
+  "column_break_55",
+  "use_official_exchange_rate",
   "default_accounts_section",
   "accounts",
   "internal_supplier_section",
@@ -86,13 +88,14 @@
  ],
  "fields": [
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
    "no_copy": 1,
    "oldfieldname": "naming_series",
    "oldfieldtype": "Select",
-   "options": "SUP-.YYYY.-",
+   "options": "SUP-",
    "set_only_once": 1
   },
   {
@@ -110,6 +113,7 @@
    "fieldname": "alias",
    "fieldtype": "Data",
    "in_global_search": 1,
+   "in_preview": 1,
    "label": "Alias",
    "no_copy": 1,
    "unique": 1
@@ -117,6 +121,7 @@
   {
    "fieldname": "country",
    "fieldtype": "Link",
+   "in_preview": 1,
    "in_import_template": 1,
    "label": "Country",
    "options": "Country"
@@ -163,6 +168,7 @@
    "description": "Used for inter-company transactions",
    "fieldname": "is_internal_supplier",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Supplier",
    "show_description_on_click": 1
   },
@@ -267,9 +273,10 @@
    "ignore_user_permissions": 1,
    "in_import_template": 1,
    "in_list_view": 1,
-   "label": "Billing Currency",
+   "label": "Currency",
    "no_copy": 1,
-   "options": "Currency"
+   "options": "Currency",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_10",
@@ -278,6 +285,7 @@
   {
    "fieldname": "default_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "ignore_user_permissions": 1,
    "in_import_template": 1,
    "label": "Price List",
@@ -286,6 +294,7 @@
   {
    "fieldname": "payment_terms",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_import_template": 1,
    "label": "Payment Terms Template",
    "options": "Payment Terms Template"
@@ -467,6 +476,7 @@
   {
    "fieldname": "tax_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Tax"
   },
   {
@@ -501,6 +511,7 @@
   {
    "fieldname": "portal_users_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Portal Users"
   },
   {
@@ -565,6 +576,16 @@
   {
    "fieldname": "section_break_pgad",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_55",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_official_exchange_rate",
+   "fieldtype": "Check",
+   "label": "Use Official Exchange Rate"
   }
  ],
  "grid_page_length": 50,
@@ -578,7 +599,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-09-30 23:24:44.044604",
+ "modified": "2026-09-30",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",
@@ -586,11 +607,10 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "email": 1,
-   "print": 1,
+   "create": 1,
    "read": 1,
-   "report": 1,
-   "role": "Purchase User"
+   "role": "Purchase User",
+   "write": 1
   },
   {
    "email": 1,
@@ -658,12 +678,17 @@
   {
    "role": "Website Manager",
    "select": 1
+  },
+  {
+   "role": "Item Manager",
+   "select": 1
   }
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
  "search_fields": "supplier_group, alias",
  "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
  "sort_field": "creation",
  "sort_order": "ASC",
  "states": [],
