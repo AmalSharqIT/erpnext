@@ -626,6 +626,7 @@
    "fieldtype": "Link",
    "hidden": 1,
    "label": "Quality Inspection",
+   "no_copy": 1,
    "options": "Quality Inspection"
   },
   {
@@ -1064,7 +1065,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-09-30",
+ "modified": "2026-10-19",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Item",
