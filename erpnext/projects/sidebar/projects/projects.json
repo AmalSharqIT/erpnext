@@ -297,11 +297,12 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-04 23:30:00.000000",
+ "modified": "2026-10-19",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Projects",
  "owner": "Administrator",
+ "roles": "System Manager",
  "sequence_id": 0.0,
  "standard": 1,
  "title": "Projects"
