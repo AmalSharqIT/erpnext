@@ -906,7 +906,7 @@
  "image_field": "image",
  "is_tree": 1,
  "links": [],
- "modified": "2026-09-30",
+ "modified": "2026-10-20",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Employee",
@@ -960,6 +960,11 @@
   },
   {
    "permlevel": 4,
+   "read": 1,
+   "role": "HR User"
+  },
+  {
+   "permlevel": 5,
    "read": 1,
    "role": "HR User"
   },
