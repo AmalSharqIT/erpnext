@@ -131,7 +131,7 @@
  "icon": "list-tree",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-14 12:00:00.000000",
+ "modified": "2026-10-16",
  "modified_by": "Administrator",
  "module": "Subcontracting",
  "name": "Subcontracting BOM",
@@ -173,11 +173,6 @@
    "role": "Manufacturing Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User"
   },
   {
    "read": 1,
