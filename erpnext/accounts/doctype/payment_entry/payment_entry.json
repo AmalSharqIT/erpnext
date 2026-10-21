@@ -802,7 +802,7 @@
    "table_fieldname": "payment_entries"
   }
  ],
- "modified": "2026-09-30 23:24:44.044604",
+ "modified": "2026-09-30",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
@@ -838,6 +838,14 @@
    "report": 1,
    "role": "Accounts Manager",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "read": 1,
+   "role": "Cash Desk User",
    "submit": 1,
    "write": 1
   }

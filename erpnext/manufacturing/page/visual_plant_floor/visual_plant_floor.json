@@ -4,7 +4,7 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2023-10-06 15:18:00.622073",
+ "modified": "2026-07-30",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "visual-plant-floor",
@@ -12,13 +12,7 @@
  "page_name": "visual-plant-floor",
  "roles": [
   {
-   "role": "Manufacturing User"
-  },
-  {
-   "role": "Manufacturing Manager"
-  },
-  {
-   "role": "Operator"
+   "role": "System Manager"
   }
  ],
  "script": null,
