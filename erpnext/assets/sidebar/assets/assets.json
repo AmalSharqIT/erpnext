@@ -344,11 +344,12 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-05 00:10:00.000000",
+ "modified": "2026-10-19",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Assets",
  "owner": "Administrator",
+ "roles": "System Manager",
  "sequence_id": 0.0,
  "standard": 1,
  "title": "Assets"
