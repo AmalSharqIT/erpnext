@@ -7,7 +7,7 @@
  "doctype": "Report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2026-08-24",
+ "modified": "2026-10-24",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Requested Items to Order and Receive",
@@ -19,19 +19,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Purchase Manager"
-  },
-  {
-   "role": "Stock Manager"
-  },
-  {
-   "role": "Stock User"
-  },
-  {
-   "role": "Purchase User"
-  },
-  {
-   "role": "Material Request User"
+   "role": "System Manager"
   }
  ]
 }
