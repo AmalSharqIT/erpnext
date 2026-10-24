@@ -481,11 +481,12 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-04 22:30:00.000000",
+ "modified": "2026-10-19",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock",
  "owner": "Administrator",
+ "roles": "System Manager\nItem Manager",
  "sequence_id": 0.0,
  "standard": 1,
  "title": "Stock"
