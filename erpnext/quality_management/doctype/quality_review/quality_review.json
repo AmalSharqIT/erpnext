@@ -87,7 +87,7 @@
    "link_fieldname": "review"
   }
  ],
- "modified": "2026-10-05 14:52:57.768508",
+ "modified": "2026-10-05",
  "modified_by": "Administrator",
  "module": "Quality Management",
  "name": "Quality Review",
@@ -116,12 +116,6 @@
    "role": "Quality Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Desk User"
   }
  ],
  "sort_field": "creation",

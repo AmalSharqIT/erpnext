@@ -23,6 +23,7 @@ class CurrencyExchange(Document):
 		for_buying: DF.Check
 		for_selling: DF.Check
 		from_currency: DF.Link
+		official_exchange_rate: DF.Check
 		to_currency: DF.Link
 	# end: auto-generated types
 
@@ -31,12 +32,8 @@ class CurrencyExchange(Document):
 		if not self.date:
 			self.date = nowdate()
 
-		# If both selling and buying enabled
-		purpose = "Selling-Buying"
-		if cint(self.for_buying) == 0 and cint(self.for_selling) == 1:
-			purpose = "Selling"
-		if cint(self.for_buying) == 1 and cint(self.for_selling) == 0:
-			purpose = "Buying"
+		if self.official_exchange_rate:
+			purpose = "Official"
 
 		self.name = "{}-{}-{}{}".format(
 			formatdate(get_datetime_str(self.date), "yyyy-MM-dd"),
