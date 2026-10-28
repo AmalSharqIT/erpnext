@@ -9,7 +9,7 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2021-06-02 18:59:55.470621",
+ "modified": "2026-08-15",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "COGS By Item Group",
@@ -20,13 +20,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Accounts User"
-  },
-  {
-   "role": "Accounts Manager"
-  },
-  {
-   "role": "Auditor"
+   "role": "System Manager"
   }
  ]
 }

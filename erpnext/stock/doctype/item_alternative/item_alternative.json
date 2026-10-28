@@ -56,7 +56,7 @@
  ],
  "icon": "replace",
  "links": [],
- "modified": "2026-10-07 12:00:00.000000",
+ "modified": "2026-10-07",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Alternative",
@@ -94,7 +94,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   }

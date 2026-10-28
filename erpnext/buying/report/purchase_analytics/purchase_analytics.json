@@ -7,7 +7,7 @@
  "doctype": "Report", 
  "idx": 0, 
  "is_standard": "Yes", 
- "modified": "2019-02-12 14:32:29.107109", 
+ "modified": "2026-10-24",
  "modified_by": "Administrator", 
  "module": "Buying", 
  "name": "Purchase Analytics", 
@@ -18,10 +18,7 @@
  "report_type": "Script Report", 
  "roles": [
   {
-   "role": "Purchase Manager"
-  }, 
-  {
-   "role": "Purchase User"
+   "role": "System Manager"
   }
  ]
 }
