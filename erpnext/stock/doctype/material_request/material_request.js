@@ -19,7 +19,7 @@ frappe.ui.form.on("Material Request", {
 
 		// formatter for material request item
 		frm.set_indicator_formatter("item_code", function (doc) {
-			return doc.stock_qty <= doc.ordered_qty ? "green" : "orange";
+			return doc.stock_qty <= doc.ordered_qty ? "green" : doc.ordered_qty > 0 ? "blue" : "orange";
 		});
 
 		frm.set_query("item_code", "items", function () {
@@ -156,14 +156,6 @@ frappe.ui.form.on("Material Request", {
 	},
 
 	make_custom_buttons: function (frm) {
-		if (frm.doc.docstatus == 0) {
-			frm.add_custom_button(
-				__("Bill of Materials"),
-				() => frm.events.get_items_from_bom(frm),
-				__("Get Items From")
-			);
-		}
-
 		if (frm.doc.docstatus == 1 && frm.doc.status != "Stopped") {
 			let precision = frappe.defaults.get_default("float_precision");
 
@@ -217,19 +209,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Purchase Order"),
 						() => frm.events.make_purchase_order(frm),
-						__("Create")
-					);
-
-					frm.add_custom_button(
-						__("Request for Quotation"),
-						() => frm.events.make_request_for_quotation(frm),
-						__("Create")
-					);
-
-					frm.add_custom_button(
-						__("Supplier Quotation"),
-						() => frm.events.make_supplier_quotation(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -251,14 +231,6 @@ frappe.ui.form.on("Material Request", {
 
 				frm.page.set_inner_btn_group_as_primary(__("Create"));
 			}
-		}
-
-		if (frm.doc.docstatus === 0) {
-			frm.add_custom_button(
-				__("Sales Order"),
-				() => frm.events.get_items_from_sales_order(frm),
-				__("Get Items From")
-			);
 		}
 
 		if (frm.doc.docstatus == 1 && frm.doc.status == "Stopped") {
@@ -439,12 +411,8 @@ frappe.ui.form.on("Material Request", {
 			freeze: true,
 			callback: function (r) {
 				const items = r.message || [];
-				const suppliers = new Set(items.map((item) => item.supplier || ""));
-
-				if (suppliers.size > 1) {
-					frm.events.select_suppliers_for_items(frm, items);
-					return;
-				}
+				frm.events.select_suppliers_for_items(frm, items);
+				return;
 
 				frappe.model.open_mapped_doc({
 					method: "erpnext.stock.doctype.material_request.material_request.make_purchase_order",
@@ -465,19 +433,23 @@ frappe.ui.form.on("Material Request", {
 
 		const dialog = new frappe.ui.Dialog({
 			title: __("Select Supplier for Items"),
-			size: "large",
+			size: "extra-large",
 			fields: [
 				{
 					fieldname: "supplier",
 					fieldtype: "Link",
 					options: "Supplier",
-					label: __("Set Supplier for All Items"),
+					label: __("Filter by Supplier"),
 					get_query: supplier_query,
 					onchange: function () {
 						const supplier = dialog.get_value("supplier");
-						if (!supplier) return;
-
-						rows.forEach((row) => (row.supplier = supplier));
+						if (!supplier) {
+							dialog.fields_dict.items.grid.df.data = rows;
+						} else {
+							dialog.fields_dict.items.grid.df.data = rows.filter(
+								(row) => supplier === row.supplier,
+							);
+						}
 						dialog.fields_dict.items.grid.refresh();
 					},
 				},
@@ -507,6 +479,13 @@ frappe.ui.form.on("Material Request", {
 							read_only: 1,
 							in_list_view: 1,
 							columns: 3,
+						},
+						{
+							fieldtype: "Data",
+							fieldname: "legacy_code",
+							label: __("Legacy Code"),
+							read_only: 1,
+							in_list_view: 1,
 						},
 						{
 							fieldtype: "Data",
@@ -545,6 +524,7 @@ frappe.ui.form.on("Material Request", {
 							label: __("Supplier"),
 							get_query: supplier_query,
 							reqd: 1,
+							read_only: 1,
 							in_list_view: 1,
 							columns: 3,
 						},
@@ -566,9 +546,10 @@ frappe.ui.form.on("Material Request", {
 						frappe.utils.escape_html(row.item_code)
 					);
 
-				const missing_supplier = item_suppliers.find((row) => !row.supplier);
-				if (missing_supplier) {
-					frappe.throw(__("Select a Supplier for Item {0}", [item_link(missing_supplier)]));
+				if (!dialog.get_value("supplier")) {
+					item_suppliers.forEach((row) => {
+						row.supplier = null;
+					});
 				}
 
 				const invalid_qty = item_suppliers.find(
@@ -596,8 +577,12 @@ frappe.ui.form.on("Material Request", {
 						dialog.hide();
 
 						const purchase_orders = r.message || [];
-						if (purchase_orders.length === 1) {
-							frappe.set_route("Form", "Purchase Order", purchase_orders[0]);
+						if (purchase_orders) {
+							const doclist = frappe.model.sync(purchase_orders);
+							if (!dialog.get_value("supplier")) {
+								doclist[0].supplier = null;
+							}
+							frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 						}
 					},
 				});
@@ -747,6 +732,9 @@ frappe.ui.form.on("Material Request Item", {
 		const item = locals[doctype][name];
 		item.rate = 0;
 		item.uom = "";
+		item.supplier = "";
+		item.legacy_code = "";
+		item.edari_item_number = "";
 		set_schedule_date(frm);
 		frm.events.get_item_data(frm, item, true);
 	},
