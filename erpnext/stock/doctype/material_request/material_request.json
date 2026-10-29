@@ -75,7 +75,6 @@
   },
   {
    "allow_on_submit": 1,
-   "default": "{material_request_type}",
    "fieldname": "title",
    "fieldtype": "Data",
    "hidden": 1,
@@ -412,7 +411,7 @@
  "idx": 70,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-20",
+ "modified": "2026-10-22",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",
