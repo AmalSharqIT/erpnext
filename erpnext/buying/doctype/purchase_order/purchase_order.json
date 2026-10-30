@@ -19,8 +19,8 @@
   "column_break_7",
   "transaction_date",
   "transaction_time",
-  "schedule_date",
   "column_break1",
+  "schedule_date",
   "company",
   "is_subcontracted",
   "has_unit_price_items",
@@ -56,7 +56,9 @@
   "net_total",
   "section_break_48",
   "pricing_rules",
+  "raw_material_details",
   "set_reserve_warehouse",
+  "supplied_items",
   "taxes_section",
   "tax_category",
   "taxes_and_charges",
@@ -99,6 +101,10 @@
   "sec_tax_breakup",
   "other_charges_calculation",
   "item_wise_tax_details",
+  "section_break_cbm_kgs",
+  "total_cbm",
+  "column_break_cbm_kgs",
+  "total_kgs",
   "address_and_contact_tab",
   "section_addresses",
   "supplier_address",
@@ -174,6 +180,7 @@
    "options": "fa fa-user"
   },
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
@@ -404,7 +411,7 @@
    "oldfieldtype": "Select",
    "options": "Currency",
    "print_hide": 1,
-   "read_only_depends_on": "eval:doc.inter_company_order_reference",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -424,6 +431,7 @@
   {
    "fieldname": "buying_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Price List",
    "options": "Price List",
    "print_hide": 1
@@ -447,6 +455,7 @@
    "default": "0",
    "fieldname": "ignore_pricing_rule",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Ignore Pricing Rule",
    "permlevel": 1,
    "print_hide": 1
@@ -462,6 +471,7 @@
    "default": "0",
    "fieldname": "is_subcontracted",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Subcontracted",
    "print_hide": 1
   },
@@ -481,6 +491,7 @@
    "options": "fa fa-shopping-cart"
   },
   {
+   "depends_on": "false",
    "fieldname": "scan_barcode",
    "fieldtype": "Data",
    "label": "Scan Barcode",
@@ -587,6 +598,7 @@
   {
    "fieldname": "taxes_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "hide_border": 1,
    "label": "Taxes and Charges",
    "oldfieldtype": "Section Break",
@@ -608,6 +620,7 @@
   {
    "fieldname": "shipping_rule",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Shipping Rule",
    "options": "Shipping Rule",
    "print_hide": 1
@@ -620,6 +633,7 @@
   {
    "fieldname": "taxes",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Purchase Taxes and Charges",
    "oldfieldname": "purchase_tax_details",
    "oldfieldtype": "Table",
@@ -709,6 +723,7 @@
   {
    "fieldname": "total_taxes_and_charges",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Total Taxes and Charges",
    "options": "currency",
    "print_hide": 1,
@@ -718,6 +733,7 @@
    "collapsible": 1,
    "fieldname": "discount_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Additional Discount"
   },
   {
@@ -835,6 +851,7 @@
    "default": "0",
    "fieldname": "disable_rounded_total",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Disable Rounded Total"
   },
   {
@@ -977,6 +994,7 @@
    "collapsible": 1,
    "fieldname": "column_break5",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Printing Settings",
    "oldfieldtype": "Column Break",
    "print_hide": 1,
@@ -1062,6 +1080,7 @@
   {
    "fieldname": "tax_category",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Tax Category",
    "options": "Tax Category"
   },
@@ -1108,6 +1127,7 @@
    "fetch_from": "supplier.is_internal_supplier",
    "fieldname": "is_internal_supplier",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Supplier",
    "read_only": 1
   },
@@ -1129,6 +1149,7 @@
   {
    "fieldname": "cost_center",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Cost Center",
    "options": "Cost Center"
   },
@@ -1139,6 +1160,7 @@
   {
    "fieldname": "project",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Project",
    "options": "Project"
   },
@@ -1161,11 +1183,13 @@
   {
    "fieldname": "terms_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Terms"
   },
   {
    "fieldname": "more_info_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "More Info"
   },
   {
@@ -1188,6 +1212,7 @@
   {
    "fieldname": "company_billing_address_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Company Billing Address"
   },
   {
@@ -1208,6 +1233,7 @@
   {
    "fieldname": "incoterm",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Incoterm",
    "options": "Incoterm"
   },
@@ -1318,6 +1344,7 @@
    "collapsible": 1,
    "fieldname": "auto_repeat_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Auto Repeat"
   },
   {
@@ -1327,6 +1354,26 @@
    "label": "Title",
    "no_copy": 1,
    "print_hide": 1
+  },
+  {
+   "fieldname": "section_break_cbm_kgs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_cbm",
+   "fieldtype": "Float",
+   "label": "Total CBM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_cbm_kgs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_kgs",
+   "fieldtype": "Float",
+   "label": "Total KGS",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
@@ -1334,7 +1381,7 @@
  "idx": 105,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-30 12:00:00.000000",
+ "modified": "2026-10-30",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
@@ -1361,16 +1408,11 @@
    "write": 1
   },
   {
-   "amend": 1,
    "cancel": 1,
    "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
    "read": 1,
    "report": 1,
    "role": "Purchase User",
-   "share": 1,
    "submit": 1,
    "write": 1
   },
