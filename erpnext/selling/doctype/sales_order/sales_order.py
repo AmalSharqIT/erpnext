@@ -18,6 +18,7 @@ from frappe.query_builder.functions import Abs, IfNull, Round, Sum
 from frappe.utils import add_days, cint, cstr, flt, get_link_to_form, getdate, nowdate, parse_json, strip_html
 from pypika import Order
 
+from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import (
 	unlink_inter_company_doc,
 	update_linked_doc,
@@ -280,9 +281,7 @@ class SalesOrder(SellingController):
 		)
 
 		if self.coupon_code:
-			from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
-
-			validate_coupon_code(self.coupon_code)
+			validate_coupon_code(self.coupon_code, self.customer)
 
 		if not self.get("is_subcontracted"):
 			self.enable_auto_reserve_stock()
@@ -1694,6 +1693,9 @@ def make_sales_invoice(
 		if source_parent.project:
 			target.cost_center = frappe.db.get_value("Project", source_parent.project, "cost_center")
 		if target.item_code:
+			target.enable_deferred_revenue = frappe.get_cached_value(
+				"Item", target.item_code, "enable_deferred_revenue"
+			)
 			item = get_item_defaults(target.item_code, source_parent.company)
 			item_group = get_item_group_defaults(target.item_code, source_parent.company)
 			cost_center = item.get("selling_cost_center") or item_group.get("selling_cost_center")
