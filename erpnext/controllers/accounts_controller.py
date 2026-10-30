@@ -4560,6 +4560,8 @@ def validate_and_delete_children(parent, data, ordered_item=None, rows_with_kept
 
 	if parent.doctype == "Purchase Order":
 		parent.update_ordered_qty_in_so_for_removed_items(deleted_children)
+	elif parent.doctype == "Sales Order":
+		parent.update_ordered_qty_in_quotation_for_removed_items(deleted_children)
 
 	# need to update ordered qty in Material Request first
 	# bin uses Material Request Items to recalculate & update
@@ -5053,7 +5055,7 @@ def update_child_qty_rate(
 		parent.validate_warehouse()
 		parent.update_reserved_qty()
 		parent.update_project()
-		parent.update_prevdoc_status("submit")
+		parent.update_prevdoc_status("submit", update_quotation_qty=True)
 		parent.update_delivery_status()
 
 	elif parent_doctype == "Supplier Quotation":
@@ -5081,7 +5083,14 @@ def update_child_qty_rate(
 			has_reserved_stock,
 		)
 
-		if parent.per_picked == 0 and has_reserved_stock(parent.doctype, parent.name):
+		# Only rebuild reservations when a stock-relevant change happened. A rate/discount edit
+		# must not cancel and re-create them, which would drop delivered and partial reservations
+		# and re-reserve rows the user had deliberately unreserved.
+		if (
+			parent.per_picked == 0
+			and (any_qty_changed or any_conversion_factor_changed or items_added_or_removed)
+			and has_reserved_stock(parent.doctype, parent.name)
+		):
 			cancel_stock_reservation_entries(parent.doctype, parent.name)
 			parent._create_stock_reservation_entries()
 
