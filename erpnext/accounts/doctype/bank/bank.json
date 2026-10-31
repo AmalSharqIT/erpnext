@@ -105,7 +105,7 @@
  ],
  "icon": "landmark",
  "links": [],
- "modified": "2026-09-16",
+ "modified": "2026-10-31",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank",
@@ -138,6 +138,10 @@
   {
    "read": 1,
    "role": "HR User - Branch"
+  },
+  {
+   "read": 1,
+   "role": "Imports User"
   }
  ],
  "quick_entry": 1,
