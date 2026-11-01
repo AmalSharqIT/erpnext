@@ -4354,6 +4354,7 @@ def set_order_defaults(parent_doctype, parent_doctype_name, child_doctype, child
 	child_item.warehouse = get_new_child_item_warehouse(p_doc, item, trans_item, child_doctype)
 	conversion_factor = flt(get_conversion_factor(item.item_code, child_item.uom).get("conversion_factor"))
 	child_item.conversion_factor = flt(trans_item.get("conversion_factor")) or conversion_factor
+	child_item.price_list_rate = flt(trans_item.get("price_list_rate"))
 	child_item.update(_get_bin_details(child_item.item_code, child_item.warehouse, p_doc.get("company")))
 
 	if child_doctype in ["Purchase Order Item", "Supplier Quotation Item"]:
@@ -4621,6 +4622,14 @@ def update_child_qty_rate(
 		if doc.doctype == "Purchase Order" and doc.status in ("Closed", "On Hold", "Delivered"):
 			frappe.throw(
 				_("Cannot update items of Purchase Order {0} because it is {1}.").format(
+					doc.name, _(doc.status)
+				)
+			)
+
+		# The Supplier Quotation form hides Update Items for these states; enforce it server-side too.
+		if doc.doctype == "Supplier Quotation" and doc.status in ("Ordered", "Stopped", "Expired"):
+			frappe.throw(
+				_("Cannot update items of Supplier Quotation {0} because it is {1}.").format(
 					doc.name, _(doc.status)
 				)
 			)
@@ -4951,25 +4960,24 @@ def update_child_qty_rate(
 		if d.get("bom_no") and parent_doctype == "Sales Order":
 			child_item.bom_no = d.get("bom_no")
 
-		if parent_doctype in ["Sales Order", "Purchase Order"]:
-			if flt(child_item.price_list_rate):
-				if flt(child_item.rate) > flt(child_item.price_list_rate):
-					#  if rate is greater than price_list_rate, set margin
-					#  or set discount
-					child_item.discount_percentage = 0
-					child_item.discount_amount = 0
-					child_item.margin_type = "Amount"
-					child_item.margin_rate_or_amount = flt(
-						child_item.rate - child_item.price_list_rate,
-						child_item.precision("margin_rate_or_amount"),
-					)
-					child_item.rate_with_margin = child_item.rate
-				else:
-					child_item.margin_type = ""
-					child_item.margin_rate_or_amount = 0
-					child_item.rate_with_margin = child_item.price_list_rate
-					child_item.discount_percentage = 0
-					child_item.discount_amount = flt(child_item.rate_with_margin) - flt(child_item.rate)
+		if flt(child_item.price_list_rate):
+			if flt(child_item.rate) > flt(child_item.price_list_rate):
+				#  if rate is greater than price_list_rate, set margin
+				#  or set discount
+				child_item.discount_percentage = 0
+				child_item.discount_amount = 0
+				child_item.margin_type = "Amount"
+				child_item.margin_rate_or_amount = flt(
+					child_item.rate - child_item.price_list_rate,
+					child_item.precision("margin_rate_or_amount"),
+				)
+				child_item.rate_with_margin = child_item.rate
+			else:
+				child_item.margin_type = ""
+				child_item.margin_rate_or_amount = 0
+				child_item.rate_with_margin = child_item.price_list_rate
+				child_item.discount_percentage = 0
+				child_item.discount_amount = flt(child_item.rate_with_margin) - flt(child_item.rate)
 
 		child_item.flags.ignore_validate_update_after_submit = True
 		if new_child_flag:
