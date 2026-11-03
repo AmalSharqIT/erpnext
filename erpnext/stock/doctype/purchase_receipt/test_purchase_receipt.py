@@ -2277,6 +2277,50 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 			if gle.account == account:
 				self.assertEqual(gle.credit, 50)
 
+	@ERPNextTestSuite.change_settings("Stock Settings", {"allow_negative_stock": 1})
+	def test_zero_rate_purchase_into_negative_stock_posts_gl(self):
+		from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
+
+		company = "_Test Company with perpetual inventory"
+		warehouse = "Stores - TCP1"
+		stock_account = get_inventory_account(company, warehouse)
+		expense_account = frappe.get_cached_value("Company", company, "default_expense_account")
+		item_code = make_item(properties={"valuation_method": "Moving Average"}).name
+		make_stock_entry(item_code=item_code, to_warehouse=warehouse, qty=5, rate=50)
+		make_stock_entry(item_code=item_code, from_warehouse=warehouse, qty=25)
+
+		for doctype in ("Purchase Receipt", "Purchase Invoice"):
+			with self.subTest(doctype=doctype):
+				purchase = frappe.get_doc(
+					{
+						"doctype": doctype,
+						"company": company,
+						"supplier": "_Test Supplier",
+						"update_stock": 1,
+						"items": [
+							{
+								"item_code": item_code,
+								"warehouse": warehouse,
+								"qty": 8,
+								"rate": 0,
+								"allow_zero_valuation_rate": 1,
+							}
+						],
+					}
+				).submit()
+
+				filters = {"voucher_type": doctype, "voucher_no": purchase.name, "is_cancelled": 0}
+				self.assertEqual(
+					frappe.db.get_value("Stock Ledger Entry", filters, "stock_value_difference"), 400
+				)
+				gl_entries = frappe.get_all(
+					"GL Entry", filters=filters, fields=["account", "debit", "credit"]
+				)
+				self.assertEqual(
+					{entry.account: entry.debit - entry.credit for entry in gl_entries},
+					{stock_account: 400, expense_account: -400},
+				)
+
 	def test_backdated_transaction_for_internal_transfer(self):
 		from erpnext.stock.doctype.delivery_note.delivery_note import make_inter_company_purchase_receipt
 		from erpnext.stock.doctype.delivery_note.test_delivery_note import create_delivery_note
@@ -7523,6 +7567,32 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 			vouchers.append(invoice.name)
 
 		self.assertEqual(self.get_provisional_balance(*vouchers), 0)
+
+	def test_non_stock_receipt_in_closed_period_can_be_cancelled(self):
+		from erpnext.accounts.doctype.payment_reconciliation.test_payment_reconciliation import (
+			make_period_closing_voucher,
+		)
+		from erpnext.accounts.utils import get_fiscal_year
+
+		closed_date = add_days(get_fiscal_year(today(), company="_Test Company")[1], -1)
+		make_period_closing_voucher(
+			company="_Test Company", cost_center="Main - _TC", posting_date=closed_date
+		)
+		item = make_item("_Test Non Stock Closed Period Item", {"is_stock_item": 0}).name
+
+		with self.change_settings("Stock Reposting Settings", item_based_reposting=0):
+			receipt = make_purchase_receipt(item_code=item, posting_date=closed_date)
+			receipt.cancel()
+
+		self.assertEqual(receipt.docstatus, 2)
+		self.assertFalse(frappe.db.exists("Repost Item Valuation", {"voucher_no": receipt.name}))
+
+	def test_stock_receipt_cancel_still_queues_voucher_repost(self):
+		with self.change_settings("Stock Reposting Settings", item_based_reposting=0):
+			receipt = make_purchase_receipt(qty=1, rate=100)
+			receipt.cancel()
+
+		self.assertTrue(frappe.db.exists("Repost Item Valuation", {"voucher_no": receipt.name}))
 
 	def make_receipt_at_rate(self, purchase_order, qty, rate, posting_time):
 		from erpnext.buying.doctype.purchase_order.purchase_order import (
