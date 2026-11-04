@@ -7,7 +7,7 @@
  "doctype": "Report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2020-05-15 20:57:52.623455",
+ "modified": "2026-10-24",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Analysis",
@@ -18,16 +18,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Purchase Manager"
-  },
-  {
-   "role": "Purchase User"
-  },
-  {
-   "role": "Stock User"
-  },
-  {
-   "role": "Supplier"
+   "role": "System Manager"
   }
  ]
 }
