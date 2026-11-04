@@ -312,7 +312,7 @@ frappe.ui.form.on("Material Request", {
 				];
 
 				if (overwrite_warehouse) {
-					allow_to_change_fields.push("description");
+					allow_to_change_fields.push("description", "manufacturer", "manufacturer_part_no");
 				}
 
 				if (!r.exc) {

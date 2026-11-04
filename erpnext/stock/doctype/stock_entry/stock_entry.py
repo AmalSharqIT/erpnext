@@ -614,6 +614,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 				(SE.source_stock_entry == self.source_stock_entry)
 				& (SE.purpose == "Disassemble")
 				& (SE.docstatus == 1)
+				& (SE.name != self.name)
 			)
 			.run(as_dict=True)
 		)
@@ -632,8 +633,8 @@ class StockEntry(StockController, SubcontractingInwardController):
 			if row.serial_no or row.batch_no or row.serial_and_batch_bundle:
 				continue
 
-			warehouse = row.s_warehouse or row.t_warehouse
-			materials = available_materials.get((row.item_code, warehouse, None))
+			key = (row.item_code, None) if row.t_warehouse else (row.item_code, row.s_warehouse)
+			materials = available_materials.get((*key, None))
 			if not materials:
 				continue
 
@@ -5160,6 +5161,20 @@ def make_stock_in_entry(source_name: str, target_doc: str | dict | Document | No
 
 		target_doc.s_warehouse = source_doc.t_warehouse
 		target_doc.qty = get_remaining_qty_in_row_uom(source_doc)
+		map_target_dimensions_to_source(source_doc, target_doc)
+
+	def map_target_dimensions_to_source(source_doc, target_doc):
+		# the stock sits in transit with the outward entry's target dimensions,
+		# so the end transit entry must take it out from there
+		from erpnext.stock.doctype.inventory_dimension.inventory_dimension import get_inventory_dimensions
+
+		for dimension in get_inventory_dimensions():
+			fieldname = dimension.source_fieldname
+			if fieldname.startswith("to_") or not target_doc.meta.has_field(f"to_{fieldname}"):
+				continue
+
+			target_doc.set(fieldname, source_doc.get(f"to_{fieldname}"))
+			target_doc.set(f"to_{fieldname}", None)
 
 	def get_remaining_qty_in_row_uom(source_doc):
 		remaining_qty = get_remaining_transfer_qty(source_doc)
@@ -5732,7 +5747,7 @@ def get_available_materials(work_order, stock_entry_doc=None) -> dict:
 			key = (row.item_code, row.s_warehouse)
 
 		if is_disassemble:
-			key = (row.item_code, row.s_warehouse or row.warehouse)
+			key = _get_disassembly_material_key(row)
 
 		key = (*key, None if is_disassemble else (row.original_item or None))
 
@@ -5763,6 +5778,19 @@ def get_available_materials(work_order, stock_entry_doc=None) -> dict:
 			_deduct_consumed_material(buckets, row)
 
 	return available_materials
+
+
+def _get_disassembly_material_key(row):
+	"""Components can return to a warehouse other than the one they were consumed from, so they
+	match by item. Finished and secondary items match by the warehouse they are in."""
+	if row.purpose == "Manufacture":
+		is_component = bool(row.s_warehouse)
+	else:
+		is_component = not row.s_warehouse
+
+	if is_component:
+		return (row.item_code, None)
+	return (row.item_code, row.s_warehouse or row.warehouse)
 
 
 def _get_available_material(available_materials, key, row):

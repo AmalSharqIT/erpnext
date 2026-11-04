@@ -953,8 +953,6 @@ class JobCard(Document):
 						"item_name": d.item_name,
 						"description": d.description,
 						"required_qty": (d.required_qty * flt(self.for_quantity)) / operation_qty,
-						"rate": d.rate,
-						"amount": d.amount,
 					},
 				)
 
@@ -1249,9 +1247,7 @@ class JobCard(Document):
 				"Kindly cancel the Manufacturing Entries first against the work order {0}."
 			).format(frappe.bold(get_link_to_form("Work Order", self.work_order)))
 
-			frappe.throw(
-				_("{0} {1}").format(first_part_msg, second_part_msg), JobCardCancelError, title=_("Error")
-			)
+			frappe.throw(first_part_msg + " " + second_part_msg, JobCardCancelError, title=_("Error"))
 
 	def update_work_order_data(self, for_quantity, process_loss_qty, pending_qty, time_in_mins, wo):
 		jc = frappe.qb.DocType("Job Card")
@@ -1847,6 +1843,7 @@ class JobCard(Document):
 
 	def set_employees(self):
 		self.employee = []
+		# nosemgrep: frappe-semgrep-rules.rules.frappe-modifying-child-tables-while-iterating -- appends to employee, not time_logs
 		for item in self.time_logs:
 			if not any(d.employee == item.employee for d in self.employee):
 				self.append("employee", {"employee": item.employee, "completed_qty": 0.0})
