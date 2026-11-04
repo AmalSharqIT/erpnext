@@ -494,11 +494,12 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-30 12:00:00.000000",
+ "modified": "2026-10-30",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Manufacturing",
  "owner": "Administrator",
+ "roles": "System Manager",
  "sequence_id": 0.0,
  "standard": 1,
  "title": "Manufacturing"

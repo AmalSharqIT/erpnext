@@ -790,11 +790,12 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-04 14:00:00.000000",
+ "modified": "2026-10-19",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Setup",
  "owner": "Administrator",
+ "roles": "System Manager",
  "standard": 1,
  "title": "Setup"
 }
