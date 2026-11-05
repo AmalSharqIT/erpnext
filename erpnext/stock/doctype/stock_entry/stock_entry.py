@@ -1605,15 +1605,22 @@ class StockEntry(StockController, SubcontractingInwardController):
 
 	def check_if_operations_completed(self):
 		"""Check if Time Sheets are completed against before manufacturing to capture operating costs."""
+		from erpnext.manufacturing.doctype.work_order.work_order import get_upstream_process_loss
+
 		prod_order = frappe.get_doc("Work Order", self.work_order)
 		allowance_percentage = flt(
 			frappe.db.get_single_value("Manufacturing Settings", "overproduction_percentage_for_work_order")
 		)
 
 		for d in prod_order.get("operations"):
-			total_completed_qty = flt(self.fg_completed_qty) + flt(prod_order.produced_qty)
+			total_completed_qty = (
+				flt(self.fg_completed_qty) + flt(prod_order.produced_qty) + flt(prod_order.process_loss_qty)
+			)
 			completed_qty = (
-				d.completed_qty + d.process_loss_qty + (allowance_percentage / 100 * d.completed_qty)
+				d.completed_qty
+				+ d.process_loss_qty
+				+ get_upstream_process_loss(prod_order, d)
+				+ (allowance_percentage / 100 * d.completed_qty)
 			)
 			if flt(total_completed_qty, self.precision("fg_completed_qty")) > flt(
 				completed_qty, self.precision("fg_completed_qty")
@@ -2002,8 +2009,16 @@ class StockEntry(StockController, SubcontractingInwardController):
 					frappe.get_value("BOM Secondary Item", d.bom_secondary_item, "cost_allocation_per")
 				)
 				if flt(d.transfer_qty):
+					secondary_items_qty = sum(
+						flt(item.transfer_qty)
+						for item in self.items
+						if item.bom_secondary_item == d.bom_secondary_item
+						and not item.s_warehouse
+						and not item.set_basic_rate_manually
+						and not is_costed_out_of_finished_item(item)
+					)
 					allocation_basis = secondary_items_cost_basis - self.get_costed_out_items_cost()
-					d.basic_rate = (allocation_basis * (cost_allocation_per / 100)) / d.transfer_qty
+					d.basic_rate = (allocation_basis * (cost_allocation_per / 100)) / secondary_items_qty
 					has_derived_rate = True
 
 			# A rate of zero that was derived rather than left unset is a real cost. Falling back to
@@ -3862,6 +3877,8 @@ class StockEntry(StockController, SubcontractingInwardController):
 			self.add_to_stock_entry_detail(secondary_items_dict, bom_no=self.bom_no)
 
 	def set_process_loss_qty(self):
+		from erpnext.manufacturing.doctype.work_order.work_order import get_upstream_process_loss
+
 		if self.purpose not in ("Manufacture", "Repack"):
 			return
 
@@ -3872,7 +3889,10 @@ class StockEntry(StockController, SubcontractingInwardController):
 
 			frappe.msgprint(_("The Process Loss Qty has reset as per job cards Process Loss Qty"), alert=True)
 
-		if not self.process_loss_percentage and not self.process_loss_qty:
+		has_upstream_loss = self.work_order and get_upstream_process_loss(
+			frappe.get_doc("Work Order", self.work_order)
+		)
+		if not self.process_loss_percentage and not self.process_loss_qty and not has_upstream_loss:
 			self.process_loss_percentage = frappe.get_cached_value(
 				"BOM", self.bom_no, "process_loss_percentage"
 			)
@@ -3934,20 +3954,16 @@ class StockEntry(StockController, SubcontractingInwardController):
 
 	def get_pending_process_loss_qty(self):
 		"""Loss this entry should still book: the job card's unbooked loss when the entry
-		belongs to one, else the unbooked portion of the largest operation loss on the work order."""
+		belongs to one, else the unbooked portion of the cumulative operation loss on the work order."""
+		from erpnext.manufacturing.doctype.work_order.work_order import get_upstream_process_loss
+
 		if self.job_card:
 			job_card = frappe.get_doc("Job Card", self.job_card)
 			return max(flt(job_card.process_loss_qty) - flt(job_card.get_consumed_process_loss()), 0)
 
 		if self.work_order:
-			data = frappe.get_all(
-				"Work Order Operation",
-				filters={"parent": self.work_order},
-				fields=[{"MAX": "process_loss_qty", "as": "process_loss_qty"}],
-			)
-			max_operation_loss = flt(data[0].process_loss_qty) if data else 0
-			booked_loss = flt(frappe.db.get_value("Work Order", self.work_order, "process_loss_qty"))
-			return max(max_operation_loss - booked_loss, 0)
+			work_order = frappe.get_doc("Work Order", self.work_order)
+			return max(get_upstream_process_loss(work_order) - flt(work_order.process_loss_qty), 0)
 
 		return 0
 
@@ -4385,19 +4401,33 @@ class StockEntry(StockController, SubcontractingInwardController):
 		wo_data = frappe.db.get_value(
 			"Work Order",
 			self.work_order,
-			["qty", "produced_qty", "material_transferred_for_manufacturing as trans_qty"],
+			[
+				"qty",
+				"produced_qty",
+				"process_loss_qty",
+				"material_transferred_for_manufacturing as trans_qty",
+			],
 			as_dict=1,
 		)
 
+		transferred_qty = flt(wo_data.trans_qty)
+		pending_qty_to_mfg = transferred_qty - flt(wo_data.produced_qty) - flt(wo_data.process_loss_qty)
+		fg_completed_qty = flt(self.fg_completed_qty)
+		fg_precision = self.precision("fg_completed_qty")
+		if not self.is_return and (flt(pending_qty_to_mfg, fg_precision) <= 0 or not fg_completed_qty):
+			return
+
 		precision = frappe.get_precision("Stock Entry Detail", "qty")
 		for _key, row in available_materials.items():
-			remaining_qty_to_produce = flt(wo_data.trans_qty) - flt(wo_data.produced_qty)
-			if remaining_qty_to_produce <= 0 and not self.is_return:
-				continue
+			# a material is only covered by the entries that consumed it
+			pending_qty = transferred_qty - sum(row.consumed_for.values())
+			if flt(min(pending_qty_to_mfg, pending_qty) - fg_completed_qty, fg_precision) <= 0:
+				# an entry for all that is pending consumes what is left
+				pending_qty = fg_completed_qty
 
 			qty = flt(row.qty)
 			if not self.is_return:
-				qty = (flt(row.qty) * flt(self.fg_completed_qty)) / remaining_qty_to_produce
+				qty = (flt(row.qty) * fg_completed_qty) / pending_qty
 
 			item = row.item_details
 			if cint(frappe.get_cached_value("UOM", item.stock_uom, "must_be_whole_number")):
@@ -5775,7 +5805,12 @@ def get_available_materials(work_order, stock_entry_doc=None) -> dict:
 			buckets = _get_consumption_buckets(available_materials, key) or [
 				_get_available_material(available_materials, key, row)
 			]
+			available_qty = [bucket.qty for bucket in buckets]
 			_deduct_consumed_material(buckets, row)
+			if row.purpose != "Material Transfer for Manufacture":
+				for bucket, qty in zip(buckets, available_qty, strict=True):
+					if bucket.qty != qty:
+						bucket.consumed_for[row.name] = flt(row.fg_completed_qty)
 
 	return available_materials
 
@@ -5796,7 +5831,13 @@ def _get_disassembly_material_key(row):
 def _get_available_material(available_materials, key, row):
 	if key not in available_materials:
 		available_materials[key] = frappe._dict(
-			{"item_details": row, "batch_details": defaultdict(float), "qty": 0, "serial_nos": []}
+			{
+				"item_details": row,
+				"batch_details": defaultdict(float),
+				"qty": 0,
+				"serial_nos": [],
+				"consumed_for": {},
+			}
 		)
 
 	return available_materials[key]
@@ -5888,6 +5929,7 @@ def get_stock_entry_data(work_order, stock_entry_doc=None):
 			stock_entry.purpose,
 			stock_entry.is_return,
 			stock_entry.name,
+			stock_entry.fg_completed_qty,
 		)
 		.where(
 			(stock_entry.name == stock_entry_detail.parent)

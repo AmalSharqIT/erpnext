@@ -34,6 +34,7 @@ from erpnext.manufacturing.doctype.work_order.work_order import (
 	StockOverProductionError,
 	close_work_order,
 	get_reserved_qty_for_production,
+	get_upstream_process_loss,
 	make_job_card,
 	make_material_request,
 	make_stock_entry,
@@ -681,6 +682,58 @@ class TestWorkOrder(ERPNextTestSuite):
 
 		self.assertEqual(work_order.get_status(), "Completed")
 
+	@ERPNextTestSuite.change_settings(
+		"Manufacturing Settings", {"overproduction_percentage_for_work_order": 5}
+	)
+	def test_operation_targets_include_upstream_process_loss(self):
+		for operations, upstream_losses, total_loss in (
+			([(1, 95, 5), (2, 92, 3), (3, 90, 2)], [0, 5, 8], 10),
+			([(1, 95, 5), (1, 97, 3), (2, 93, 2)], [0, 0, 5], 7),
+			([(1, 95, 5), (2, 90, 10), (3, 90, 10)], [0, 5, 10], 10),
+			([(1, 100, 5), (2, 100, 0)], [0, 5], 5),
+			([(0, 95, 5), (0, 95, 5)], [0, 0], 5),
+			([(1, 0, 100), (2, 0, 0)], [0, 100], 100),
+		):
+			with self.subTest(operations=operations):
+				work_order = frappe.get_doc(
+					{
+						"doctype": "Work Order",
+						"qty": 100,
+						"operations": [
+							{
+								"sequence_id": sequence_id,
+								"completed_qty": completed_qty,
+								"process_loss_qty": process_loss_qty,
+							}
+							for sequence_id, completed_qty, process_loss_qty in operations
+						],
+					}
+				)
+				self.assertEqual(
+					[get_upstream_process_loss(work_order, row) for row in work_order.operations],
+					upstream_losses,
+				)
+				self.assertEqual(get_upstream_process_loss(work_order), total_loss)
+				work_order.update_operation_status()
+				self.assertTrue(all(row.status == "Completed" for row in work_order.operations))
+				work_order.track_semi_finished_goods = 1
+				self.assertEqual(get_upstream_process_loss(work_order), 0)
+
+	def test_operation_target_rounds_upstream_process_loss(self):
+		work_order = frappe.get_doc(
+			{
+				"doctype": "Work Order",
+				"qty": 0.3,
+				"operations": [
+					{"sequence_id": 1, "completed_qty": 0.2, "process_loss_qty": 0.1},
+					{"sequence_id": 2, "completed_qty": 0, "process_loss_qty": 0.2},
+					{"sequence_id": 3},
+				],
+			}
+		)
+		work_order.update_operation_status()
+		self.assertEqual(work_order.operations[2].status, "Completed")
+
 	def test_work_order_material_transferred_qty_with_process_loss(self):
 		stock_entries = []
 		item_code = make_item("_Test Item For Process Loss", {"is_stock_item": 1}).name
@@ -1053,6 +1106,65 @@ class TestWorkOrder(ERPNextTestSuite):
 		self.assertEqual(sorted(remaining_batches), sorted(batches))
 
 		frappe.db.set_single_value("Manufacturing Settings", "make_serial_no_batch_from_work_order", 0)
+
+	def test_partial_entries_consume_all_transferred_materials(self):
+		consumption = "Material Consumption for Manufacture"
+		for loss, continuous, steps in (
+			(10, 0, [("Manufacture", 5, 5), ("Manufacture", 5, 5)]),
+			(0, 1, [(consumption, 4, 4), (consumption, 6, 6)]),
+		):
+			with (
+				self.subTest(loss=loss, continuous=continuous),
+				self.change_settings(
+					"Manufacturing Settings",
+					{
+						"backflush_raw_materials_based_on": "Material Transferred for Manufacture",
+						"material_consumption": continuous,
+					},
+				),
+			):
+				work_order, raw_materials = make_transfer_based_work_order(1, loss)
+				for purpose, qty, raw_material_qty in steps:
+					entry = frappe.get_doc(make_stock_entry(work_order.name, purpose, qty))
+					self.assertEqual(
+						{row.item_code: row.qty for row in entry.items if row.s_warehouse},
+						{raw_materials[0]: raw_material_qty},
+					)
+					entry.submit()
+
+				self.assertEqual(get_bin(raw_materials[0], work_order.wip_warehouse).actual_qty, 0)
+
+	@ERPNextTestSuite.change_settings(
+		"Manufacturing Settings",
+		{
+			"backflush_raw_materials_based_on": "Material Transferred for Manufacture",
+			"material_consumption": 1,
+		},
+	)
+	def test_material_consumption_in_stages(self):
+		consumption = "Material Consumption for Manufacture"
+		work_order, raw_materials = make_transfer_based_work_order(2)
+		first_stage = frappe.get_doc(make_stock_entry(work_order.name, consumption, 5))
+		first_stage.remove(next(row for row in first_stage.items if row.item_code == raw_materials[1]))
+		first_stage.submit()
+
+		# the second material is still due for the first 5
+		second_stage = frappe.get_doc(make_stock_entry(work_order.name, consumption, 5))
+		self.assertEqual(
+			{row.item_code: row.qty for row in second_stage.items if row.s_warehouse},
+			{raw_materials[0]: 5, raw_materials[1]: 5},
+		)
+		second_stage.submit()
+
+		# more than is pending only consumes what is left
+		last_stage = frappe.get_doc(make_stock_entry(work_order.name, consumption, 10))
+		self.assertEqual(
+			{row.item_code: row.qty for row in last_stage.items if row.s_warehouse},
+			{raw_materials[1]: 5},
+		)
+		last_stage.submit()
+		for item in raw_materials:
+			self.assertEqual(get_bin(item, work_order.wip_warehouse).actual_qty, 0)
 
 	def test_partial_material_consumption(self):
 		frappe.db.set_single_value("Manufacturing Settings", "material_consumption", 1)
@@ -8867,6 +8979,42 @@ def make_wo_order_test_record(**args):
 		if not args.do_not_submit:
 			wo_order.submit()
 	return wo_order
+
+
+def make_transfer_based_work_order(components, process_loss_percentage=0):
+	"""Work Order for 10 Kg with 10 Kg of each raw material transferred."""
+	company = "_Test Company with perpetual inventory"
+	raw_materials = [make_item(properties={"stock_uom": "Kg"}).name for _ in range(components)]
+	finished_good = make_item(properties={"stock_uom": "Kg"}).name
+	for item in raw_materials:
+		test_stock_entry.make_stock_entry(
+			item_code=item, company=company, target="Stores - TCP1", qty=10, basic_rate=10
+		)
+
+	bom = make_bom(
+		item=finished_good,
+		company=company,
+		currency="INR",
+		quantity=10,
+		raw_materials=raw_materials,
+		rm_qty=10,
+		process_loss_percentage=process_loss_percentage,
+		do_not_save=True,
+	)
+	bom.insert()
+	bom.submit()
+	work_order = make_wo_order_test_record(
+		production_item=finished_good,
+		bom_no=bom.name,
+		company=company,
+		qty=10,
+		stock_uom="Kg",
+		source_warehouse="Stores - TCP1",
+		wip_warehouse="Work In Progress - TCP1",
+		fg_warehouse="Finished Goods - TCP1",
+	)
+	frappe.get_doc(make_stock_entry(work_order.name, "Material Transfer for Manufacture", 10)).submit()
+	return work_order, raw_materials
 
 
 def make_partially_reserved_work_order(rm_item, rm_properties=None):

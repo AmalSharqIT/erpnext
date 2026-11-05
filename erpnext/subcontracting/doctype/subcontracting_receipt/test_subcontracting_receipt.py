@@ -387,6 +387,115 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 		self.assertEqual(sle.stock_value_difference, -4 * scr.items[0].rate)
 		self.assertEqual(bundle_value, sle.stock_value_difference)
 
+	def test_batch_raw_material_return_value_matches_receipt(self):
+		rm_item = make_item(
+			properties={
+				"is_stock_item": 1,
+				"has_batch_no": 1,
+				"create_new_batch": 1,
+				"batch_number_series": "SCR-RM-RET-BATCH-.####",
+			}
+		).name
+		fg_item = make_item(properties={"is_stock_item": 1, "is_sub_contracted_item": 1}).name
+		make_bom(item=fg_item, raw_materials=[rm_item])
+		sco = get_subcontracting_order(
+			service_items=[
+				{
+					"warehouse": "_Test Warehouse - _TC",
+					"item_code": "Subcontracted Service Item 1",
+					"qty": 10,
+					"rate": 50,
+					"fg_item": fg_item,
+					"fg_item_qty": 10,
+				}
+			]
+		)
+		rm_items = get_rm_items(sco.supplied_items)
+		itemwise_details = make_stock_in_entry(rm_items=rm_items)
+		make_stock_transfer_entry(
+			sco_no=sco.name, rm_items=rm_items, itemwise_details=copy.deepcopy(itemwise_details)
+		)
+		scr = make_subcontracting_receipt(sco.name)
+		scr.submit()
+
+		scr_return = make_return_subcontracting_receipt(scr_name=scr.name, qty=-4)
+
+		stock_value_difference = frappe.db.get_value(
+			"Stock Ledger Entry",
+			{"voucher_no": scr_return.name, "item_code": rm_item, "is_cancelled": 0},
+			"stock_value_difference",
+		)
+		self.assertEqual(scr_return.supplied_items[0].rate, scr.supplied_items[0].rate)
+		self.assertEqual(stock_value_difference, 4 * scr.supplied_items[0].rate)
+
+	def test_return_sends_back_batches_consumed_by_the_receipt(self):
+		sco = make_order_with_two_batches_transferred()
+		for _ in range(2):
+			scr = make_subcontracting_receipt(sco.name)
+			scr.items[0].qty = 5
+			scr.save()
+			scr.submit()
+
+		scr_return = make_return_subcontracting_receipt(scr_name=scr.name, qty=-2)
+
+		self.assertEqual(
+			get_batch_from_bundle(scr_return.supplied_items[0].serial_and_batch_bundle),
+			get_batch_from_bundle(scr.supplied_items[0].serial_and_batch_bundle),
+		)
+		self.assertEqual(scr_return.supplied_items[0].rate, scr.supplied_items[0].rate)
+
+	@ERPNextTestSuite.change_settings("Stock Settings", {"use_serial_batch_fields": 0})
+	def test_return_of_receipt_without_consumed_bundle_keeps_consumed_rate(self):
+		sco = make_order_with_two_batches_transferred()
+		for _ in range(2):
+			scr = make_subcontracting_receipt(sco.name)
+			scr.items[0].qty = 5
+			scr.save()
+			scr.submit()
+
+		# receipts made before serial and batch bundles have no bundle on the consumed rows
+		frappe.db.set_value(
+			"Subcontracting Receipt Supplied Item",
+			scr.supplied_items[0].name,
+			"serial_and_batch_bundle",
+			None,
+		)
+		scr_return = make_return_subcontracting_receipt(scr_name=scr.name, qty=-2, do_not_submit=True)
+
+		self.assertEqual(scr_return.supplied_items[0].rate, scr.supplied_items[0].rate)
+
+	@ERPNextTestSuite.change_settings(
+		"Buying Settings",
+		{
+			"backflush_raw_materials_of_subcontract_based_on": "Material Transferred for Subcontract",
+			"validate_consumed_qty": 0,
+		},
+	)
+	@ERPNextTestSuite.change_settings("Stock Settings", {"use_serial_batch_fields": 0})
+	def test_return_sends_back_no_more_than_the_receipt_consumed(self):
+		sco = make_order_with_two_batches_transferred()
+		scr = make_subcontracting_receipt(sco.name)
+		scr.save()
+		scr.supplied_items[0].consumed_qty = 5
+		scr.save()
+		scr.submit()
+
+		scr_return = make_return_subcontracting_receipt(scr_name=scr.name, qty=-10)
+
+		self.assertEqual(sum(row.consumed_qty for row in scr_return.supplied_items), -5)
+
+	def test_return_cannot_send_back_batches_already_returned(self):
+		sco = make_order_with_two_batches_transferred()
+		scr = make_subcontracting_receipt(sco.name)
+		scr.submit()
+		first_return, second_return = (
+			make_return_subcontracting_receipt(scr_name=scr.name, qty=-5, do_not_submit=True)
+			for _ in range(2)
+		)
+		first_return.submit()
+
+		self.assertRaises(frappe.ValidationError, second_return.submit)
+
 	def test_subcontracting_receipt_over_return(self):
 		sco = get_subcontracting_order()
 		rm_items = get_rm_items(sco.supplied_items)
@@ -3591,6 +3700,91 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 			frappe.db.get_value("Serial and Batch Bundle", fg_sle.serial_and_batch_bundle, "total_amount"),
 			4500,
 		)
+
+	@ERPNextTestSuite.change_settings("Stock Settings", {"use_serial_batch_fields": 1})
+	@ERPNextTestSuite.change_settings("Buying Settings", {"set_valuation_rate_for_rejected_materials": 0})
+	def test_rejected_qty_of_batched_finished_good_has_no_value(self):
+		from erpnext.stock.doctype.warehouse.test_warehouse import create_warehouse
+
+		fg_item = make_item(
+			"_Test Batched Subcontracted FG Rejected",
+			properties={
+				"is_stock_item": 1,
+				"is_sub_contracted_item": 1,
+				"has_batch_no": 1,
+				"create_new_batch": 1,
+				"batch_number_series": "BSFGR-.####",
+			},
+		).name
+		rm_item = make_item("_Test RM Batched Subcontracted FG Rejected", {"is_stock_item": 1}).name
+		service_item = make_item("_Test Service Batched Subcontracted FG Rejected", {"is_stock_item": 0}).name
+		make_bom(item=fg_item, raw_materials=[rm_item])
+		rejected_warehouse = create_warehouse("_Test Rejected Warehouse Batched Subcontracted FG")
+
+		sco = get_subcontracting_order(
+			service_items=[
+				{
+					"warehouse": "_Test Warehouse - _TC",
+					"item_code": service_item,
+					"qty": 10,
+					"rate": 100,
+					"fg_item": fg_item,
+					"fg_item_qty": 10,
+				}
+			]
+		)
+		rm_items = get_rm_items(sco.supplied_items)
+		itemwise_details = make_stock_in_entry(rm_items=rm_items)
+		make_stock_transfer_entry(
+			sco_no=sco.name, rm_items=rm_items, itemwise_details=copy.deepcopy(itemwise_details)
+		)
+
+		scr = make_subcontracting_receipt(sco.name)
+		scr.items[0].qty = 8
+		scr.items[0].rejected_qty = 2
+		scr.items[0].rejected_warehouse = rejected_warehouse
+		scr.save()
+		scr.submit()
+
+		rejected_value = frappe.db.get_value(
+			"Stock Ledger Entry",
+			{"voucher_no": scr.name, "warehouse": rejected_warehouse, "is_cancelled": 0},
+			"stock_value_difference",
+		)
+		self.assertEqual(rejected_value, 0)
+
+
+def make_order_with_two_batches_transferred():
+	"""Subcontracting Order for 10 whose raw material was sent in two batches, 5 at 100 and 5 at 300."""
+	rm_item = make_item(
+		properties={
+			"is_stock_item": 1,
+			"has_batch_no": 1,
+			"create_new_batch": 1,
+			"batch_number_series": "SCR-RM-RET-OWN-.####",
+		}
+	).name
+	fg_item = make_item(properties={"is_stock_item": 1, "is_sub_contracted_item": 1}).name
+	make_bom(item=fg_item, raw_materials=[rm_item])
+	sco = get_subcontracting_order(
+		service_items=[
+			{
+				"warehouse": "_Test Warehouse - _TC",
+				"item_code": "Subcontracted Service Item 1",
+				"qty": 10,
+				"rate": 50,
+				"fg_item": fg_item,
+				"fg_item_qty": 10,
+			}
+		]
+	)
+	rm_item_row = get_rm_items(sco.supplied_items)[0]
+	rm_items = [{**rm_item_row, "qty": 5, "rate": 100}, {**rm_item_row, "qty": 5, "rate": 300}]
+	itemwise_details = make_stock_in_entry(rm_items=rm_items)
+	make_stock_transfer_entry(
+		sco_no=sco.name, rm_items=rm_items, itemwise_details=copy.deepcopy(itemwise_details)
+	)
+	return sco
 
 
 def make_return_subcontracting_receipt(**args):
