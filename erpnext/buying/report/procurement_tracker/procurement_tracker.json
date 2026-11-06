@@ -8,7 +8,7 @@
  "documentation_url": "https://docs.frappe.io/erpnext/procurement-tracker-report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2019-07-21 23:24:21.094269",
+ "modified": "2026-10-24",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Procurement Tracker",
@@ -19,10 +19,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Purchase Manager"
-  },
-  {
-   "role": "Purchase User"
+   "role": "System Manager"
   }
  ]
 }
