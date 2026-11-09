@@ -218,6 +218,7 @@ def validate_returned_bundle_components(doc, valid_items, already_returned_items
 	from erpnext.stock.doctype.packed_item.packed_item import (
 		get_component_stock_qty_per_unit,
 		get_order_packed_items,
+		get_order_row,
 		get_product_bundle_items,
 		pop_order_packed_item,
 	)
@@ -242,7 +243,7 @@ def validate_returned_bundle_components(doc, valid_items, already_returned_items
 		bundle_stock_qty = abs(flt(row.qty) * flt(row.conversion_factor or 1))
 		if frappe.db.get_single_value("Stock Settings", "allow_to_edit_stock_uom_qty_for_sales"):
 			bundle_stock_qty = flt(bundle_stock_qty, row.precision("stock_qty"))
-		so_packed_items = list(order_packed_items.get(row.get("so_detail"), []))
+		so_packed_items = list(order_packed_items.get(get_order_row(doc, row), []))
 		for component in components[row.item_code]:
 			so_packed_item = pop_order_packed_item(so_packed_items, row.item_code, component.item_code)
 			ref = valid_items.get(component.item_code)
@@ -1424,11 +1425,7 @@ def filter_serial_batches(parent_doc, data, row, warehouse_field=None, qty_field
 				continue
 
 			if parent_doc.doctype in ["Purchase Invoice", "Purchase Receipt", "Subcontracting Receipt"]:
-				batch_qty = get_available_batch_qty(
-					parent_doc,
-					batch_no,
-					warehouse,
-				)
+				batch_qty = min(batch_qty, get_available_batch_qty(parent_doc, batch_no, warehouse))
 
 				if batch_qty <= 0:
 					unavailable_batch = batch_no
@@ -1448,6 +1445,17 @@ def filter_serial_batches(parent_doc, data, row, warehouse_field=None, qty_field
 			)
 
 	return filterd_serial_batch
+
+
+def remove_picked_serial_batches(data, picked, parent_doc):
+	"""Drop what a return row picked so later rows against the same row do not pick it again."""
+	for serial_no in picked.serial_nos:
+		data.serial_nos.pop(serial_no, None)
+
+	sign = -1 if parent_doc.get("is_internal_customer") else 1
+	precision = frappe.get_precision("Serial and Batch Entry", "qty")
+	for batch_no, qty in picked.batches.items():
+		data.batches[batch_no] = flt(data.batches[batch_no] - sign * qty, precision)
 
 
 def get_available_batch_qty(parent_doc, batch_no, warehouse):
