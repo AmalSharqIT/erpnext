@@ -7,7 +7,7 @@
  "doctype": "Report",
  "idx": 5,
  "is_standard": "Yes",
- "modified": "2024-06-19 12:12:15.418799",
+ "modified": "2026-10-24",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Item-wise Purchase History",
@@ -18,13 +18,7 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "Stock User"
-  },
-  {
-   "role": "Purchase Manager"
-  },
-  {
-   "role": "Purchase User"
+   "role": "System Manager"
   }
   ]
 }

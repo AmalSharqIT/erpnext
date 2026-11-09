@@ -114,11 +114,12 @@
    "options": "fa fa-user"
   },
   {
+   "depends_on": "false",
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
    "no_copy": 1,
-   "options": "CUST-.YYYY.-",
+   "options": "CUST-",
    "set_only_once": 1
   },
   {
@@ -145,11 +146,12 @@
    "depends_on": "eval:doc.customer_type == 'Individual'",
    "fieldname": "gender",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Gender",
    "options": "Gender"
   },
   {
-   "default": "Company",
+   "default": "Individual",
    "fieldname": "customer_type",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -170,6 +172,7 @@
   {
    "fieldname": "lead_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Lead",
    "no_copy": 1,
    "oldfieldname": "lead_name",
@@ -194,6 +197,7 @@
   {
    "fieldname": "account_manager",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Account Manager",
    "options": "User"
   },
@@ -250,6 +254,7 @@
    "description": "Mark if this customer represents an internal company. Enables inter-company transactions.",
    "fieldname": "is_internal_customer",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Internal Customer"
   },
   {
@@ -284,6 +289,7 @@
    "description": "Fetched automatically on sales orders and invoices for this customer.",
    "fieldname": "default_price_list",
    "fieldtype": "Link",
+   "hidden": 1,
    "ignore_user_permissions": 1,
    "in_import_template": 1,
    "label": "Price List",
@@ -313,6 +319,7 @@
   {
    "fieldname": "website",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Website"
   },
   {
@@ -385,7 +392,8 @@
   },
   {
    "fieldname": "default_receivable_accounts",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1
   },
   {
    "description": "If set, accounting entries for this customer will post to these accounts instead of the company default.",
@@ -403,6 +411,7 @@
    "description": "Defines when payment is due (e.g. Net 30, 50% advance). Applied automatically on invoices for this customer.",
    "fieldname": "payment_terms",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_import_template": 1,
    "label": "Payment Terms Template",
    "options": "Payment Terms Template",
@@ -545,6 +554,7 @@
   {
    "fieldname": "opportunity_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Opportunity",
    "no_copy": 1,
    "options": "Opportunity",
@@ -589,6 +599,7 @@
    "collapsible_depends_on": "default_sales_partner",
    "fieldname": "sales_team_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Sales Team",
    "oldfieldtype": "Section Break",
    "options": "fa fa-group"
@@ -610,6 +621,7 @@
    "collapsible_depends_on": "loyalty_program",
    "fieldname": "loyalty_points_tab",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Loyalty Points"
   },
   {
@@ -624,6 +636,7 @@
   {
    "fieldname": "tax_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Tax"
   },
   {
@@ -640,6 +653,7 @@
    "description": "Users listed here can log into the customer portal to view their orders, invoices, and deliveries.",
    "fieldname": "portal_users_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Portal Users"
   },
   {
@@ -655,6 +669,7 @@
   {
    "fieldname": "prospect_name",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Prospect",
    "no_copy": 1,
    "options": "Prospect",
@@ -764,7 +779,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-10-30 12:00:00.000000",
+ "modified": "2026-10-30",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
@@ -844,19 +859,7 @@
    "select": 1
   },
   {
-   "role": "Employee",
-   "select": 1
-  },
-  {
    "role": "Fulfillment User",
-   "select": 1
-  },
-  {
-   "role": "HR Manager",
-   "select": 1
-  },
-  {
-   "role": "HR User",
    "select": 1
   },
   {
@@ -890,6 +893,10 @@
   {
    "role": "Website Manager",
    "select": 1
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "quick_entry": 1,
