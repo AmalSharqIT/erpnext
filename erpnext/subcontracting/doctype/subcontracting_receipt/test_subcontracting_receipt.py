@@ -862,6 +862,23 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 
 		self.assertRaises(frappe.ValidationError, second_return.submit)
 
+	def test_return_must_use_the_receipt_job_worker_warehouse(self):
+		sco = get_subcontracting_order()
+		rm_items = get_rm_items(sco.supplied_items)
+		make_stock_transfer_entry(
+			sco_no=sco.name, rm_items=rm_items, itemwise_details=make_stock_in_entry(rm_items=rm_items)
+		)
+		scr = make_subcontracting_receipt(sco.name)
+		scr.submit()
+
+		self.assertRaises(
+			frappe.ValidationError,
+			make_return_subcontracting_receipt,
+			scr_name=scr.name,
+			qty=-5,
+			supplier_warehouse="Finished Goods - _TC",
+		)
+
 	def test_moving_average_return_takes_the_finished_good_out_at_the_receipt_rate_on_submit(self):
 		moving_average = {"is_stock_item": 1, "valuation_method": "Moving Average"}
 		rm_item = make_item(properties=moving_average).name
@@ -1068,6 +1085,40 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 		)
 		self.assertEqual(row.rate, consumed_rate)
 		self.assertEqual(stock_value_difference, qty * consumed_rate)
+
+	@ERPNextTestSuite.change_settings("Stock Settings", {"use_serial_batch_fields": 1})
+	def test_return_sends_back_each_batch_of_a_mixed_rate_bundle_at_its_consumed_rate(self):
+		scr, scr_return = make_draft_return_of_two_batches(-4)
+		consumed_rates = get_batch_rates(scr.name)
+		cheaper, dearer = sorted(consumed_rates, key=consumed_rates.get)
+		row = scr_return.supplied_items[0]
+		# as the serial and batch selector does: the bundle has no rate
+		bundle = make_serial_batch_bundle(
+			{
+				"item_code": row.rm_item_code,
+				"warehouse": scr_return.supplier_warehouse,
+				"qty": 4,
+				"batches": frappe._dict({cheaper: 1, dearer: 3}),
+				"voucher_type": "Subcontracting Receipt",
+				"do_not_submit": True,
+			}
+		).name
+		row.update(
+			{
+				"consumed_qty": -4,
+				"use_serial_batch_fields": 0,
+				"batch_no": None,
+				"serial_and_batch_bundle": bundle,
+			}
+		)
+		scr_return.supplied_items = [row]
+		scr_return.save()
+		scr_return.submit()
+
+		self.assertEqual(
+			get_batch_rates(scr_return.name),
+			{cheaper: consumed_rates[cheaper], dearer: consumed_rates[dearer]},
+		)
 
 	def test_repost_keeps_the_consumed_batch_rate_on_each_return_entry(self):
 		scr, scr_return = make_draft_return_of_two_batches(-10)
@@ -4993,7 +5044,8 @@ def get_batch_rates(scr_name):
 def make_return_subcontracting_receipt(**args):
 	args = frappe._dict(args)
 	return_doc = make_return_doc("Subcontracting Receipt", args.scr_name)
-	return_doc.supplier_warehouse = args.supplier_warehouse or args.warehouse or "_Test Warehouse 1 - _TC"
+	if args.supplier_warehouse:
+		return_doc.supplier_warehouse = args.supplier_warehouse
 
 	if args.qty:
 		for item in return_doc.items:

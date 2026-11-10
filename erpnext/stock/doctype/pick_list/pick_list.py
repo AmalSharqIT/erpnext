@@ -25,6 +25,7 @@ from erpnext.selling.doctype.sales_order.sales_order import (
 from erpnext.stock.doctype.packed_item.packed_item import get_packed_items_of_order_rows
 from erpnext.stock.doctype.serial_and_batch_bundle.serial_and_batch_bundle import (
 	get_auto_batch_nos,
+	get_batch_qty_for_stock,
 	get_reserved_serial_nos_for_sre,
 )
 from erpnext.stock.get_item_details import get_company_total_stock, get_conversion_factor
@@ -178,15 +179,13 @@ class PickList(TransactionBase):
 			self.validate_warehouses()
 
 	def validate_stock_qty(self):
-		from erpnext.stock.doctype.batch.batch import get_batch_qty
-
 		for row in self.get("locations"):
 			row_qty = self.get_qty_to_pick(row)
 			if not row_qty:
 				continue
 
 			if row.batch_no:
-				batch_qty = get_batch_qty(row.batch_no, row.warehouse, row.item_code)
+				batch_qty = get_batch_qty_for_stock(row.batch_no, row.warehouse, item_code=row.item_code)
 
 				if row_qty > batch_qty:
 					frappe.throw(
@@ -1287,9 +1286,9 @@ def get_items_with_location_and_quantity(item_doc, item_location_map, docstatus)
 		# if extra quantity is available push current warehouse to available locations
 		if qty_diff > 0:
 			item_location.qty = qty_diff
-			if item_location.serial_no:
+			if item_location.serial_nos:
 				# set remaining serial numbers
-				item_location.serial_no = item_location.serial_no[-int(qty_diff) :]
+				item_location.serial_nos = item_location.serial_nos[cint(stock_qty) :]
 			available_locations = [item_location, *available_locations]
 
 	# update available locations for the item
@@ -1451,13 +1450,16 @@ def filter_locations_by_picked_materials(locations, picked_item_details) -> list
 			filterd_locations.append(row)
 			continue
 		if picked_qty > row.qty:
-			row.qty = 0
 			picked_item_details[key]["picked_qty"] -= row.qty
+			row.qty = 0
 		else:
 			row.qty -= picked_qty
 			picked_item_details[key]["picked_qty"] = 0.0
 			if row.serial_nos:
-				row.serial_nos = list(set(row.serial_nos) - set(picked_item_details[key].get("serial_no")))
+				picked_serial_nos = set(picked_item_details[key].get("serial_no") or [])
+				row.serial_nos = [
+					serial_no for serial_no in row.serial_nos if serial_no not in picked_serial_nos
+				]
 
 		if flt(row.qty, precision) > 0:
 			filterd_locations.append(row)
@@ -2006,7 +2008,10 @@ def add_product_bundles_to_target(
 			continue
 
 		target_bundle_item = map_child_doc(sales_order_item, target_doc, item_mapper)
-		target_bundle_item.qty = pending_qty
+		target_bundle_item.qty = flt(
+			pending_qty / (flt(target_bundle_item.conversion_factor) or 1),
+			target_bundle_item.precision("qty"),
+		)
 		target_bundle_item.against_pick_list = pick_list.name
 		update_child_item(sales_order_item, target_bundle_item, target_doc)
 

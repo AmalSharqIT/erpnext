@@ -37,7 +37,6 @@ from erpnext.projects.doctype.project.project import update_consumed_material_co
 from erpnext.setup.doctype.brand.brand import get_brand_defaults
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from erpnext.stock import get_warehouse_account, get_warehouse_account_map
-from erpnext.stock.doctype.batch.batch import get_batch_qty
 from erpnext.stock.doctype.inventory_dimension.inventory_dimension import (
 	get_evaluated_inventory_dimension,
 	get_mandatory_dimension_fields,
@@ -46,6 +45,7 @@ from erpnext.stock.doctype.inventory_dimension.inventory_dimension import (
 from erpnext.stock.doctype.item.item import get_item_defaults
 from erpnext.stock.doctype.serial_and_batch_bundle.serial_and_batch_bundle import (
 	combine_datetime,
+	get_batch_qty_for_stock,
 	get_type_of_transaction,
 )
 from erpnext.stock.stock_ledger import get_items_to_be_repost
@@ -369,6 +369,7 @@ class StockController(AccountsController):
 		if self.doctype == "Stock Entry" and self.purpose in ["Material Issue", "Material Transfer"]:
 			is_material_issue = True
 
+		check_batches = self.is_batch_check_needed()
 		for d in self.get("items"):
 			if hasattr(d, "serial_no") and hasattr(d, "batch_no") and d.serial_no and d.batch_no:
 				serial_nos = frappe.get_all(
@@ -385,7 +386,13 @@ class StockController(AccountsController):
 							)
 						)
 
-			if flt(d.qty) > 0.0 and d.get("batch_no") and self.get("posting_date") and self.docstatus < 2:
+			if (
+				check_batches
+				and flt(d.qty) > 0.0
+				and d.get("batch_no")
+				and self.get("posting_date")
+				and self.docstatus < 2
+			):
 				expiry_date, disabled = frappe.get_cached_value(
 					"Batch", d.get("batch_no"), ["expiry_date", "disabled"]
 				)
@@ -393,7 +400,17 @@ class StockController(AccountsController):
 					d.idx, d.batch_no, None if is_material_issue else expiry_date, disabled
 				)
 
-		self.validate_outward_bundle_batches(check_expiry=not is_material_issue)
+		if check_batches:
+			self.validate_outward_bundle_batches(check_expiry=not is_material_issue)
+
+	def is_batch_check_needed(self) -> bool:
+		"""An invoice without Update Stock moves no stock, so its batches were checked when they moved.
+		A consolidated invoice repeats POS Invoices whose batches were checked when sold."""
+		if self.flags.is_consolidated:
+			return False
+
+		is_invoice = self.doctype in ("Sales Invoice", "Purchase Invoice")
+		return not is_invoice or bool(self.get("update_stock"))
 
 	def validate_batch_is_usable(self, idx, batch_no, expiry_date, disabled):
 		if disabled:
@@ -1629,7 +1646,7 @@ class StockController(AccountsController):
 			if flt(reserved_qty, precision) <= 0:
 				continue
 
-			batch_qty = get_batch_qty(
+			batch_qty = get_batch_qty_for_stock(
 				batch_no,
 				warehouse,
 				posting_date=self.posting_date,

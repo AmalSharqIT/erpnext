@@ -922,12 +922,12 @@ class SerialandBatchBundle(Document):
 			and frappe.db.get_single_value("Buying Settings", "set_valuation_rate_for_rejected_materials")
 		)
 
-		transfer_rates = self.get_transfer_rates()
+		entry_rates = self.get_transfer_rates() or self.get_subcontracting_return_rates()
 		precision = frappe.get_precision("Serial and Batch Entry", "incoming_rate")
 		for d in self.entries:
 			is_queue_valued = valuation_method in ("FIFO", "LIFO") and d.batch_no in batches
 
-			entry_rate = transfer_rates.get((d.serial_no, d.batch_no), rate)
+			entry_rate = entry_rates.get((d.serial_no, d.batch_no), rate)
 
 			if self.is_rejected and not set_valuation_rate_for_rejected_materials:
 				entry_rate = 0.0
@@ -1259,6 +1259,29 @@ class SerialandBatchBundle(Document):
 				fields=["serial_no", "batch_no", "incoming_rate"],
 			)
 		}
+
+	def get_subcontracting_return_rates(self) -> dict:
+		"""Rate the returned Subcontracting Receipt consumed each serial/batch of a supplied item at."""
+		if self.voucher_type != "Subcontracting Receipt" or not self.voucher_detail_no:
+			return {}
+
+		row = frappe.db.get_value(
+			"Subcontracting Receipt Supplied Item",
+			self.voucher_detail_no,
+			["parent", "reference_name", "rm_item_code"],
+			as_dict=True,
+		)
+		if not row:
+			return {}
+
+		receipt = frappe.get_doc("Subcontracting Receipt", row.parent)
+		# rejected returns keep the row rate
+		if not receipt.is_return or row.reference_name in receipt.get_rejected_return_rows():
+			return {}
+
+		receipt_item = receipt.get("items", {"name": row.reference_name})[0].subcontracting_receipt_item
+		consumed = receipt.get_consumed_serial_batches().get((receipt_item, row.rm_item_code), {})
+		return {key: identity.rate for key, identity in consumed.items()}
 
 	def get_qty_field(self, row, qty_field=None) -> str:
 		if not qty_field:
@@ -3281,6 +3304,24 @@ def get_reserved_batches_for_sre(kwargs) -> dict:
 	return reserved_batches_details
 
 
+def get_batch_qty_for_stock(batch_no=None, warehouse=None, posting_date=None, posting_time=None, **kwargs):
+	"""Internal stock calculations must include quantities in all relevant warehouses."""
+	kwargs = frappe._dict(kwargs)
+	kwargs.update(
+		batch_no=batch_no,
+		warehouse=warehouse,
+		based_on=frappe.get_single_value("Stock Settings", "pick_serial_and_batch_based_on"),
+	)
+	if not kwargs.posting_datetime and posting_date:
+		kwargs.posting_datetime = combine_datetime(posting_date, posting_time)
+
+	batches = get_auto_batch_nos(kwargs)
+	if batch_no and warehouse:
+		return sum(row.qty for row in batches if row.batch_no == batch_no)
+
+	return batches
+
+
 def get_auto_batch_nos(kwargs):
 	if kwargs.against_sales_order and (
 		only_consider_batches := get_batches_to_be_considered(kwargs.against_sales_order)
@@ -3479,7 +3520,6 @@ def get_available_batches(kwargs):
 			Sum(batch_ledger.qty).as_("qty"),
 			batch_table.expiry_date,
 		)
-		.where(batch_table.disabled == 0)
 		.where(stock_ledger_entry.is_cancelled == 0)
 		.groupby(batch_ledger.batch_no, batch_ledger.warehouse)
 	)
@@ -3488,6 +3528,7 @@ def get_available_batches(kwargs):
 		query = query.where(stock_ledger_entry.company == kwargs.get("company"))
 
 	if not kwargs.get("for_stock_levels"):
+		query = query.where(batch_table.disabled == 0)
 		query = query.where((batch_table.expiry_date >= today()) | (batch_table.expiry_date.isnull()))
 
 	if kwargs.get("posting_datetime"):

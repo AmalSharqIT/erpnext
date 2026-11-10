@@ -74,8 +74,10 @@ class PackedItem(Document):
 		self.projected_qty = _bin.projected_qty if _bin else 0
 
 
-def make_packing_list(doc):
-	"Make/Update packing list for Product Bundle Item."
+def make_packing_list(doc, order_packed_items=None):
+	"""Make/Update packing list for Product Bundle Item.
+
+	order_packed_items: a Sales Order's own packed rows by order row, to keep their qty on Update Items."""
 
 	if doc.get("is_subcontracted"):
 		return
@@ -87,13 +89,15 @@ def make_packing_list(doc):
 	set_price_from_children = frappe.get_single_value("Selling Settings", "editable_bundle_item_rates")
 
 	stale_packed_items_table = get_indexed_packed_items_table(doc)
-	order_packed_items = get_order_packed_items(doc)
+	if order_packed_items is None:
+		order_packed_items = get_order_packed_items(doc)
 
 	reset = reset_packing_list(doc)
 
 	for item_row in doc.get("items"):
 		if is_product_bundle(item_row.item_code):
-			so_packed_items = list(order_packed_items.get(get_order_row(doc, item_row), []))
+			order_row = item_row.name if doc.doctype == "Sales Order" else get_order_row(doc, item_row)
+			so_packed_items = list(order_packed_items.get(order_row, []))
 			for bundle_item in get_product_bundle_items(item_row.item_code):
 				pi_row = add_packed_item_row(
 					doc=doc,
@@ -111,7 +115,7 @@ def make_packing_list(doc):
 				update_packed_item_price_data(pi_row, item_data, doc)
 
 				if item_row.get("against_pick_list"):
-					update_packed_item_with_pick_list_info(item_row, pi_row)
+					update_packed_item_with_pick_list_info(item_row, pi_row, so_packed_item)
 
 				if set_price_from_children:  # create/update bundle item wise price dict
 					update_product_bundle_rate(parent_items_price, pi_row, item_row)
@@ -278,11 +282,18 @@ def update_packed_item_basic_data(main_item_row, pi_row, packing_item, item_data
 
 def get_component_stock_qty_per_unit(packing_item, stock_uom, so_packed_item=None):
 	"""Component stock qty per bundle stock unit; a Sales Order's packed row keeps the qty it was ordered with."""
-	if so_packed_item and so_packed_item.qty_per_unit:
-		return so_packed_item.qty_per_unit
-
 	# component qty is in the bundle row's UOM; convert to stock qty
-	return flt(packing_item.qty) * get_component_conversion_factor(packing_item, stock_uom)
+	qty_per_unit = flt(packing_item.qty) * get_component_conversion_factor(packing_item, stock_uom)
+
+	# the order's ratio comes from its rounded packed qty, so use it only once the conversion has changed
+	if so_packed_item and so_packed_item.qty_per_unit:
+		ordered_qty = flt(
+			qty_per_unit * flt(so_packed_item.order_stock_qty), frappe.get_precision("Packed Item", "qty")
+		)
+		if ordered_qty != flt(so_packed_item.qty):
+			return so_packed_item.qty_per_unit
+
+	return qty_per_unit
 
 
 def get_component_conversion_factor(packing_item, stock_uom):
@@ -396,15 +407,20 @@ def get_order_packed_item_pairs(doc) -> list[tuple]:
 	return pairs
 
 
-def update_packed_item_with_pick_list_info(main_item_row, pi_row):
+def update_packed_item_with_pick_list_info(main_item_row, pi_row, so_packed_item=None):
+	filters = {
+		"item_code": pi_row.item_code,
+		"sales_order": main_item_row.get("against_sales_order"),
+		"sales_order_item": main_item_row.get("so_detail"),
+		"parent": main_item_row.against_pick_list,
+	}
+	# a component repeated on the bundle has a pick list row per packed row
+	if so_packed_item:
+		filters["product_bundle_item"] = so_packed_item.name
+
 	pl_row = frappe.db.get_value(
 		"Pick List Item",
-		{
-			"item_code": pi_row.item_code,
-			"sales_order": main_item_row.get("against_sales_order"),
-			"sales_order_item": main_item_row.get("so_detail"),
-			"parent": main_item_row.against_pick_list,
-		},
+		filters,
 		["warehouse", "batch_no", "serial_no"],
 		as_dict=True,
 		order_by="qty desc",

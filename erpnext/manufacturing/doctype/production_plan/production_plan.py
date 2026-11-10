@@ -1540,11 +1540,13 @@ def download_raw_materials(doc, warehouses=None):
 						"",
 						"",
 						"",
+						"",
 						bin_dict.get("warehouse"),
 						"",
 						bin_dict.get("projected_qty", 0),
 						bin_dict.get("actual_qty", 0),
 						bin_dict.get("ordered_qty", 0),
+						bin_dict.get("planned_qty", 0),
 						bin_dict.get("reserved_qty_for_production", 0),
 					]
 				)
@@ -1772,6 +1774,7 @@ def get_material_request_items(
 	bin_dict,
 	consumed_qty,
 	shortage_bin,
+	is_transfer=False,
 ):
 	required_qty = _required_qty_for_mr(
 		row, ignore_existing_ordered_qty, warehouse, shortage_bin, consumed_qty, include_safety_stock
@@ -1785,12 +1788,15 @@ def get_material_request_items(
 
 	uom = purchase_uom or row.get("stock_uom")
 	min_order_qty = flt(row.get("min_order_qty")) if doc.get("consider_minimum_order_qty") else 0
+	quantity = required_qty / conversion_factor
+	if not is_transfer:  # a transfer rounds only what is left to purchase
+		quantity = round_up_whole_uom(
+			_quantity_in_purchase_uom(required_qty, conversion_factor, min_order_qty), uom
+		)
 	return {
 		"item_code": row.item_code,
 		"item_name": row.item_name,
-		"quantity": round_up_whole_uom(
-			_quantity_in_purchase_uom(required_qty, conversion_factor, min_order_qty), uom
-		),
+		"quantity": quantity,
 		"conversion_factor": conversion_factor,
 		"required_bom_qty": row.get("qty"),
 		"stock_uom": row.get("stock_uom"),
@@ -1803,6 +1809,7 @@ def get_material_request_items(
 		"projected_qty": bin_dict.get("projected_qty", 0),
 		"ordered_qty": bin_dict.get("ordered_qty", 0),
 		"reserved_qty_for_production": bin_dict.get("reserved_qty_for_production", 0),
+		"planned_qty": bin_dict.get("planned_qty", 0),
 		"min_order_qty": row["min_order_qty"],
 		"material_request_type": row.get("default_material_request_type"),
 		"sales_order": sales_order,
@@ -2353,6 +2360,7 @@ def get_items_for_material_requests(
 					bin_dict,
 					consumed_qty,
 					shortage_bin,
+					is_transfer,
 				)
 				if items:
 					mr_items.append(items)
