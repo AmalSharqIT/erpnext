@@ -371,6 +371,7 @@ def get_packed_items_of_order_rows(order_rows, doctype="Sales Order") -> dict:
 			packed_item.warehouse,
 			packed_item.reserve_stock,
 			packed_item.qty,
+			packed_item.picked_qty,
 			order_item.stock_qty.as_("order_stock_qty"),
 		)
 		.where((packed_item.parenttype == doctype) & packed_item.parent_detail_docname.isin(list(order_rows)))
@@ -412,6 +413,8 @@ def get_order_packed_item_pairs(doc) -> list[tuple]:
 
 
 def update_packed_item_with_pick_list_info(main_item_row, pi_row, so_packed_item=None):
+	from erpnext.stock.doctype.pick_list.pick_list import get_pending_serial_nos, get_serial_nos_in_stock
+
 	filters = {
 		"item_code": pi_row.item_code,
 		"sales_order": main_item_row.get("against_sales_order"),
@@ -425,7 +428,7 @@ def update_packed_item_with_pick_list_info(main_item_row, pi_row, so_packed_item
 	pl_row = frappe.db.get_value(
 		"Pick List Item",
 		filters,
-		["warehouse", "batch_no", "serial_no"],
+		["item_code", "warehouse", "batch_no", "serial_no", "delivered_qty"],
 		as_dict=True,
 		order_by="qty desc",
 	)
@@ -435,7 +438,9 @@ def update_packed_item_with_pick_list_info(main_item_row, pi_row, so_packed_item
 
 	pi_row.warehouse = pl_row.warehouse
 	pi_row.batch_no = pl_row.batch_no
-	pi_row.serial_no = pl_row.serial_no
+	# keep the serial nos picked on the packed row for a partial delivery
+	if not pi_row.serial_no:
+		pi_row.serial_no = get_pending_serial_nos(pl_row, get_serial_nos_in_stock([pl_row]))
 
 
 def update_packed_item_price_data(pi_row, item_data, doc):
