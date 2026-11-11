@@ -51,6 +51,7 @@
    "link_to": "Account",
    "link_type": "DocType",
    "open_in_new_tab": 0,
+   "roles": "System Manager",
    "show_arrow": 0,
    "type": "Link"
   },
@@ -309,6 +310,7 @@
    "label": "Banking",
    "link_type": "URL",
    "open_in_new_tab": 0,
+   "roles": "System Manager",
    "show_arrow": 0,
    "type": "Link",
    "url": "/banking"
@@ -674,11 +676,12 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-04 22:30:00.000000",
+ "modified": "2026-10-19",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Accounts",
  "owner": "Administrator",
+ "roles": "System Manager\nCash Desk User",
  "standard": 1,
  "title": "Accounts"
 }
