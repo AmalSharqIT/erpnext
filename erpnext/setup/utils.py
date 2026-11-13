@@ -63,13 +63,18 @@ def get_pegged_rate(pegged_map, from_currency, to_currency, transaction_date=Non
 	return None
 
 
-def get_stored_exchange_rate(from_currency, to_currency, transaction_date, args=None, checkpoint_date=None):
+def get_stored_exchange_rate(from_currency, to_currency, transaction_date, args=None, checkpoint_date=None, supplier=None):
 	"""Return the latest rate from Currency Exchange records, or None if there is none.
 
 	On the same date, a record meant only for the requested side (buying or selling)
 	wins over a record meant for both.
 	"""
 	filters = [
+		[
+			"official_exchange_rate",
+			"=",
+			frappe.get_value("Supplier", supplier, "use_official_exchange_rate") if supplier else 0,
+		],
 		["date", "<=", getdate(transaction_date)],
 		["from_currency", "=", from_currency],
 		["to_currency", "=", to_currency],
@@ -98,7 +103,7 @@ def get_stored_exchange_rate(from_currency, to_currency, transaction_date, args=
 
 
 @frappe.whitelist()
-def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=None):
+def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=None, supplier=None):
 	if not (from_currency and to_currency):
 		# manqala 19/09/2016: Should this be an empty return or should it throw and exception?
 		return
@@ -121,17 +126,23 @@ def get_exchange_rate(from_currency, to_currency, transaction_date=None, args=No
 	if not allow_stale_rates:
 		checkpoint_date = add_days(transaction_date, -currency_settings.get("stale_days"))
 
-	rate = get_stored_exchange_rate(from_currency, to_currency, transaction_date, args, checkpoint_date)
+	rate = get_stored_exchange_rate(from_currency, to_currency, transaction_date, args, checkpoint_date, supplier)
 	if rate is not None:
 		return rate
 
 	# no direct record: use the inverse of a record for the opposite direction
 	reverse_args = {"for_buying": "for_selling", "for_selling": "for_buying"}.get(args, args)
 	reverse_rate = get_stored_exchange_rate(
-		to_currency, from_currency, transaction_date, reverse_args, checkpoint_date
+		to_currency, from_currency, transaction_date, reverse_args, checkpoint_date, supplier
 	)
 	if reverse_rate:
 		return 1 / reverse_rate
+
+	frappe.throw(
+		_(
+			"Unable to find exchange rate for {0} to {1} for key date {2}. Please create a Currency Exchange record manually"
+		).format(from_currency, to_currency, transaction_date)
+	)
 
 	if frappe.get_single_value("Currency Exchange Settings", "disabled"):
 		return 0.00

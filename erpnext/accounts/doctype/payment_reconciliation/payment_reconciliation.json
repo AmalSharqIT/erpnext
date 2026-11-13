@@ -194,6 +194,7 @@
   {
     "fieldname": "project",
     "fieldtype": "Link",
+    "hidden": 1,
     "label": "Project",
     "options": "Project"
   },
@@ -235,7 +236,7 @@
  "is_virtual": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-30 18:18:07.872317",
+ "modified": "2026-10-30",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Reconciliation",
