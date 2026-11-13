@@ -29,7 +29,7 @@
  ],
  "icon": "hash",
  "links": [],
- "modified": "2024-03-27 13:06:48.957880",
+ "modified": "2026-10-12",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Customs Tariff Number",
@@ -55,6 +55,12 @@
    "report": 1,
    "role": "Stock User",
    "share": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Imports User",
+   "write": 1
   }
  ],
  "quick_entry": 1,

@@ -291,7 +291,7 @@
  "idx": 1,
  "is_tree": 1,
  "links": [],
- "modified": "2026-10-12 18:30:00.000000",
+ "modified": "2026-10-12",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Warehouse",
@@ -307,7 +307,7 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Item Manager",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   },
@@ -337,13 +337,6 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Purchase User"
-  },
-  {
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
    "role": "Accounts User"
   },
   {
@@ -356,10 +349,6 @@
   },
   {
    "role": "Delivery User",
-   "select": 1
-  },
-  {
-   "role": "HR Manager",
    "select": 1
   },
   {
@@ -376,6 +365,14 @@
   },
   {
    "role": "Website Manager",
+   "select": 1
+  },
+  {
+   "role": "Item Manager",
+   "select": 1
+  },
+  {
+   "role": "Material Request User",
    "select": 1
   }
  ],

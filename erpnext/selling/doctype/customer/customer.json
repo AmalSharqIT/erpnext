@@ -764,7 +764,7 @@
    "link_fieldname": "party"
   }
  ],
- "modified": "2026-10-30 12:00:00.000000",
+ "modified": "2026-11-06",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
@@ -844,19 +844,7 @@
    "select": 1
   },
   {
-   "role": "Employee",
-   "select": 1
-  },
-  {
    "role": "Fulfillment User",
-   "select": 1
-  },
-  {
-   "role": "HR Manager",
-   "select": 1
-  },
-  {
-   "role": "HR User",
    "select": 1
   },
   {
@@ -890,6 +878,10 @@
   {
    "role": "Website Manager",
    "select": 1
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "quick_entry": 1,
