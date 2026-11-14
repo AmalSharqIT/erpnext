@@ -486,7 +486,7 @@
    "indent": 0,
    "is_default_module": 0,
    "keep_closed": 0,
-   "label": "Settings",
+   "label": "Manufacturing Settings",
    "link_to": "Manufacturing Settings",
    "link_type": "DocType",
    "open_in_new_tab": 0,
@@ -494,7 +494,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-30",
+ "modified": "2026-11-15",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Manufacturing",
