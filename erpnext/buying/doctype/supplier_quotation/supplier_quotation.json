@@ -950,7 +950,7 @@
  "is_submittable": 1,
  "link_display_mode": "Search",
  "links": [],
- "modified": "2026-11-15 00:15:15.391344",
+ "modified": "2026-11-15",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier Quotation",
@@ -981,18 +981,6 @@
    "read": 1,
    "report": 1,
    "role": "Purchase Manager",
-   "share": 1,
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "amend": 1,
-   "create": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Purchase User",
    "share": 1,
    "submit": 1,
    "write": 1

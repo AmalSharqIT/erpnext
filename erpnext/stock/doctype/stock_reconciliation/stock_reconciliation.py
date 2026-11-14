@@ -51,7 +51,7 @@ class StockReconciliation(StockController):
 		)
 
 		amended_from: DF.Link | None
-		company: DF.Link
+		company: DF.Link | None
 		cost_center: DF.Link | None
 		difference_amount: DF.Currency
 		expense_account: DF.Link | None

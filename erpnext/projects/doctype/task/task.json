@@ -436,7 +436,7 @@
  "link_display_mode": "Search",
  "links": [],
  "max_attachments": 5,
- "modified": "2026-11-02 16:48:25.316976",
+ "modified": "2026-11-02",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
@@ -456,25 +456,7 @@
    "write": 1
   },
   {
-   "role": "HR User",
-   "select": 1
-  },
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "read": 1,
-   "role": "HR Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
    "role": "Accounts User",
-   "select": 1
-  },
-  {
-   "role": "Employee",
    "select": 1
   },
   {
