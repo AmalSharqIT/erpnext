@@ -248,7 +248,7 @@ class BuyingController(SubcontractingController):
 		the entry it belongs to; the material leaving the in-transit warehouse gets a package of its
 		own when the receipt is submitted.
 		"""
-		if not (self.is_internal_receipt() and flt(row.rejected_qty)):
+		if not self.has_rejected_stock(row):
 			return self.make_package_for_transfer(
 				package,
 				row.from_warehouse,
@@ -284,7 +284,7 @@ class BuyingController(SubcontractingController):
 		A receipt of an internal transfer builds no package for it on its own, so rejected material
 		of a tracked item would have nothing to say where it came from.
 		"""
-		if not (self.is_internal_receipt() and flt(row.rejected_qty)) or self.is_return:
+		if not self.has_rejected_stock(row) or self.is_return:
 			return
 
 		if row.get("rejected_serial_and_batch_bundle") or not row.rejected_warehouse:
@@ -335,7 +335,7 @@ class BuyingController(SubcontractingController):
 			if not details or details.docstatus != 0:
 				continue
 
-			if flt(row.rejected_qty):
+			if self.has_rejected_stock(row):
 				wanted = (row.warehouse, "Inward")
 			else:
 				wanted = (row.from_warehouse, "Outward")
@@ -776,7 +776,7 @@ class BuyingController(SubcontractingController):
 
 				net_rate = item.base_net_amount
 				if item.sales_incoming_rate:  # for internal transfer
-					net_rate = self.get_internal_transfer_qty(item) * item.sales_incoming_rate
+					net_rate = get_transit_amount(item, self.get_internal_transfer_qty(item))
 
 				if (
 					not net_rate
@@ -1208,8 +1208,12 @@ class BuyingController(SubcontractingController):
 	def is_internal_receipt(self) -> bool:
 		return self.is_internal_transfer() and self.is_stock_receipt()
 
+	def has_rejected_stock(self, row) -> bool:
+		"""An internal receipt row whose rejected qty doesn't round to 0 in the stock UOM."""
+		return self.is_internal_receipt() and bool(get_stock_qty(row, row.rejected_qty))
+
 	def get_source_warehouse_qty(self, row, accepted_qty):
-		if not (self.is_internal_receipt() and flt(row.rejected_qty)):
+		if not self.has_rejected_stock(row):
 			return accepted_qty
 
 		if row.get("serial_and_batch_bundle") and not row.get("rejected_serial_and_batch_bundle"):
@@ -1220,7 +1224,7 @@ class BuyingController(SubcontractingController):
 	def get_accepted_warehouse_package(self, row, type_of_transaction, via_landed_cost_voucher):
 		"""Package for the entry into the accepted warehouse, which is the package of the row itself
 		when the row rejects material."""
-		if flt(row.rejected_qty) and self.is_internal_receipt() and not self.is_return:
+		if self.has_rejected_stock(row) and not self.is_return:
 			return row.serial_and_batch_bundle
 
 		if self.is_internal_transfer() and not self.is_return and self.docstatus != 2:
@@ -1864,6 +1868,11 @@ def get_purchase_expense_account(item_code, company):
 def get_stock_qty(row, qty) -> float:
 	"""Qty of a row in the stock UOM, rounded as the stock ledger posts it."""
 	return flt(flt(qty) * flt(row.conversion_factor), row.precision("stock_qty"))
+
+
+def get_transit_amount(row, qty) -> float:
+	"""Value of qty of an internal transfer row at its transit rate, as the stock ledger moves it."""
+	return get_stock_qty(row, qty) * flt(row.sales_incoming_rate) / flt(row.conversion_factor)
 
 
 def get_stock_qty_status_args(round_total=True) -> dict:

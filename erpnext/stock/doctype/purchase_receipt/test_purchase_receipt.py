@@ -4137,7 +4137,7 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 			sle.actual_qty,
 		)
 
-	def make_transfer_receipt(self, tag, item_doc, qty, rejected):
+	def make_transfer_receipt(self, tag, item_doc, qty, rejected, uom=None, conversion_factor=None):
 		from erpnext.stock.doctype.delivery_note.delivery_note import make_inter_company_purchase_receipt
 		from erpnext.stock.doctype.delivery_note.test_delivery_note import create_delivery_note
 
@@ -4166,7 +4166,13 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 			warehouse=wh.source,
 			target_warehouse=wh.transit,
 			batch_no=batch_no,
+			use_serial_batch_fields=bool(uom),
+			do_not_submit=bool(uom),
 		)
+		if uom:
+			dn.items[0].update({"uom": uom, "conversion_factor": conversion_factor})
+			dn.submit()
+
 		pr = make_inter_company_purchase_receipt(dn.name)
 		pr.items[0].warehouse = wh.accepted
 		pr.items[0].qty = qty
@@ -4174,6 +4180,33 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 		pr.items[0].received_qty = qty + rejected
 		pr.items[0].rejected_warehouse = wh.rejected
 		return pr, wh, company, batch_no
+
+	def test_internal_pr_with_rejected_stock_qty_rounding_to_zero(self):
+		"""A rejected qty that rounds to 0 in the stock UOM posts no rejected stock, and can be returned."""
+		from erpnext.controllers.sales_and_purchase_return import make_return_doc
+
+		for tag, properties in (
+			("Plain", {}),
+			("Batch", {"has_batch_no": 1, "create_new_batch": 1, "batch_number_series": "BT-BIRZ-.####"}),
+		):
+			with self.subTest(tag):
+				item_doc = make_item(
+					f"_Test {tag} Item For Zero Rejected Stock Qty",
+					{"stock_uom": "Kg", "uoms": [{"uom": "Gram", "conversion_factor": 0.001}], **properties},
+				)
+				pr, warehouses, *_ = self.make_transfer_receipt(
+					f"Zero Rejected {tag}", item_doc, 999, 1, uom="Gram", conversion_factor=0.001
+				)
+				pr.submit()
+
+				self.assertFalse(pr.items[0].rejected_serial_and_batch_bundle)
+				self.assertFalse(
+					frappe.db.exists(
+						"Stock Ledger Entry", {"voucher_no": pr.name, "warehouse": warehouses.rejected}
+					)
+				)
+
+				make_return_doc("Purchase Receipt", pr.name).submit()
 
 	def test_removing_the_rejection_moves_the_package_back(self):
 		"""A row that no longer rejects anything carries the package of the in-transit warehouse
@@ -7331,6 +7364,64 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 
 		# Test 3 - OverAllowanceError should be thrown as qty is greater than qty in DN
 		self.assertRaises(erpnext.controllers.status_updater.OverAllowanceError, pr.submit)
+
+	def test_internal_pr_of_batch_item_takes_the_value_that_leaves_transit(self):
+		"""A batch item received from transit in another UOM is valued at the stock qty that moved."""
+		from erpnext.stock.doctype.delivery_note.delivery_note import make_inter_company_purchase_receipt
+		from erpnext.stock.doctype.delivery_note.test_delivery_note import create_delivery_note
+
+		company = "_Test Company with perpetual inventory"
+		item = make_item(
+			"_Test Kg Batch Item For Transit Value",
+			{
+				"stock_uom": "Kg",
+				"has_batch_no": 1,
+				"create_new_batch": 1,
+				"batch_number_series": "BT-KGTV-.####",
+				"uoms": [{"uom": "Kg", "conversion_factor": 1}, {"uom": "Box", "conversion_factor": 0.3356}],
+			},
+		).name
+		make_purchase_receipt(
+			item_code=item,
+			company=company,
+			warehouse="Stores - TCP1",
+			qty=20,
+			rate=100,
+			uom="Kg",
+			posting_date=add_days(today(), -2),
+		)
+		dn = create_delivery_note(
+			item_code=item,
+			company=company,
+			customer="_Test Internal Customer 2",
+			cost_center="Main - TCP1",
+			expense_account="Cost of Goods Sold - TCP1",
+			qty=4,
+			rate=100,
+			warehouse="Stores - TCP1",
+			target_warehouse="Work In Progress - TCP1",
+			posting_date=add_days(today(), -1),
+			do_not_submit=True,
+		)
+		dn.items[0].update({"uom": "Box", "conversion_factor": 0.3356})
+		dn.submit()
+
+		# received after the delivery, so no repost revalues it
+		pr = make_inter_company_purchase_receipt(dn.name)
+		pr.update({"set_posting_time": 1, "posting_date": today(), "posting_time": nowtime()})
+		pr.items[0].warehouse = "Finished Goods - TCP1"
+		pr.submit()
+
+		stock_value = dict(
+			frappe.get_all(
+				"Stock Ledger Entry",
+				filters={"voucher_no": pr.name, "is_cancelled": 0},
+				fields=["warehouse", "stock_value_difference"],
+				as_list=True,
+			)
+		)
+		self.assertEqual(stock_value["Finished Goods - TCP1"], -stock_value["Work In Progress - TCP1"])
+		self.assertFalse(get_gl_entries("Purchase Receipt", pr.name))
 
 	def test_valuation_rate_for_rejected_materials(self):
 		item = make_item("Test Item with Rej Material Valuation", {"is_stock_item": 1})

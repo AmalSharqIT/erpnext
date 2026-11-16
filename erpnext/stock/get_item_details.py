@@ -30,7 +30,7 @@ from erpnext.setup.doctype.brand.brand import get_brand_defaults
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from erpnext.setup.utils import get_exchange_rate
 from erpnext.stock.doctype.item.item import get_item_defaults, get_uom_conv_factor
-from erpnext.stock.doctype.item_manufacturer.item_manufacturer import get_item_manufacturer_part_no
+from erpnext.stock.doctype.item_manufacturer.item_manufacturer import _get_item_manufacturer_part_no
 from erpnext.stock.doctype.price_list.price_list import get_price_list_details
 
 ItemDetails = frappe._dict
@@ -152,7 +152,7 @@ def _get_item_details(
 	out: ItemDetails = get_basic_details(ctx, item, overwrite_warehouse)
 
 	get_item_tax_template(ctx, item, out)
-	out.item_tax_rate = get_item_tax_map(
+	out.item_tax_rate = _get_item_tax_map(
 		doc=doc or ctx,
 		tax_template=out.item_tax_template or ctx.item_tax_template,
 		as_json=True,
@@ -753,7 +753,7 @@ def get_basic_details(ctx: ItemDetailsCtx, item, overwrite_warehouse=True) -> It
 		out[fieldname] = item.get(fieldname)
 
 	if ctx.manufacturer:
-		part_no = get_item_manufacturer_part_no(ctx.item_code, ctx.manufacturer)
+		part_no = _get_item_manufacturer_part_no(ctx.item_code, ctx.manufacturer)
 		if part_no:
 			out.manufacturer_part_no = part_no
 		else:
@@ -886,6 +886,9 @@ def get_item_tax_info(doc, tax_category, item_codes, item_rates=None, item_tax_t
 		if not item_code or item_code[1] in out or not item_tax_templates.get(item_code[1]):
 			continue
 
+		if not isinstance(item_code[0], str):
+			frappe.throw(_("Invalid Item Code"))
+
 		out[item_code[1]] = ItemDetails()
 		item = frappe.get_cached_doc("Item", item_code[0])
 		ctx: ItemDetailsCtx = {
@@ -898,11 +901,14 @@ def get_item_tax_info(doc, tax_category, item_codes, item_rates=None, item_tax_t
 			ctx.update({"item_tax_template": item_tax_templates.get(item_code[1])})
 
 		get_item_tax_template(ctx, item, out[item_code[1]])
-		out[item_code[1]]["item_tax_rate"] = get_item_tax_map(
+		out[item_code[1]]["item_tax_rate"] = _get_item_tax_map(
 			doc=doc,
 			tax_template=out[item_code[1]].get("item_tax_template"),
 			as_json=True,
 		)
+
+	for item_tax_template in {row.item_tax_template for row in out.values() if row.item_tax_template}:
+		erpnext.require_permission("Item Tax Template", item_tax_template, "select")
 
 	return out
 
@@ -928,7 +934,7 @@ def get_item_tax_template(ctx, item=None, out: ItemDetails | None = None):
 	        }
 	"""
 	if not item:
-		if not ctx.get("item_code"):
+		if not ctx.get("item_code") or not isinstance(ctx.item_code, str):
 			frappe.throw(_("Item/Item Code required to get Item Tax Template."))
 		else:
 			item = frappe.get_cached_doc("Item", ctx.item_code)
@@ -1054,6 +1060,13 @@ def is_within_valid_range(ctx: ItemDetailsCtx, tax) -> bool:
 
 @frappe.whitelist()
 def get_item_tax_map(*, doc: str | dict | Document, tax_template: str | None = None, as_json=True):
+	if tax_template:
+		erpnext.require_permission("Item Tax Template", tax_template, "select")
+
+	return _get_item_tax_map(doc=doc, tax_template=tax_template, as_json=as_json)
+
+
+def _get_item_tax_map(*, doc: str | dict | Document, tax_template: str | None = None, as_json=True):
 	doc = parse_json(doc)
 	item_tax_map = {}
 	for t in (t for t in (doc.get("taxes") or []) if not t.get("set_by_item_tax_template")):
@@ -1075,6 +1088,8 @@ def get_item_tax_map(*, doc: str | dict | Document, tax_template: str | None = N
 @erpnext.normalize_ctx_input(ItemDetailsCtx)
 def calculate_service_end_date(ctx: ItemDetailsCtx, item=None):
 	_preprocess_ctx(ctx)
+	if not isinstance(ctx.item_code, str):
+		frappe.throw(_("Invalid Item Code"))
 	if not item:
 		item = frappe.get_cached_doc("Item", ctx.item_code)
 

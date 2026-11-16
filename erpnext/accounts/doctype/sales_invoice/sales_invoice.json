@@ -1643,6 +1643,7 @@
    "hide_days": 1,
    "hide_seconds": 1,
    "label": "Inter Company Invoice Reference",
+   "no_copy": 1,
    "options": "Purchase Invoice",
    "read_only": 1,
    "search_index": 1
@@ -2397,7 +2398,7 @@
    "link_fieldname": "consolidated_invoice"
   }
  ],
- "modified": "2026-10-13",
+ "modified": "2026-11-16",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

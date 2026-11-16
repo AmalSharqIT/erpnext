@@ -95,6 +95,27 @@ class TestGetItemDetail(ERPNextTestSuite):
 		details = get_item_details(args)
 		self.assertEqual(details.get("price_list_rate"), 100)
 
+	def test_item_tax_info_needs_item_code_as_text(self):
+		from erpnext.stock.doctype.item.test_item import make_item
+		from erpnext.stock.get_item_details import get_item_tax_info
+
+		template = "_Test Account Excise Duty @ 10 - _TC"
+		item = make_item(properties={"taxes": [{"item_tax_template": template}]})
+		kwargs = {"doc": {"company": "_Test Company"}, "tax_category": "", "item_tax_templates": {"row": "x"}}
+
+		self.assertRaisesRegex(
+			frappe.ValidationError,
+			"Invalid Item Code",
+			get_item_tax_info,
+			item_codes=[[{"item_name": ["=", item.item_name]}, "row"]],
+			**kwargs,
+		)
+		details = get_item_tax_info(item_codes=[[item.name, "row"]], **kwargs)
+		self.assertEqual(details["row"]["item_tax_template"], template)
+		self.assertEqual(
+			frappe.parse_json(details["row"]["item_tax_rate"]), {"_Test Account Excise Duty - _TC": 10}
+		)
+
 	def test_bin_details_for_selling_doctypes(self):
 		from erpnext.stock.doctype.item.test_item import make_item
 		from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import make_purchase_receipt
@@ -212,6 +233,41 @@ class TestGetItemDetail(ERPNextTestSuite):
 					method(item_code, "_Test Warehouse 1 - _TC")
 
 			assert_refused(self, get_batch_qty, "_Test Batch", "_Test Warehouse - _TC", item_code)
+
+	def test_service_end_date_needs_item_code_as_text(self):
+		from erpnext.stock.doctype.item.test_item import make_item
+		from erpnext.stock.get_item_details import calculate_service_end_date
+
+		item = make_item(properties={"is_stock_item": 0, "enable_deferred_revenue": 1, "no_of_months": 12})
+		ctx = {"doctype": "Sales Invoice", "company": "_Test Company", "service_start_date": "2026-01-15"}
+
+		self.assertRaisesRegex(
+			frappe.ValidationError,
+			"Invalid Item Code",
+			calculate_service_end_date,
+			dict(ctx, item_code={"item_name": ["=", item.item_name]}),
+		)
+		details = calculate_service_end_date(dict(ctx, item_code=item.name))
+		self.assertEqual(str(details["service_end_date"]), "2027-01-15")
+		self.assertEqual(details["enable_deferred_revenue"], 1)
+
+	def test_service_end_date_needs_item_code_as_text_when_item_is_given(self):
+		from erpnext.stock.doctype.item.test_item import make_item
+		from erpnext.stock.get_item_details import calculate_service_end_date
+
+		item = make_item(properties={"is_stock_item": 0, "enable_deferred_revenue": 1, "no_of_months": 12})
+		ctx = {"doctype": "Sales Invoice", "company": "_Test Company", "service_start_date": "2026-01-15"}
+		item_values = {"enable_deferred_revenue": 1, "no_of_months": 12}
+
+		self.assertRaisesRegex(
+			frappe.ValidationError,
+			"Invalid Item Code",
+			calculate_service_end_date,
+			dict(ctx, item_code={"item_name": ["=", item.item_name]}),
+			item=item_values,
+		)
+		details = calculate_service_end_date(dict(ctx, item_code=item.name), item=item_values)
+		self.assertEqual(str(details["service_end_date"]), "2027-01-15")
 
 	# making this test in get_item_details test file as feat/fix is present in that method
 	def test_fetch_price_from_list_rate_on_doc_save(self):
@@ -1125,3 +1181,29 @@ class TestGetItemDetail(ERPNextTestSuite):
 				"qty": 1,
 			}
 		)
+
+	def test_item_tax_info_needs_template_permission(self):
+		from erpnext.stock.doctype.item.test_item import make_item
+		from erpnext.stock.get_item_details import get_item_tax_info
+
+		item = make_item(
+			properties={"taxes": [{"item_tax_template": "_Test Account Excise Duty @ 10 - _TC"}]}
+		)
+		kwargs = {
+			"doc": {"company": "_Test Company"},
+			"tax_category": "",
+			"item_codes": [[item.name, "row"]],
+			"item_tax_templates": {"row": "x"},
+		}
+		expected = get_item_tax_info(**kwargs)
+		self.assertEqual(expected["row"]["item_tax_template"], "_Test Account Excise Duty @ 10 - _TC")
+
+		other_company_user = make_fenced_user(
+			"_test_tax_info_other_company@example.com", ["Sales User"], [("Company", "_Test Company 1")]
+		)
+		for user in (other_company_user, make_fenced_user("_test_tax_info_no_role@example.com", [])):
+			with as_user(user):
+				assert_refused(self, get_item_tax_info, **kwargs)
+
+		with as_user(make_fenced_user("_test_tax_info_sales@example.com", ["Sales User"])):
+			self.assertEqual(get_item_tax_info(**kwargs), expected)

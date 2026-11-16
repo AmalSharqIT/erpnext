@@ -2261,6 +2261,36 @@ class TestPurchaseOrder(ERPNextTestSuite):
 			frappe.db.get_value("Purchase Order", po.name, "inter_company_order_reference"), so.name
 		)
 
+	def test_row_linked_by_internal_sales_order_cannot_be_deleted(self):
+		po = make_internal_purchase_order(do_not_submit=True)
+		po.append("items", {**po.items[0].as_dict(), "name": None, "idx": None})
+		po.submit()
+
+		so = make_inter_company_sales_order(po.name)
+		so.items = [row for row in so.items if row.purchase_order_item == po.items[0].name]
+		so.items[0].delivery_date = today()
+		so.submit()
+
+		kept_row = po.items[1]
+		trans_item = json.dumps(
+			[
+				{
+					"docname": kept_row.name,
+					"item_code": kept_row.item_code,
+					"qty": kept_row.qty,
+					"rate": kept_row.rate,
+				}
+			]
+		)
+		self.assertRaisesRegex(
+			frappe.ValidationError,
+			"already ordered on Sales Order",
+			update_child_qty_rate,
+			"Purchase Order",
+			trans_item,
+			po.name,
+		)
+
 	def test_internal_sales_order_drops_buying_only_terms(self):
 		frappe.get_doc(
 			doctype="Terms and Conditions", title="_Test Buy Only Terms", buying=1, selling=0, terms="FOB"
@@ -2286,6 +2316,50 @@ class TestPurchaseOrder(ERPNextTestSuite):
 		so.submit()
 		self.assertRaisesRegex(
 			frappe.ValidationError, "fully ordered", make_inter_company_sales_order, po.name
+		)
+
+	def test_no_internal_sales_order_from_purchase_order_made_from_one(self):
+		from erpnext.selling.doctype.sales_order.sales_order import make_inter_company_purchase_order
+		from erpnext.selling.doctype.sales_order.test_sales_order import make_sales_order
+
+		prepare_data_for_internal_transfer()
+		so = make_sales_order(
+			company="_Test Company with perpetual inventory",
+			customer="_Test Internal Customer 2",
+			warehouse="_Test Internal Warehouse New 1 - TCP1",
+			qty=2,
+			rate=1,
+		)
+		po = make_inter_company_purchase_order(so.name)
+		po.items[0].schedule_date = today()
+		po.submit()
+
+		self.assertRaisesRegex(
+			frappe.ValidationError, "was created from", make_inter_company_sales_order, po.name
+		)
+
+	def test_no_internal_purchase_order_from_sales_order_made_from_drop_ship_po(self):
+		from erpnext.selling.doctype.sales_order.sales_order import make_inter_company_purchase_order
+		from erpnext.selling.doctype.sales_order.sales_order import make_purchase_order as make_po_from_so
+		from erpnext.selling.doctype.sales_order.test_sales_order import make_sales_order
+
+		prepare_data_for_internal_transfer()
+		customer_so = make_sales_order(
+			company="_Test Company with perpetual inventory", warehouse="Stores - TCP1", qty=2, rate=1
+		)
+		po = make_po_from_so(
+			customer_so.name,
+			selected_items=[{"name": customer_so.items[0].name, "supplier": "_Test Internal Supplier 2"}],
+		)[0]
+		po.items[0].from_warehouse = "_Test Internal Warehouse New 1 - TCP1"
+		po.submit()
+
+		so = make_inter_company_sales_order(po.name)
+		so.items[0].delivery_date = today()
+		so.submit()
+
+		self.assertRaisesRegex(
+			frappe.ValidationError, "was created from", make_inter_company_purchase_order, so.name
 		)
 
 	def test_update_status_accepts_only_hold_close_and_reopen_on_submitted_po(self):

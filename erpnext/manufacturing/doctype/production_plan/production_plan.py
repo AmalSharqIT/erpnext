@@ -45,6 +45,7 @@ from erpnext.stock.doctype.stock_reservation_entry.stock_reservation_entry impor
 )
 from erpnext.stock.get_item_details import get_conversion_factor
 from erpnext.stock.utils import get_or_make_bin, validate_warehouse_company
+from erpnext.utilities.query import get_user_permission_conditions_qb
 from erpnext.utilities.transaction_base import validate_uom_is_integer
 
 
@@ -152,10 +153,20 @@ class ProductionPlan(Document):
 		self.validate_sales_orders()
 		self.validate_material_request_type()
 		self.validate_raw_material_group_warehouse()
-		if self.for_warehouse:
-			validate_warehouse_company(self.for_warehouse, self.company)
+		self.validate_warehouse_belongs_to_company()
 		clear_reserve_stock_if_disabled(self)
 		self.enable_auto_reserve_stock()
+
+	def validate_warehouse_belongs_to_company(self):
+		warehouses = {self.for_warehouse, self.sub_assembly_warehouse}
+		warehouses.update(row.warehouse for row in self.po_items)
+		warehouses.update(row.fg_warehouse for row in self.sub_assembly_items)
+		for row in self.mr_items:
+			warehouses.update((row.warehouse, row.from_warehouse))
+
+		for warehouse in warehouses:
+			if warehouse:
+				validate_warehouse_company(warehouse, self.company)
 
 	def validate_raw_material_group_warehouse(self):
 		if not self.raw_material_group_warehouse:
@@ -832,6 +843,11 @@ class ProductionPlan(Document):
 
 	@frappe.whitelist()
 	def set_status(self, close: bool | None = None, update_bin: bool = False):
+		if close is not None:
+			self.reload()
+			if self.docstatus != 1:
+				frappe.throw(_("Only a submitted Production Plan can be closed or re-opened"))
+
 		self.check_permission("write")
 
 		if close is None and self.status == "Closed":
@@ -2876,6 +2892,9 @@ def sales_order_query(doctype=None, txt=None, searchfield=None, start=None, page
 
 	if txt:
 		query = query.where(table.parent.like(f"%{txt}%"))
+
+	for condition in get_user_permission_conditions_qb("Sales Order", so_table):
+		query = query.where(condition)
 
 	if page_len:
 		query = query.limit(page_len)
