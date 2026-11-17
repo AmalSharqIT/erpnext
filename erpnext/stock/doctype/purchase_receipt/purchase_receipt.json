@@ -9,6 +9,7 @@
  "document_type": "Document",
  "documentation": "https://docs.frappe.io/erpnext/user/manual/en/purchase-receipt",
  "editable_grid": 1,
+ "enable_upload_first_workflow": 1,
  "engine": "InnoDB",
  "field_order": [
   "supplier_section",
@@ -1326,8 +1327,9 @@
  "icon": "package-check",
  "idx": 261,
  "is_submittable": 1,
+ "link_display_mode": "Search",
  "links": [],
- "modified": "2026-10-13",
+ "modified": "2026-11-15",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt",

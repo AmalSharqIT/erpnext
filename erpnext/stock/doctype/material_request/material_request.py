@@ -521,6 +521,10 @@ class MaterialRequest(BuyingController):
 
 				frappe.db.set_value(d.doctype, d.name, "ordered_qty", d.ordered_qty)
 
+		self.update_per_ordered(update_modified)
+		self.update_requested_qty_in_work_order()
+
+	def update_per_ordered(self, update_modified=True):
 		self._update_percent_field(
 			{
 				"target_dt": "Material Request Item",
@@ -532,8 +536,6 @@ class MaterialRequest(BuyingController):
 			},
 			update_modified,
 		)
-
-		self.update_requested_qty_in_work_order()
 
 	def update_requested_qty_in_work_order(self):
 		"""Refresh both counters: stop and cancel also flip pick list coverage."""
@@ -603,12 +605,15 @@ class MaterialRequest(BuyingController):
 			return
 
 		update_plan_item_requested_qty({d.material_request_plan_item for d in items_from_pp})
+		update_production_plan_status({d.production_plan for d in items_from_pp})
 
-		for production_plan in {d.production_plan for d in items_from_pp}:
-			doc = frappe.get_doc("Production Plan", production_plan)
-			doc.flags.ignore_permissions = True
-			doc.set_status()
-			doc.db_set("status", doc.status)
+
+def update_production_plan_status(production_plans):
+	for production_plan in production_plans:
+		doc = frappe.get_doc("Production Plan", production_plan)
+		doc.flags.ignore_permissions = True
+		doc.set_status()
+		doc.db_set("status", doc.status)
 
 
 def update_plan_item_requested_qty(plan_item_names):
@@ -995,6 +1000,7 @@ def make_request_for_quotation(source_name: str, target_doc: str | dict | Docume
 					["name", "material_request_item"],
 					["parent", "material_request"],
 					["project", "project_name"],
+					["cost_center", "cost_center"],
 				],
 				"postprocess": update_item,
 				"condition": select_item,

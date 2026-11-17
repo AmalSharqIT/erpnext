@@ -541,7 +541,7 @@
    "indent": 0,
    "is_default_module": 0,
    "keep_closed": 0,
-   "label": "Settings",
+   "label": "Buying Settings",
    "link_to": "Buying Settings",
    "link_type": "DocType",
    "open_in_new_tab": 0,
@@ -550,7 +550,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-10",
+ "modified": "2026-11-15",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying",

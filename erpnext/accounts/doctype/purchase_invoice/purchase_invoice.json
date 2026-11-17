@@ -8,6 +8,7 @@
  "document_type": "Document",
  "documentation": "https://docs.frappe.io/erpnext/user/manual/en/purchase-invoice",
  "email_append_to": 1,
+ "enable_upload_first_workflow": 1,
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
@@ -1726,8 +1727,9 @@
  "icon": "receipt-text",
  "idx": 204,
  "is_submittable": 1,
+ "link_display_mode": "Search",
  "links": [],
- "modified": "2026-10-13",
+ "modified": "2026-11-15",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice",

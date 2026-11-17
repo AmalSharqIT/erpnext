@@ -7,6 +7,7 @@
  "description": "Money you received or paid, matched against invoices.",
  "doctype": "DocType",
  "documentation": "https://docs.frappe.io/erpnext/user/manual/en/payment-entry",
+ "enable_upload_first_workflow": 1,
  "engine": "InnoDB",
  "field_order": [
   "type_of_payment",
@@ -791,8 +792,8 @@
  ],
  "grid_page_length": 50,
  "icon": "banknote",
- "index_web_pages_for_search": 1,
  "is_submittable": 1,
+ "link_display_mode": "Search",
  "links": [
   {
    "is_child_table": 1,
@@ -802,7 +803,7 @@
    "table_fieldname": "payment_entries"
   }
  ],
- "modified": "2026-11-04",
+ "modified": "2026-11-15",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Entry",
