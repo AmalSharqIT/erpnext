@@ -1550,6 +1550,7 @@ def get_bom_item_rate(args, bom_doc):
 				"transaction_type": "buying",
 				"company": bom_doc.company,
 				"currency": bom_doc.currency,
+				"transaction_date": today(),
 				"conversion_rate": 1,  # Passed conversion rate as 1 purposefully, as conversion rate is applied at the end of the function
 				"conversion_factor": args.get("conversion_factor") or 1,
 				"plc_conversion_rate": 1,
@@ -1567,7 +1568,7 @@ def get_bom_item_rate(args, bom_doc):
 def get_valuation_rate(data):
 	"""
 	1) Get average valuation rate from all warehouses
-	2) If no value, get last valuation rate from SLE
+	2) If no value, get last valuation rate from the company's SLE
 	3) If no value, get valuation rate from Item
 	"""
 	from pypika import Case
@@ -1603,13 +1604,18 @@ def get_valuation_rate(data):
 
 	valuation_rate = item_valuation.get("valuation_rate")
 
-	if (valuation_rate is not None) and valuation_rate <= 0:
-		# Explicit null value check. If None, Bins don't exist, neither does SLE
+	# None: no Bin, e.g. a source warehouse that never held the item
+	if flt(valuation_rate) <= 0:
 		sle = frappe.qb.DocType("Stock Ledger Entry")
 		last_val_rate = (
 			frappe.qb.from_(sle)
 			.select(sle.valuation_rate)
-			.where((sle.item_code == item_code) & (sle.valuation_rate > 0) & (sle.is_cancelled == 0))
+			.where(
+				(sle.item_code == item_code)
+				& (sle.company == company)
+				& (sle.valuation_rate > 0)
+				& (sle.is_cancelled == 0)
+			)
 			.orderby(sle.posting_datetime, order=frappe.qb.desc)
 			.orderby(sle.creation, order=frappe.qb.desc)
 			.limit(1)
@@ -1715,15 +1721,19 @@ def get_bom_items_as_dict(
 
 		items = frappe.db.sql(query, {"qty": qty, "bom": bom, "company": company}, as_dict=True)
 	else:
+		rate_col = "bom_item.base_rate"
+		if fetch_qty_in_stock_uom:
+			rate_col += " / ifnull(nullif(bom_item.conversion_factor, 0), 1)"
+
 		query = query.format(
 			table="BOM Item",
 			where_conditions="or bom_item.is_phantom_item)",
 			is_stock_item=is_stock_item,
 			qty_field="stock_qty" if fetch_qty_in_stock_uom else "qty",
-			select_columns=""", bom_item.rate, bom_item.uom, bom_item.conversion_factor, bom_item.source_warehouse,
+			select_columns=f""", bom_item.rate, bom_item.uom, bom_item.conversion_factor, bom_item.source_warehouse,
 				bom_item.operation, bom_item.include_item_in_manufacturing, bom_item.sourced_by_supplier,
 				sum(bom_item.stock_qty/ifnull(bom.quantity, 1)) * bom_item.rate * %(qty)s as amount,
-				bom_item.description, bom_item.base_rate as rate, bom_item.operation_row_id, bom_item.is_phantom_item , bom_item.bom_no """,
+				bom_item.description, {rate_col} as rate, bom_item.operation_row_id, bom_item.is_phantom_item , bom_item.bom_no """,
 			group_by_cond=group_by_cond,
 		)
 		items = frappe.db.sql(query, {"qty": qty, "bom": bom, "company": company}, as_dict=True)
