@@ -1667,6 +1667,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 
 	get_exchange_rate(transaction_date, from_currency, to_currency, callback) {
 		var args;
+		let supplier = null;
 		if (
 			["Quotation", "Sales Order", "Delivery Note", "Sales Invoice", "POS Invoice"].includes(
 				this.frm.doctype
@@ -1679,6 +1680,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			)
 		) {
 			args = "for_buying";
+			supplier = this.frm.doc.supplier;
 		}
 
 		if (!transaction_date || !from_currency || !to_currency) return;
@@ -1689,6 +1691,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				from_currency: from_currency,
 				to_currency: to_currency,
 				args: args,
+				supplier: supplier,
 			},
 			freeze: true,
 			freeze_message: __("Fetching exchange rates ..."),
