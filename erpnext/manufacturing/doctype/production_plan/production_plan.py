@@ -328,7 +328,7 @@ class ProductionPlan(Document):
 				& (mr.docstatus == 1)
 				& (mr.status != "Stopped")
 				& (mr.company == self.company)
-				& (mr_item.qty > IfNull(mr_item.ordered_qty, 0))
+				& (mr_item.stock_qty > IfNull(mr_item.ordered_qty, 0))
 				& (mr_item.stock_qty > IfNull(get_mr_item_planned_qty_query(mr_item), 0))
 				& (
 					ExistsCriterion(
@@ -547,7 +547,8 @@ class ProductionPlan(Document):
 				mr_item.warehouse,
 				mr_item.description,
 				mr_item.bom_no,
-				((mr_item.qty - mr_item.ordered_qty) * mr_item.conversion_factor).as_("pending_qty"),
+				# ordered_qty of a Manufacture request is the Work Order qty in stock UOM
+				(mr_item.stock_qty - mr_item.ordered_qty).as_("pending_qty"),
 				mr_item.stock_qty,
 				IfNull(get_mr_item_planned_qty_query(mr_item), 0).as_("planned_qty"),
 			)
@@ -555,7 +556,7 @@ class ProductionPlan(Document):
 			.where(
 				(mr_item.parent.isin(mr_list))
 				& (mr_item.docstatus == 1)
-				& (mr_item.qty > mr_item.ordered_qty)
+				& (mr_item.stock_qty > mr_item.ordered_qty)
 				& (
 					ExistsCriterion(
 						frappe.qb.from_(bom)
@@ -884,7 +885,8 @@ class ProductionPlan(Document):
 					return
 
 	def update_requested_status(self):
-		if self.mr_items and all(flt(d.requested_qty) >= flt(d.quantity) for d in self.mr_items):
+		rows_to_request = [d for d in self.mr_items if flt(d.quantity) > 0]
+		if rows_to_request and all(flt(d.requested_qty) >= flt(d.quantity) for d in rows_to_request):
 			self.status = "Material Requested"
 
 	def get_production_items(self):
