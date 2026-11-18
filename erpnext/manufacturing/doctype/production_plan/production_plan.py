@@ -427,7 +427,7 @@ class ProductionPlan(Document):
 		bom = frappe.qb.DocType("BOM")
 		so_item = frappe.qb.DocType("Sales Order Item")
 
-		items_subquery = frappe.qb.from_(bom).select(bom.name).where(bom.is_active == 1)
+		items_subquery = get_item_or_template_bom_query(bom, so_item)
 		items_query = (
 			frappe.qb.from_(so_item)
 			.select(
@@ -1993,7 +1993,7 @@ def get_sales_orders(self):
 	so = frappe.qb.DocType("Sales Order")
 	so_item = frappe.qb.DocType("Sales Order Item")
 
-	open_so_subquery1 = frappe.qb.from_(bom).select(bom.name).where(bom.is_active == 1)
+	open_so_subquery1 = get_item_or_template_bom_query(bom, so_item)
 
 	open_so_subquery2 = (
 		frappe.qb.from_(pi)
@@ -2054,6 +2054,21 @@ def get_sales_orders(self):
 	open_so = open_so_query.run(as_dict=True)
 
 	return open_so
+
+
+def get_item_or_template_bom_query(bom, so_item):
+	"""Active BOMs of the Sales Order item or of its template."""
+	item = frappe.qb.DocType("Item")
+	return (
+		frappe.qb.from_(bom)
+		.from_(item)
+		.select(bom.name)
+		.where(
+			(item.name == so_item.item_code)
+			& bom.item.isin([item.name, item.variant_of])
+			& (bom.is_active == 1)
+		)
+	)
 
 
 def _required_qty_for_mr(
@@ -2368,6 +2383,7 @@ def get_items_for_material_requests(
 	target_warehouse = doc.get("for_warehouse")
 	scope_warehouse = doc.get("raw_material_group_warehouse") or target_warehouse
 	is_transfer = bool((ignore_existing_ordered_qty or get_parent_warehouse_data) and warehouses)
+	transfer_warehouses = set(warehouses) if is_transfer else set()
 
 	for sales_order in so_item_details:
 		item_dict = so_item_details[sales_order]
@@ -2384,6 +2400,11 @@ def get_items_for_material_requests(
 				shortage_warehouse = row_target_warehouse
 				shortage_bin = _aggregate_bin_details(
 					row for row in bins if row.warehouse == row_target_warehouse
+				)
+			elif is_transfer and not row_scope_warehouse:
+				# no warehouse: availability spans all warehouses, the selected ones included
+				shortage_bin = _aggregate_bin_details(
+					row for row in bins if row.warehouse not in transfer_warehouses
 				)
 
 			if details.qty > 0:
