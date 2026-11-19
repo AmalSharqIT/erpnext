@@ -566,7 +566,7 @@
  "idx": 29,
  "links": [],
  "max_attachments": 4,
- "modified": "2026-11-04",
+ "modified": "2026-11-19",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",
@@ -613,15 +613,6 @@
    "role": "Projects Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "report": 1,
-   "role": "System Manager",
-   "select": 1,
-   "share": 1
   },
   {
    "role": "Accounts Manager",

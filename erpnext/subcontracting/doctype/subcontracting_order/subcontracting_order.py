@@ -214,6 +214,15 @@ class SubcontractingOrder(SubcontractingController):
 			if service_item.purchase_order_item in purchase_order_items
 		]
 
+		service_purchase_order_items = {
+			service_item.purchase_order_item for service_item in self.service_items
+		}
+		for item in self.items:
+			if item.purchase_order_item not in service_purchase_order_items:
+				frappe.throw(
+					_("Row {0}: Finished Good {1} has no Service Item row.").format(item.idx, item.item_code)
+				)
+
 		for service_item in self.service_items:
 			if frappe.get_value("Item", service_item.item_code, "is_stock_item"):
 				frappe.throw(_("Service Item {0} must be a non-stock item.").format(service_item.item_code))
@@ -295,7 +304,7 @@ class SubcontractingOrder(SubcontractingController):
 	def calculate_supplied_items_qty_and_amount(self):
 		for item in self.get("items"):
 			bom = frappe.get_doc("BOM", item.bom)
-			rm_cost = sum(flt(rm_item.amount) for rm_item in bom.items)
+			rm_cost = sum(flt(rm_item.base_rate) * flt(rm_item.qty) for rm_item in bom.items)
 			item.rm_cost_per_qty = flt(rm_cost / flt(bom.quantity), item.precision("rm_cost_per_qty"))
 
 	def calculate_items_qty_and_amount(self):
