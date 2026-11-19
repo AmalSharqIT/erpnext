@@ -51,7 +51,7 @@
  "idx": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-16 11:42:07.000000",
+ "modified": "2026-09-16",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Mode of Payment",
@@ -73,14 +73,6 @@
    "role": "Accounts User"
   },
   {
-   "role": "HR User",
-   "select": 1
-  },
-  {
-   "role": "HR Manager",
-   "select": 1
-  },
-  {
    "role": "Maintenance Manager",
    "select": 1
   },
@@ -93,16 +85,27 @@
    "select": 1
   },
   {
-   "role": "Purchase User",
-   "select": 1
-  },
-  {
    "role": "Sales Manager",
    "select": 1
   },
   {
    "role": "Sales User",
    "select": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Cash Desk User"
   }
  ],
  "quick_entry": 1,

@@ -16,7 +16,7 @@
  ],
  "idx": 0, 
  "is_standard": "Yes", 
- "modified": "2026-10-05 12:00:00.000000",
+ "modified": "2026-10-05",
  "modified_by": "Administrator", 
  "module": "Accounts", 
  "name": "Trial Balance (Simple)", 
@@ -28,13 +28,7 @@
  "report_type": "Query Report", 
  "roles": [
   {
-   "role": "Accounts User"
-  }, 
-  {
-   "role": "Accounts Manager"
-  }, 
-  {
-   "role": "Auditor"
+   "role": "System Manager"
   }
  ]
 }
