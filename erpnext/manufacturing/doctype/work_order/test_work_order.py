@@ -1194,6 +1194,30 @@ class TestWorkOrder(ERPNextTestSuite):
 		for item in raw_materials:
 			self.assertEqual(get_bin(item, work_order.wip_warehouse).actual_qty, 0)
 
+	@ERPNextTestSuite.change_settings(
+		"Manufacturing Settings", {"material_consumption": 1, "backflush_raw_materials_based_on": "BOM"}
+	)
+	def test_skip_transfer_work_order_in_process_after_consumption(self):
+		rm_item = make_item(properties={"is_stock_item": 1}).name
+		fg_item = make_item(properties={"is_stock_item": 1}).name
+		bom = make_bom(item=fg_item, raw_materials=[rm_item], rm_qty=2)
+		test_stock_entry.make_stock_entry(item_code=rm_item, target="Stores - _TC", qty=20, basic_rate=100)
+		work_order = make_wo_order_test_record(
+			production_item=fg_item,
+			bom_no=bom.name,
+			qty=10,
+			source_warehouse="Stores - _TC",
+			skip_transfer=1,
+		)
+		consumption = frappe.get_doc(
+			make_stock_entry(work_order.name, "Material Consumption for Manufacture", 5)
+		)
+		consumption.submit()
+		self.assertEqual(work_order.reload().status, "In Process")
+
+		consumption.cancel()
+		self.assertEqual(work_order.reload().status, "Not Started")
+
 	def test_partial_material_consumption(self):
 		frappe.db.set_single_value("Manufacturing Settings", "material_consumption", 1)
 		wo_order = make_wo_order_test_record(planned_start_date=now(), qty=4)
@@ -2088,6 +2112,23 @@ class TestWorkOrder(ERPNextTestSuite):
 		return_entry = make_stock_return_entry(work_order.name)
 		available_by_attribution = {row.original_item: row.qty for row in return_entry.items}
 		self.assertEqual(available_by_attribution, {None: 1.0, "_Test Item Home Desktop 100": 2.0})
+
+	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"material_consumption": 1})
+	def test_material_consumption_refused_on_closed_work_order(self):
+		rm_item = make_item(properties={"is_stock_item": 1}).name
+		fg_item = make_item(properties={"is_stock_item": 1}).name
+		bom = make_bom(item=fg_item, raw_materials=[rm_item], rm_qty=2)
+		test_stock_entry.make_stock_entry(item_code=rm_item, target="Stores - _TC", qty=20, basic_rate=100)
+		work_order = make_wo_order_test_record(
+			production_item=fg_item, bom_no=bom.name, qty=10, source_warehouse="Stores - _TC"
+		)
+		frappe.get_doc(make_stock_entry(work_order.name, "Material Transfer for Manufacture", 10)).submit()
+		close_work_order(work_order.name, "Closed")
+
+		consumption = frappe.get_doc(
+			make_stock_entry(work_order.name, "Material Consumption for Manufacture", 10)
+		)
+		self.assertRaisesRegex(frappe.ValidationError, "closed Work Order", consumption.submit)
 
 	def test_work_order_material_request_and_bom_details(self):
 		from erpnext.stock.doctype.material_request.material_request import (
@@ -7080,6 +7121,31 @@ class TestWorkOrder(ERPNextTestSuite):
 
 		new_bom = frappe.get_doc("Work Order", wo.name).make_bom()
 		self.assertEqual([flt(d.time_in_mins) for d in new_bom.operations], [60, 60])
+
+	@ERPNextTestSuite.change_settings(
+		"Manufacturing Settings",
+		{
+			"material_consumption": 1,
+			"backflush_raw_materials_based_on": "Material Transferred for Manufacture",
+		},
+	)
+	def test_bom_from_work_order_includes_material_consumption(self):
+		rm_item = make_item(properties={"is_stock_item": 1}).name
+		fg_item = make_item(properties={"is_stock_item": 1}).name
+		bom = make_bom(item=fg_item, raw_materials=[rm_item], rm_qty=2)
+		test_stock_entry.make_stock_entry(item_code=rm_item, target="Stores - _TC", qty=20, basic_rate=100)
+		work_order = make_wo_order_test_record(
+			production_item=fg_item, bom_no=bom.name, qty=10, source_warehouse="Stores - _TC"
+		)
+		for purpose in (
+			"Material Transfer for Manufacture",
+			"Material Consumption for Manufacture",
+			"Manufacture",
+		):
+			frappe.get_doc(make_stock_entry(work_order.name, purpose, 10)).submit()
+
+		new_bom = frappe.get_doc("Work Order", work_order.name).make_bom()
+		self.assertEqual([(d.item_code, d.qty) for d in new_bom.items], [(rm_item, 20)])
 
 	def test_semi_fg_fractional_output_qty_completes_work_order(self):
 		wo = self.make_car_with_four_wheels_work_order(
