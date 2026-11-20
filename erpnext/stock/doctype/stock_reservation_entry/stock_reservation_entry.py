@@ -1982,7 +1982,7 @@ def create_stock_reservation_entries_for_so_items(
 			continue
 
 		# Partial Reservation
-		if qty_to_be_reserved < unreserved_qty:
+		if flt(unreserved_qty - qty_to_be_reserved, item.precision("stock_qty")) > 0:
 			if not from_voucher_type and (
 				not item.get("qty_to_reserve") or qty_to_be_reserved < flt(item.get("qty_to_reserve"))
 			):
@@ -2244,11 +2244,12 @@ def get_status(sre) -> str:
 		return "Partially Used" if sre.transferred_qty < sre.reserved_qty else "Closed"
 	if flt(sre.delivered_qty) + flt(sre.consumed_qty) >= flt(sre.reserved_qty):
 		return "Delivered"
-	if sre.delivered_qty:
+	precision = frappe.get_precision("Stock Reservation Entry", "reserved_qty")
+	# float residue of serial / batch qty arithmetic is not a delivery
+	if flt(sre.delivered_qty, precision):
 		return "Partially Delivered"
 	if sre.consumed_qty:
 		return "Partially Used"
-	precision = frappe.get_precision("Stock Reservation Entry", "reserved_qty")
 	if flt(sre.reserved_qty, precision) >= flt(sre.voucher_qty, precision):
 		return "Reserved"
 	return "Partially Reserved"
