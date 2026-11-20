@@ -9853,9 +9853,8 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 		receipt.submit()
 		return receipt
 
-	def test_receipt_from_invoice_at_another_rate_books_matching_account_currency_amounts(self):
-		"""The exchange difference rows of a receipt made from a foreign currency invoice book the same
-		amounts in an account in the company currency."""
+	def make_receipt_from_usd_invoice(self, receipt_conversion_rate):
+		"""Receipt at another exchange rate from a USD invoice of 3 @ 10.33 at 85.37."""
 		from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import (
 			make_purchase_receipt as make_receipt,
 		)
@@ -9878,8 +9877,14 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 		pi.submit()
 
 		pr = frappe.get_doc(make_receipt(pi.name))
-		pr.conversion_rate = 83.11
+		pr.conversion_rate = receipt_conversion_rate
 		pr.submit()
+		return pr
+
+	def test_receipt_from_invoice_at_another_rate_books_matching_account_currency_amounts(self):
+		"""The exchange difference rows of a receipt made from a foreign currency invoice book the same
+		amounts in an account in the company currency."""
+		pr = self.make_receipt_from_usd_invoice(83.11)
 
 		gl_entries = frappe.get_all(
 			"GL Entry",
@@ -9930,6 +9935,82 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 				"Stock Received But Not Billed - TCP1": (1200, 0),
 				"Cost of Goods Sold - TCP1": (0, 200),
 			},
+		)
+
+	def test_return_of_receipt_from_invoice_at_another_rate_reverses_exchange_difference(self):
+		self.assert_return_reverses_exchange_difference()
+
+	def test_return_in_another_uom_reverses_exchange_difference(self):
+		self.assert_return_reverses_exchange_difference(
+			{"uom": "Box", "conversion_factor": 3, "qty": -1, "received_qty": -1, "rate": 30.99}
+		)
+
+	def assert_return_reverses_exchange_difference(self, return_row=None):
+		"""Full return of a receipt made at 83.11 from a USD invoice at 85.37 reverses its 70.04."""
+		from erpnext.stock.doctype.purchase_receipt.purchase_receipt import make_purchase_return
+
+		pr = self.make_receipt_from_usd_invoice(83.11)
+		pr_return = make_purchase_return(pr.name)
+		if return_row:
+			item = frappe.get_doc("Item", pr.items[0].item_code)
+			item.append(
+				"uoms", {"uom": return_row["uom"], "conversion_factor": return_row["conversion_factor"]}
+			)
+			item.save()
+			pr_return.items[0].update(return_row)
+		pr_return.submit()
+
+		gain_loss_account = frappe.get_cached_value("Company", pr.company, "exchange_gain_loss_account")
+		reversed_amount = frappe.db.get_value(
+			"GL Entry",
+			{"voucher_no": pr_return.name, "account": gain_loss_account, "is_cancelled": 0},
+			"credit",
+		)
+		self.assertEqual(reversed_amount, 70.04)
+
+	def test_internal_receipt_return_takes_back_the_lot_it_received(self):
+		"""A return of an internal receipt with no delivery row link still takes back the lot it received."""
+		from erpnext.controllers.sales_and_purchase_return import make_return_doc
+		from erpnext.stock.doctype.delivery_note.delivery_note import make_inter_company_purchase_receipt
+		from erpnext.stock.doctype.delivery_note.test_delivery_note import create_delivery_note
+		from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
+
+		company = "_Test Company with perpetual inventory"
+		item_code = make_item(properties={"is_stock_item": 1, "valuation_method": "FIFO"}).name
+		make_stock_entry(item_code=item_code, qty=3, rate=100, to_warehouse="Stores - TCP1", company=company)
+		make_stock_entry(
+			item_code=item_code, qty=10, rate=300, to_warehouse="Finished Goods - TCP1", company=company
+		)
+		dn = create_delivery_note(
+			item_code=item_code,
+			company=company,
+			customer="_Test Internal Customer 2",
+			cost_center="Main - TCP1",
+			expense_account="Cost of Goods Sold - TCP1",
+			qty=3,
+			rate=100,
+			warehouse="Stores - TCP1",
+			target_warehouse="Goods In Transit - TCP1",
+		)
+		pr = make_inter_company_purchase_receipt(dn.name)
+		pr.items[0].warehouse = "Finished Goods - TCP1"
+		pr.submit()
+
+		purchase_return = make_return_doc("Purchase Receipt", pr.name)
+		# as on a return made before the delivery row link was copied onto it
+		purchase_return.items[0].delivery_note_item = None
+		purchase_return.submit()
+
+		stock_value_difference = frappe.db.get_value(
+			"Stock Ledger Entry",
+			{"voucher_no": purchase_return.name, "warehouse": "Finished Goods - TCP1", "is_cancelled": 0},
+			"stock_value_difference",
+		)
+		self.assertEqual(stock_value_difference, -300)
+		self.assertFalse(
+			frappe.db.exists(
+				"GL Entry", {"voucher_no": purchase_return.name, "account": "Cost of Goods Sold - TCP1"}
+			)
 		)
 
 
