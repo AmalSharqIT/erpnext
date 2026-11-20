@@ -1947,6 +1947,16 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 		self.assertEqual(consumed_value, -1000)
 		self.assertEqual(gl_value, consumed_value)
 
+	def test_landed_cost_voucher_gets_only_the_finished_goods_of_a_receipt(self):
+		from erpnext.stock.doctype.landed_cost_voucher.landed_cost_voucher import get_pr_items
+
+		scr = make_receipt_with_scrap(co_product_allocation=20)
+
+		items = get_pr_items(
+			frappe._dict(receipt_document_type="Subcontracting Receipt", receipt_document=scr.name)
+		)
+		self.assertEqual([row.name for row in items], [scr.items[0].name])
+
 	def test_additional_and_landed_costs_with_rejected_qty(self):
 		from erpnext.stock.doctype.landed_cost_voucher.test_landed_cost_voucher import (
 			make_landed_cost_voucher,
@@ -2055,6 +2065,43 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 
 		self.assertEqual(scr_return.items[0].process_loss_qty, 0)
 		self.assertEqual(scr_return.items[0].received_qty, -8)
+
+	def test_full_return_of_receipt_with_process_loss_marks_it_returned(self):
+		set_backflush_based_on("BOM")
+		sco = get_subcontracting_order()
+		rm_items = get_rm_items(sco.supplied_items)
+		itemwise_details = make_stock_in_entry(rm_items=rm_items)
+		make_stock_transfer_entry(
+			sco_no=sco.name,
+			rm_items=rm_items,
+			itemwise_details=copy.deepcopy(itemwise_details),
+		)
+		scr = make_subcontracting_receipt(sco.name)
+		scr.items[0].qty = 8
+		scr.items[0].process_loss_qty = 2
+		scr.save()
+		scr.submit()
+
+		make_return_subcontracting_receipt(scr_name=scr.name)
+
+		scr.load_from_db()
+		self.assertEqual(scr.per_returned, 100)
+		self.assertEqual(scr.status, "Return Issued")
+
+	def test_full_return_of_receipt_with_process_loss_returns_its_secondary_items(self):
+		fg_item = "Subcontracted Item SA1"
+		make_bom_with_secondary_item(fg_item)
+		scr = make_receipt_with_secondary_items(fg_item, 10, process_loss_qty=2)
+
+		scr_return = make_return_doc("Subcontracting Receipt", scr.name)
+		scr_return.save()
+		scr_return.get_secondary_items()
+		scr_return.save()
+		scr_return.submit()
+
+		scr.load_from_db()
+		self.assertEqual(scr.items[1].returned_qty, 5)
+		self.assertEqual(scr.status, "Return Issued")
 
 	def test_supplied_items_follow_changed_accepted_qty(self):
 		set_backflush_based_on("BOM")
@@ -3503,6 +3550,12 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 
 		scr.run_method("onload")
 		self.assertTrue(scr.get_onload().get("allow_to_make_qc_after_submission"))
+
+	def test_secondary_item_without_its_finished_good_row_cannot_be_submitted(self):
+		scr = make_receipt_with_scrap(do_not_submit=True)
+		scr.items[1].reference_name = "not-a-row-of-this-receipt"
+
+		self.assertRaises(frappe.ValidationError, scr.submit)
 
 	def test_secondary_items_for_subcontracting_receipt(self):
 		set_backflush_based_on("BOM")
@@ -5615,7 +5668,7 @@ def make_bom_with_secondary_item(fg_item, quantity=1, secondary_qty=0.5, seconda
 	return bom
 
 
-def make_receipt_with_secondary_items(fg_item, qty):
+def make_receipt_with_secondary_items(fg_item, qty, process_loss_qty=0):
 	"""Submitted receipt for qty of fg_item, with its secondary rows."""
 	set_backflush_based_on("BOM")
 	service_items = [
@@ -5637,6 +5690,8 @@ def make_receipt_with_secondary_items(fg_item, qty):
 		itemwise_details=copy.deepcopy(itemwise_details),
 	)
 	scr = make_subcontracting_receipt(sco.name)
+	scr.items[0].qty = qty - process_loss_qty
+	scr.items[0].process_loss_qty = process_loss_qty
 	scr.save()
 	scr.get_secondary_items()
 	scr.save()
@@ -5870,7 +5925,9 @@ def make_service_receipt(service_item, fg_item, qty, rate, fg_item_qty):
 	return scr
 
 
-def make_receipt_with_scrap(valuation_type="Valuation Rate", scrap_rate=None, co_product_allocation=None):
+def make_receipt_with_scrap(
+	valuation_type="Valuation Rate", scrap_rate=None, co_product_allocation=None, do_not_submit=False
+):
 	"""Receipt of 2 finished goods, with 2 scrap valued at 10 unless given a rate, and an optional co-product."""
 	set_backflush_based_on("BOM")
 	rm_item = make_item(properties={"is_stock_item": 1, "valuation_rate": 100}).name
@@ -5923,5 +5980,6 @@ def make_receipt_with_scrap(valuation_type="Valuation Rate", scrap_rate=None, co
 	if scrap_rate:
 		scr.items[1].rate = scrap_rate
 	scr.save()
-	scr.submit()
+	if not do_not_submit:
+		scr.submit()
 	return scr

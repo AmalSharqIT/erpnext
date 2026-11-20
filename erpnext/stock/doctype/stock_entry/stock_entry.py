@@ -1632,7 +1632,11 @@ class StockEntry(StockController, SubcontractingInwardController):
 
 	def get_source_fg_qty(self) -> float:
 		if self.source_stock_entry:
-			return flt(frappe.db.get_value("Stock Entry", self.source_stock_entry, "fg_completed_qty"))
+			# the finished good the entry put in stock, as produced qty does for a Work Order
+			fg_completed_qty, process_loss_qty = frappe.db.get_value(
+				"Stock Entry", self.source_stock_entry, ["fg_completed_qty", "process_loss_qty"]
+			)
+			return flt(fg_completed_qty) - flt(process_loss_qty)
 		if self.work_order:
 			return flt(frappe.db.get_value("Work Order", self.work_order, "produced_qty"))
 		return 0.0
@@ -4386,7 +4390,12 @@ class StockEntry(StockController, SubcontractingInwardController):
 		if self.job_card:
 			pending_qty = flt(self.fg_completed_qty)
 		else:
-			pending_qty = flt(self.get_completed_job_card_qty()) - flt(self.pro_doc.produced_qty)
+			# completed qty leaves out the unbooked job card loss that For Quantity includes
+			pending_qty = (
+				flt(self.get_completed_job_card_qty())
+				- flt(self.pro_doc.produced_qty)
+				+ flt(self.get_pending_process_loss_qty())
+			)
 
 		used_secondary_items = self.get_used_secondary_items()
 		for row in other:

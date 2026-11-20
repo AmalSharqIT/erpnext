@@ -1116,27 +1116,11 @@ frappe.ui.form.on("Stock Entry", {
 			refresh_field("process_loss_qty");
 		}
 	},
-
-	set_fg_completed_qty(frm) {
-		let fg_completed_qty = 0;
-
-		frm.doc.items.forEach((item) => {
-			if (item.is_finished_item) {
-				fg_completed_qty += flt(item.transfer_qty + frm.doc.process_loss_qty);
-			}
-		});
-
-		frm.set_value("fg_completed_qty", fg_completed_qty);
-	},
 });
 
 frappe.ui.form.on("Stock Entry Detail", {
 	items_add(frm, cdt, cdn) {
 		let item = frappe.get_doc(cdt, cdn);
-		if (item.is_finished_item) {
-			frm.events.set_fg_completed_qty(frm);
-		}
-
 		if (frm.doc.purpose === "Receive from Customer") {
 			const scio_row = frm.doc.items.find((row) => row.scio_detail);
 			if (scio_row) {
@@ -1356,10 +1340,24 @@ var validate_sample_quantity = function (frm, cdt, cdn) {
 	}
 };
 
+// child handlers run on every parent form, the total is only on Stock Entry
+const update_total_additional_costs = (frm) => {
+	if (frm.doctype === "Stock Entry") {
+		frm.events.calculate_total_additional_costs(frm);
+	}
+};
+
 frappe.ui.form.on("Landed Cost Taxes and Charges", {
 	amount: function (frm, cdt, cdn) {
 		frm.events.set_base_amount(frm, cdt, cdn);
 	},
+
+	base_amount: update_total_additional_costs,
+	// duplicated rows keep their amounts
+	additional_costs_add: update_total_additional_costs,
+	additional_costs_remove: update_total_additional_costs,
+	// "Delete all rows" only fires this
+	additional_costs_delete: update_total_additional_costs,
 
 	expense_account: function (frm, cdt, cdn) {
 		frm.events.set_account_currency(frm, cdt, cdn);
@@ -1752,8 +1750,11 @@ erpnext.stock.StockEntry = class StockEntry extends erpnext.stock.StockControlle
 			this.frm.script_manager.copy_from_first_row("items", row, ["expense_account", "cost_center"]);
 		}
 
-		if (this.frm.doc.from_warehouse) row.s_warehouse = this.frm.doc.from_warehouse;
-		if (this.frm.doc.to_warehouse) row.t_warehouse = this.frm.doc.to_warehouse;
+		// a duplicated row keeps its own warehouses
+		if (!row.s_warehouse && !row.t_warehouse) {
+			if (this.frm.doc.from_warehouse) row.s_warehouse = this.frm.doc.from_warehouse;
+			if (this.frm.doc.to_warehouse) row.t_warehouse = this.frm.doc.to_warehouse;
+		}
 
 		if (cint(frappe.user_defaults?.use_serial_batch_fields)) {
 			frappe.model.set_value(row.doctype, row.name, "use_serial_batch_fields", 1);

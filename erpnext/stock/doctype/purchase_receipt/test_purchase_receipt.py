@@ -40,6 +40,26 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 		frappe.local.future_sle = {}
 		self.load_test_records("Purchase Receipt")
 
+	def test_bin_lock_includes_parent_warehouses(self):
+		receipt = frappe.get_doc(
+			{
+				"doctype": "Purchase Receipt",
+				"set_warehouse": "_Test Warehouse - _TC",
+				"supplier_warehouse": "_Test Warehouse 1 - _TC",
+				"items": [{"item_code": "_Test Item"}],
+				"supplied_items": [{"rm_item_code": "_Test Item Home Desktop 100"}],
+			}
+		)
+
+		self.assertEqual(
+			receipt.get_item_warehouses(),
+			{
+				(item_code, warehouse)
+				for item_code in ("_Test Item", "_Test Item Home Desktop 100")
+				for warehouse in ("_Test Warehouse - _TC", "_Test Warehouse 1 - _TC")
+			},
+		)
+
 	def test_purchase_receipt_skips_validation(self):
 		"""
 		Test that validation is skipped when over delivery receipt allowance is reduced after PO submission
@@ -9872,6 +9892,45 @@ class TestPurchaseReceipt(ERPNextTestSuite):
 		for entry in gl_entries:
 			self.assertEqual(entry.debit, entry.debit_in_account_currency)
 			self.assertEqual(entry.credit, entry.credit_in_account_currency)
+
+	def test_moving_average_purchase_return_leaves_no_negative_stock_value(self):
+		"""A purchase return at a rate above the moving average takes out at most what is in stock."""
+		from erpnext.controllers.sales_and_purchase_return import make_return_doc
+		from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
+
+		item_code = make_item(properties={"is_stock_item": 1, "valuation_method": "Moving Average"}).name
+		make_stock_entry(item_code=item_code, qty=10, rate=100, to_warehouse="Stores - TCP1")
+		pr = make_purchase_receipt(
+			item_code=item_code,
+			qty=10,
+			rate=300,
+			warehouse="Stores - TCP1",
+			company="_Test Company with perpetual inventory",
+		)
+		make_stock_entry(item_code=item_code, qty=15, from_warehouse="Stores - TCP1")
+
+		purchase_return = make_return_doc("Purchase Receipt", pr.name)
+		purchase_return.items[0].qty = -4
+		purchase_return.items[0].received_qty = -4
+		purchase_return.submit()
+
+		stock_value, valuation_rate = frappe.db.get_value(
+			"Stock Ledger Entry",
+			{"voucher_no": purchase_return.name, "is_cancelled": 0},
+			["stock_value", "valuation_rate"],
+		)
+		self.assertEqual(stock_value, 0)
+		self.assertEqual(valuation_rate, 0)
+
+		gl_entries = get_gl_entries("Purchase Receipt", purchase_return.name, skip_cancelled=True)
+		self.assertEqual(
+			{gle.account: (gle.debit, gle.credit) for gle in gl_entries},
+			{
+				"Stock In Hand - TCP1": (0, 1000),
+				"Stock Received But Not Billed - TCP1": (1200, 0),
+				"Cost of Goods Sold - TCP1": (0, 200),
+			},
+		)
 
 
 def create_asset_category_for_pr_test():

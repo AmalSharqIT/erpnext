@@ -648,7 +648,11 @@ def get_reposting_data(file_path) -> dict:
 	)
 
 	if not file_name:
-		return frappe._dict()
+		frappe.throw(
+			_(
+				"The reposting data file {0} is missing. Resuming this repost without it would silently skip the affected transactions during GL reposting. Restart the repost to regenerate it."
+			).format(bold(file_path))
+		)
 
 	attached_file = frappe.get_doc("File", file_name)
 
@@ -657,12 +661,13 @@ def get_reposting_data(file_path) -> dict:
 		content = content.encode("utf-8")
 
 	try:
-		data = gzip.decompress(content)
+		data = json.loads(gzip.decompress(content).decode("utf-8"))
 	except Exception:
-		return frappe._dict()
-
-	if data := json.loads(data.decode("utf-8")):
-		data = data
+		frappe.throw(
+			_(
+				"The reposting data file {0} is corrupted. Resuming this repost without it would silently skip the affected transactions during GL reposting. Restart the repost to regenerate it."
+			).format(bold(file_path))
+		)
 
 	return parse_json(data)
 
@@ -2070,7 +2075,8 @@ class update_entries_after:
 						actual_qty * sle.outgoing_rate
 					)
 
-					self.wh_data.valuation_rate = new_stock_value / new_stock_qty
+					# an outflow at a set rate, like a purchase return, takes out at most the stock value
+					self.wh_data.valuation_rate = max(new_stock_value, 0) / new_stock_qty
 				else:
 					self.wh_data.valuation_rate = sle.outgoing_rate
 		else:
