@@ -1050,6 +1050,43 @@ class TestJobCard(ERPNextTestSuite):
 		self.assertEqual(cost_after_cancel, original_cost)
 
 	@ERPNextTestSuite.change_settings(
+		"Manufacturing Settings",
+		{"add_corrective_operation_cost_in_finished_good_valuation": 1, "disable_capacity_planning": 1},
+	)
+	def test_corrective_operation_cost_is_rounded(self):
+		workstation = make_jc_review_workstation(hour_rate=600)
+		operation = make_jc_review_operation(workstation)
+		wo = make_jc_review_work_order(
+			make_jc_review_item(),
+			[{"item_code": make_jc_review_item(), "qty": 1}],
+			[{"operation": operation, "workstation": workstation, "time_in_mins": 60}],
+			skip_transfer=1,
+		)
+		job_card = get_jc_review_job_cards(wo.name)[0]
+		job_card.append("time_logs", jc_review_log("2031-03-11 08:00:00", 60, job_card.for_quantity))
+		job_card.submit()
+
+		corrective_operation = frappe.get_doc(
+			doctype="Operation", is_corrective_operation=1, name=frappe.generate_hash()
+		).insert()
+		for from_time in ("2031-03-11 10:00:00", "2031-03-11 11:00:00"):
+			corrective_job_card = make_corrective_job_card(
+				job_card.name, operation=corrective_operation.name, for_operation=job_card.operation
+			)
+			corrective_job_card.hour_rate = 1000
+			corrective_job_card.insert()
+			corrective_job_card.append(
+				"time_logs", jc_review_log(from_time, 7, corrective_job_card.for_quantity)
+			)
+			corrective_job_card.submit()
+
+		# 233.34 if each card's cost were rounded before adding them up
+		self.assertEqual(
+			frappe.db.get_value("Work Order", wo.name, ["corrective_operation_cost", "total_operating_cost"]),
+			(233.33, 833.33),
+		)
+
+	@ERPNextTestSuite.change_settings(
 		"Manufacturing Settings", {"add_corrective_operation_cost_in_finished_good_valuation": 1}
 	)
 	def test_if_corrective_jc_ops_cost_is_added_to_manufacture_stock_entry(self):
@@ -4382,6 +4419,30 @@ class TestJobCard(ERPNextTestSuite):
 			[("2031-03-03 09:00:00", "2031-03-03 10:00:00")],
 		)
 
+	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 0})
+	def test_work_order_planned_end_date_is_the_latest_parallel_operation_end(self):
+		long_workstation, short_workstation = make_jc_review_workstation(), make_jc_review_workstation()
+		operations = [
+			{
+				"operation": make_jc_review_operation(workstation),
+				"workstation": workstation,
+				"time_in_mins": minutes,
+				"sequence_id": 1,
+			}
+			for workstation, minutes in ((long_workstation, 9), (short_workstation, 6))
+		]
+		wo = make_jc_review_work_order(
+			make_jc_review_item(),
+			[{"item_code": make_jc_review_item(), "qty": 1}],
+			operations,
+			skip_transfer=1,
+			planned_start_date="2031-05-05 08:00:00",
+		)
+
+		self.assertEqual(
+			str(frappe.db.get_value("Work Order", wo.name, "planned_end_date")), "2031-05-05 09:30:00"
+		)
+
 	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
 	def test_partial_sub_operation_cycles_keep_job_card_qty(self):
 		workstation = make_jc_review_workstation()
@@ -5095,6 +5156,47 @@ class TestJobCard(ERPNextTestSuite):
 			{"job_card_id": job_card.name, "start_time": "2031-03-09 10:00:00"},
 		)
 		self.assertEqual(frappe.db.count("Job Card Time Log", {"parent": job_card.name}), time_logs)
+
+	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
+	def test_make_time_log_validates_time_logs(self):
+		from erpnext.manufacturing.doctype.job_card.job_card import make_time_log
+
+		workstation = make_jc_review_workstation(capacity=1)
+		operation = make_jc_review_operation(workstation)
+		first_card, second_card = (
+			get_jc_review_job_cards(
+				make_jc_review_work_order(
+					make_jc_review_item(),
+					[{"item_code": make_jc_review_item(), "qty": 1}],
+					[{"operation": operation, "workstation": workstation, "time_in_mins": 60}],
+					skip_transfer=1,
+				).name
+			)[0]
+			for _ in range(2)
+		)
+		first_card.append("time_logs", jc_review_log("2031-03-10 08:00:00", 60))
+		first_card.save()
+
+		self.assertRaises(
+			OverlapError,
+			make_time_log,
+			{"job_card_id": second_card.name, "start_time": "2031-03-10 08:30:00"},
+		)
+
+		make_time_log({"job_card_id": second_card.name, "start_time": "2031-03-10 10:00:00"})
+		self.assertRaisesRegex(
+			frappe.ValidationError,
+			"From time must be less than to time",
+			make_time_log,
+			{"job_card_id": second_card.name, "complete_time": "2031-03-10 09:30:00"},
+		)
+
+		make_time_log(
+			{"job_card_id": second_card.name, "complete_time": "2031-03-10 11:00:00", "completed_qty": 1}
+		)
+		second_card.reload()
+		self.assertEqual(second_card.time_logs[0].time_in_mins, 60)
+		self.assertEqual(second_card.total_completed_qty, 1)
 
 	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
 	def test_job_card_lookups_follow_work_order_user_permissions(self):

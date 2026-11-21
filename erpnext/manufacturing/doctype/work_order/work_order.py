@@ -735,8 +735,9 @@ class WorkOrder(Document):
 			self.actual_operating_cost if self.actual_operating_cost else self.planned_operating_cost
 		)
 
-		self.total_operating_cost = (
-			flt(self.additional_operating_cost) + flt(variable_cost) + flt(self.corrective_operation_cost)
+		self.total_operating_cost = flt(
+			flt(self.additional_operating_cost) + flt(variable_cost) + flt(self.corrective_operation_cost),
+			self.precision("total_operating_cost"),
 		)
 
 	@staticmethod
@@ -1478,9 +1479,10 @@ class WorkOrder(Document):
 				if row.job_card_qty > 0:
 					self.prepare_data_for_job_card(row, idx, plan_days, enable_capacity_planning)
 
-		planned_end_date = self.operations and self.operations[-1].planned_end_time
-		if planned_end_date:
-			self.db_set("planned_end_date", planned_end_date)
+		# operations with the same Sequence ID run in parallel, so the last row may not end last
+		end_times = [get_datetime(row.planned_end_time) for row in self.operations if row.planned_end_time]
+		if end_times:
+			self.db_set("planned_end_date", max(end_times))
 
 	def prepare_data_for_job_card(self, row, idx, plan_days, enable_capacity_planning):
 		self.set_operation_start_end_time(row, idx)
@@ -1682,14 +1684,16 @@ class WorkOrder(Document):
 			.left_join(plan_item)
 			.on(plan_item.name == wo.production_plan_item)
 			.select(Sum(qty_against_sales_order(wo, plan_item)))
-			.where((wo.sales_order == self.sales_order) & (wo.docstatus == 1))
+			.where(
+				(wo.sales_order == self.sales_order)
+				& (wo.sales_order_item == self.sales_order_item)
+				& (wo.docstatus == 1)
+			)
 		)
 		if self.product_bundle_item:
 			query = query.where(wo.product_bundle_item == self.product_bundle_item)
 		else:
-			query = query.where(
-				(wo.production_item == self.production_item) & (wo.sales_order_item == self.sales_order_item)
-			)
+			query = query.where(wo.production_item == self.production_item)
 
 		return query.run(as_list=1)
 
