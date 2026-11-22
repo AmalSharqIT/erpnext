@@ -868,10 +868,21 @@ class BOM(WebsiteGenerator):
 	def set_conversion_rate(self):
 		if self.currency == self.company_currency():
 			self.conversion_rate = 1
-		elif self.conversion_rate == 1 or flt(self.conversion_rate) <= 0:
+		elif self.conversion_rate == 1 or flt(self.conversion_rate) <= 0 or self.has_stale_conversion_rate:
 			self.conversion_rate = get_exchange_rate(
 				self.currency, self.company_currency(), args="for_buying"
 			)
+
+	@property
+	def has_stale_conversion_rate(self):
+		"""Currency changed without a new conversion rate."""
+		previous = self.get_doc_before_save()
+		if not previous:
+			return False
+
+		precision = self.precision("conversion_rate")
+		rate_unchanged = flt(previous.conversion_rate, precision) == flt(self.conversion_rate, precision)
+		return previous.currency != self.currency and rate_unchanged
 
 	def set_plc_conversion_rate(self):
 		if self.rm_cost_as_per in ["Valuation Rate", "Last Purchase Rate"]:
@@ -1516,8 +1527,9 @@ class BOM(WebsiteGenerator):
 		return BOMTree(self.name)
 
 	def set_process_loss_qty(self):
-		if self.process_loss_percentage:
-			self.process_loss_qty = flt(self.quantity) * flt(self.process_loss_percentage) / 100
+		self.process_loss_qty = flt(
+			flt(self.quantity) * flt(self.process_loss_percentage) / 100, self.precision("process_loss_qty")
+		)
 
 		for item in self.secondary_items:
 			item.process_loss_qty = flt(
@@ -1980,6 +1992,7 @@ def add_operating_cost_component_wise(stock_entry, work_order=None, op_expense_a
 	from erpnext.stock.doctype.stock_entry.stock_entry import get_consumed_operating_cost
 
 	cost_added = False
+	without_components = []
 	for row in work_order.operations:
 		if job_card and job_card.operation_id != row.name:
 			continue
@@ -1987,16 +2000,11 @@ def add_operating_cost_component_wise(stock_entry, work_order=None, op_expense_a
 		if not row.actual_operation_time:
 			continue
 
-		workstation_cost = frappe.get_all(
-			"Workstation Cost",
-			fields=["operating_component", "operating_cost"],
-			filters={
-				"parent": row.workstation,
-				"parenttype": "Workstation",
-			},
-		)
-
+		workstation_cost = _get_operating_components(row)
 		total_component_rate = sum(flt(wc.operating_cost) for wc in workstation_cost)
+		if not total_component_rate:
+			without_components.append(row)
+
 		if not (flt(row.actual_operating_cost) and total_component_rate):
 			continue
 
@@ -2044,7 +2052,23 @@ def add_operating_cost_component_wise(stock_entry, work_order=None, op_expense_a
 
 				cost_added = True
 
+	if cost_added:
+		for row in without_components:
+			_add_operation_cost(stock_entry, work_order, row, op_expense_account)
+
 	return cost_added
+
+
+def _get_operating_components(row):
+	# an operation planned on a Workstation Type has no workstation
+	parent, parenttype = (
+		(row.workstation, "Workstation") if row.workstation else (row.workstation_type, "Workstation Type")
+	)
+	return frappe.get_all(
+		"Workstation Cost",
+		fields=["operating_component", "operating_cost"],
+		filters={"parent": parent, "parenttype": parenttype},
+	)
 
 
 def _add_operation_cost(stock_entry, work_order, operation, expense_account):
@@ -2101,11 +2125,16 @@ def get_component_account(parent, company):
 	)
 
 
+def makes_semi_finished_good(work_order, job_card=None) -> bool:
+	"""Work order level costs go to the finished good, not to a semi-finished good of a job card."""
+	return bool(job_card and job_card.finished_good and job_card.finished_good != work_order.production_item)
+
+
 def _add_additional_operating_cost(stock_entry, work_order, expense_account, job_card=None):
 	if not (work_order and work_order.additional_operating_cost and work_order.qty):
 		return
 
-	if job_card and job_card.finished_good and job_card.finished_good != work_order.production_item:
+	if makes_semi_finished_good(work_order, job_card):
 		return
 
 	per_unit = flt(work_order.additional_operating_cost) / flt(work_order.qty)
@@ -2167,6 +2196,10 @@ def add_operations_cost(stock_entry, work_order=None, expense_account=None, job_
 			)
 			.groupby(table.operation)
 		)
+		if work_order.track_semi_finished_goods:
+			# semi-finished good quantities are not finished good units
+			query = query.where(table.finished_good == work_order.production_item)
+
 		return min([d.qty for d in query.run(as_dict=True)], default=0)
 
 	def get_utilised_corrective_cost():
@@ -2191,6 +2224,7 @@ def add_operations_cost(stock_entry, work_order=None, expense_account=None, job_
 	if (
 		work_order
 		and work_order.corrective_operation_cost
+		and not makes_semi_finished_good(work_order, job_card)
 		and cint(
 			frappe.db.get_single_value(
 				"Manufacturing Settings", "add_corrective_operation_cost_in_finished_good_valuation"

@@ -353,6 +353,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 		self.validate_work_order_status_for_return()
 		self.validate_job_card_for_semi_finished_goods()
 		self.validate_returned_qty_within_work_order()
+		self.validate_returned_qty_within_subcontracting_order()
 		self.validate_alternative_items()
 		self.validate_source_stock_entry()
 		self.validate_bom()
@@ -1371,6 +1372,25 @@ class StockEntry(StockController, SubcontractingInwardController):
 					title=_("Excess Return"),
 				)
 
+	def validate_returned_qty_within_subcontracting_order(self):
+		"""A Return of Components takes back at most what the order still has at the supplier."""
+		if not (self.purpose == "Material Transfer" and self.is_return and self.get("subcontracting_order")):
+			return
+
+		order = frappe.get_doc("Subcontracting Order", self.subcontracting_order)
+		qty_at_supplier = order.get_raw_material_qty_at_supplier()
+		returned_qty = defaultdict(float)
+		for row in self.items:
+			precision = row.precision("transfer_qty")
+			returned_qty[row.item_code] += flt(row.transfer_qty, precision)
+			allowed_qty = flt(qty_at_supplier[row.item_code], precision)
+			if flt(returned_qty[row.item_code], precision) > allowed_qty:
+				frappe.throw(
+					_(
+						"Row #{0}: Only {1} of Item {2} can be returned against Subcontracting Order {3}"
+					).format(row.idx, allowed_qty, row.item_code, order.name)
+				)
+
 	def get_returnable_qty(self) -> dict:
 		from pypika import Case
 
@@ -2151,16 +2171,6 @@ class StockEntry(StockController, SubcontractingInwardController):
 			creation=self.first_sle_creation,
 		)
 
-	@property
-	def first_sle_creation(self):
-		"""Creation of this entry's earliest ledger entry, if it has posted any yet."""
-		return frappe.db.get_value(
-			"Stock Ledger Entry",
-			{"voucher_no": self.name, "voucher_type": self.doctype, "is_cancelled": 0},
-			"creation",
-			order_by="creation asc",
-		)
-
 	def has_consumption_basis(self) -> bool:
 		"""Whether the cost of the consumed items is known, even when that cost is zero."""
 		if any(d.s_warehouse for d in self.get("items")):
@@ -2404,16 +2414,39 @@ class StockEntry(StockController, SubcontractingInwardController):
 
 		self.total_additional_costs = sum(flt(t.base_amount) for t in self.get("additional_costs"))
 
-		incoming_items, basis, total_basis = self.get_additional_cost_allocation()
-
 		for d in self.get("items"):
 			d.additional_cost = 0
 
-		if not total_basis:
-			return
+		for d, _account, _amount, base_amount in self.get_additional_cost_split():
+			d.additional_cost = flt(d.additional_cost + base_amount, d.precision("additional_cost"))
 
-		for d in incoming_items:
-			d.additional_cost = (flt(d.get(basis)) / total_basis) * self.total_additional_costs
+	def get_additional_cost_split(self) -> list[tuple]:
+		"""(row, expense account, amount, base amount) for each expense account's share of each
+		incoming row. Shares are rounded so the rows and the accounts carry exactly the cost."""
+		incoming_items, basis, total_basis = self.get_additional_cost_allocation()
+		if not total_basis:
+			return []
+
+		precision = incoming_items[0].precision("additional_cost")
+		weights = [flt(d.get(basis)) / total_basis for d in incoming_items]
+
+		split = []
+		for account, (amount, base_amount) in self.get_additional_costs_by_account().items():
+			amounts = split_by_weights(amount, weights, precision)
+			base_amounts = split_by_weights(base_amount, weights, precision)
+			for d, row_amount, row_base_amount in zip(incoming_items, amounts, base_amounts, strict=True):
+				split.append((d, account, row_amount, row_base_amount))
+
+		return split
+
+	def get_additional_costs_by_account(self) -> dict:
+		"""(amount, base amount) of the additional costs per expense account."""
+		costs = {}
+		for cost in self.get("additional_costs"):
+			amount, base_amount = costs.get(cost.expense_account, (0.0, 0.0))
+			costs[cost.expense_account] = (amount + flt(cost.amount), base_amount + flt(cost.base_amount))
+
+		return costs
 
 	def get_additional_cost_allocation(self):
 		if self.purpose in ("Repack", "Manufacture"):
@@ -3077,28 +3110,12 @@ class StockEntry(StockController, SubcontractingInwardController):
 	def get_gl_entries(self, inventory_account_map):
 		gl_entries = super().get_gl_entries(inventory_account_map)
 
-		incoming_items, basis, divide_based_on = self.get_additional_cost_allocation()
-
 		item_account_wise_additional_cost = {}
-
-		for t in self.get("additional_costs"):
-			if not divide_based_on:
-				continue
-			for d in incoming_items:
-				item_account_wise_additional_cost.setdefault((d.item_code, d.name), {})
-				item_account_wise_additional_cost[(d.item_code, d.name)].setdefault(
-					t.expense_account, {"amount": 0.0, "base_amount": 0.0}
-				)
-
-				multiply_based_on = flt(d.get(basis))
-
-				item_account_wise_additional_cost[(d.item_code, d.name)][t.expense_account]["amount"] += (
-					flt(t.amount * multiply_based_on) / divide_based_on
-				)
-
-				item_account_wise_additional_cost[(d.item_code, d.name)][t.expense_account][
-					"base_amount"
-				] += flt(t.base_amount * multiply_based_on) / divide_based_on
+		for d, account, amount, base_amount in self.get_additional_cost_split():
+			item_account_wise_additional_cost.setdefault((d.item_code, d.name), {})[account] = {
+				"amount": amount,
+				"base_amount": base_amount,
+			}
 
 		if item_account_wise_additional_cost:
 			precision = self.get_debit_field_precision()
@@ -4567,6 +4584,7 @@ class StockEntry(StockController, SubcontractingInwardController):
 				"produced_qty",
 				"process_loss_qty",
 				"material_transferred_for_manufacturing as trans_qty",
+				"transfer_material_against",
 			],
 			as_dict=1,
 		)
@@ -4579,16 +4597,18 @@ class StockEntry(StockController, SubcontractingInwardController):
 			return
 
 		precision = frappe.get_precision("Stock Entry Detail", "qty")
-		for _key, row in available_materials.items():
-			# a material is only covered by the entries that consumed it
-			pending_qty = transferred_qty - sum(row.consumed_for.values())
-			if flt(min(pending_qty_to_mfg, pending_qty) - fg_completed_qty, fg_precision) <= 0:
+		for key, row in available_materials.items():
+			pending_qty, covered_qty = self.get_material_pending_qty(
+				key, available_materials, wo_data, pending_qty_to_mfg
+			)
+			if flt(covered_qty - fg_completed_qty, fg_precision) <= 0:
 				# an entry for all that is pending consumes what is left
 				pending_qty = fg_completed_qty
 
 			qty = flt(row.qty)
 			if not self.is_return:
-				qty = (flt(row.qty) * fg_completed_qty) / pending_qty
+				# drop float noise only, so 7.000000000000001 is not ceiled to 8 and 0.004 still is to 1
+				qty = flt(flt(row.qty) * fg_completed_qty / pending_qty, 9)
 
 			item = row.item_details
 			if cint(frappe.get_cached_value("UOM", item.stock_uom, "must_be_whole_number")):
@@ -4605,6 +4625,69 @@ class StockEntry(StockController, SubcontractingInwardController):
 
 			if flt(qty, precision) != 0.0:
 				self.update_item_in_stock_entry_detail(row, item, qty)
+
+	def get_material_pending_qty(self, key, available_materials, wo_data, pending_qty_to_mfg):
+		"""Qty the material left in WIP is for, and the part of it that is ready to manufacture."""
+		transferred_qty = flt(wo_data.trans_qty)
+		if wo_data.transfer_material_against == "Job Card":
+			pending_qty = self.get_job_card_material_pending_qty(key, available_materials, transferred_qty)
+			return pending_qty, pending_qty
+
+		# a material is only covered by the entries that consumed it
+		pending_qty = transferred_qty - sum(available_materials[key].consumed_for.values())
+		return pending_qty, min(pending_qty_to_mfg, pending_qty)
+
+	def get_job_card_material_pending_qty(self, key, available_materials, transferred_qty):
+		"""The Work Order's transferred qty follows the completed operations, not the moved material,
+		so use the item's moved share of its required qty, over its alternatives and warehouses."""
+		item_code = key[2] or key[0]
+		consumed_for = {}
+		for material_key, row in available_materials.items():
+			if (material_key[2] or material_key[0]) == item_code:
+				consumed_for.update(row.consumed_for)
+
+		# material moved in excess is spread over the order qty
+		transferred_for_qty = min(
+			self.get_material_transferred_for_qty(item_code), max(flt(self.pro_doc.qty), transferred_qty)
+		)
+		return transferred_for_qty - sum(consumed_for.values())
+
+	def get_material_transferred_for_qty(self, item_code):
+		"""Finished goods qty the item moved to WIP is for, as its share of the required qty."""
+		required_qty = sum(
+			flt(d.required_qty) for d in self.pro_doc.required_items if d.item_code == item_code
+		)
+		if not required_qty:
+			return flt(self.pro_doc.qty)
+
+		return self.transferred_qty_by_item[item_code] * flt(self.pro_doc.qty) / required_qty
+
+	@cached_property
+	def transferred_qty_by_item(self):
+		stock_entry = frappe.qb.DocType("Stock Entry")
+		stock_entry_detail = frappe.qb.DocType("Stock Entry Detail")
+		rows = (
+			frappe.qb.from_(stock_entry)
+			.inner_join(stock_entry_detail)
+			.on(stock_entry.name == stock_entry_detail.parent)
+			.select(
+				stock_entry_detail.item_code,
+				stock_entry_detail.original_item,
+				stock_entry_detail.transfer_qty,
+			)
+			.where(
+				(stock_entry.work_order == self.work_order)
+				& (stock_entry.purpose == "Material Transfer for Manufacture")
+				& (stock_entry.is_return == 0)
+				& (stock_entry.docstatus == 1)
+			)
+		).run(as_dict=True)
+
+		qty = defaultdict(float)
+		for row in rows:
+			qty[row.original_item or row.item_code] += flt(row.transfer_qty)
+
+		return qty
 
 	def get_batches_to_consume(self, row, qty):
 		"""Batch qty not reserved by other vouchers when it covers the qty, else the transferred batches."""
@@ -5281,6 +5364,19 @@ class StockEntry(StockController, SubcontractingInwardController):
 		self.set_transfer_qty()
 		self.set_actual_qty()
 		self.calculate_rate_and_amount()
+
+
+def split_by_weights(amount: float, weights: list[float], precision: int) -> list[float]:
+	"""`amount` split by `weights`. Rounds the running total, so the shares add up to `amount`
+	and a row with no weight gets nothing."""
+	shares, previous_total, cumulative_weight = [], 0.0, 0.0
+	for weight in weights:
+		cumulative_weight += weight
+		total = flt(amount * cumulative_weight, precision)
+		shares.append(flt(total - previous_total, precision))
+		previous_total = total
+
+	return shares
 
 
 @frappe.whitelist()

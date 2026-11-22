@@ -1474,15 +1474,33 @@ class WorkOrder(Document):
 
 		for idx, row in enumerate(self.operations):
 			qty = get_operation_qty(self, row)
+			card_times = []
 			while qty > 0:
 				qty = split_qty_based_on_batch_size(self, row, qty)
 				if row.job_card_qty > 0:
 					self.prepare_data_for_job_card(row, idx, plan_days, enable_capacity_planning)
+					card_times.append(
+						(get_datetime(row.planned_start_time), get_datetime(row.planned_end_time))
+					)
+
+			self.set_batch_operation_time(row, card_times)
 
 		# operations with the same Sequence ID run in parallel, so the last row may not end last
 		end_times = [get_datetime(row.planned_end_time) for row in self.operations if row.planned_end_time]
 		if end_times:
 			self.db_set("planned_end_date", max(end_times))
+
+	@staticmethod
+	def set_batch_operation_time(row, card_times):
+		"""Batch cards can be scheduled out of order, so the operation spans all of them."""
+		if len(card_times) < 2:
+			return
+
+		start = min(start for start, _end in card_times)
+		end = max(end for _start, end in card_times)
+		if (start, end) != card_times[-1]:
+			row.planned_start_time, row.planned_end_time = start, end
+			row.db_update()
 
 	def prepare_data_for_job_card(self, row, idx, plan_days, enable_capacity_planning):
 		self.set_operation_start_end_time(row, idx)
@@ -2147,15 +2165,23 @@ class WorkOrder(Document):
 			transferred_items[item_code] = flt(transferred_items.get(item_code)) + qty
 
 		row_wise_serial_batch = frappe._dict({})
+		sent_to_subcontractor = {}
 		if self.reserve_stock:
 			row_wise_serial_batch = get_row_wise_serial_batch(self.name)
+			sent_to_subcontractor = self._subcontract_transferred_qty_by_item()
 
 		transferred_by_row = distribute_transfers_over_rows(self.required_items, transferred_by_key)
 		for row in self.required_items:
 			transferred_qty = transferred_by_row[row.name]
 			row.db_set("transferred_qty", transferred_qty, update_modified=False)
 			if self.reserve_stock:
-				self.update_qty_in_stock_reservation(row, transferred_qty, row_wise_serial_batch)
+				# stock sent to a subcontractor uses the reservation too; rows of the same item share it
+				key = (row.item_code, row.source_warehouse)
+				sent_qty = sent_to_subcontractor.get(key, 0.0)
+				unused_qty = self.update_qty_in_stock_reservation(
+					row, transferred_qty + sent_qty, row_wise_serial_batch
+				)
+				sent_to_subcontractor[key] = min(sent_qty, unused_qty)
 
 		self.recompute_material_transferred_for_manufacturing(transferred_items)
 
@@ -2291,6 +2317,7 @@ class WorkOrder(Document):
 		self.db_set("material_transferred_for_manufacturing", material_transferred)
 
 	def update_qty_in_stock_reservation(self, row, transferred_qty, row_wise_serial_batch):
+		"""Set `transferred_qty` on the row's reservations and return the qty none of them could take."""
 		filters = {
 			"voucher_no": self.name,
 			"item_code": row.item_code,
@@ -2299,8 +2326,10 @@ class WorkOrder(Document):
 		}
 		names = frappe.get_all(
 			"Stock Reservation Entry",
-			filters={**filters, "status": ("not in", ["Closed", "Cancelled", "Completed"])},
+			# a fully transferred reservation is Closed, and must reopen when its transfer is cancelled
+			filters={**filters, "docstatus": 1},
 			pluck="name",
+			order_by="creation",
 		)
 		if self.status == "Closed":
 			names += frappe.get_all(
@@ -2339,6 +2368,8 @@ class WorkOrder(Document):
 				doc.update_status()
 				doc.update_reserved_stock_in_bin()
 				doc.update_reserved_qty_in_voucher()
+
+		return transferred_qty
 
 	def update_returned_qty(self):
 		returned_by_row = distribute_over_rows(

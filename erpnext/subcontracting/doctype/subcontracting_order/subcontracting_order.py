@@ -277,9 +277,13 @@ class SubcontractingOrder(SubcontractingController):
 					frappe.throw(_(msg))
 
 	def set_missing_values(self):
-		self.calculate_additional_costs()
 		self.calculate_service_costs()
 		self.calculate_supplied_items_qty_and_amount()
+		for item in self.items:
+			# additional costs split by Amount use the cost before them
+			item.amount = item.qty * (item.rm_cost_per_qty + item.service_cost_per_qty)
+
+		self.calculate_additional_costs()
 		self.calculate_items_qty_and_amount()
 
 	def set_service_item_base_amounts(self):
@@ -501,6 +505,18 @@ class SubcontractingOrder(SubcontractingController):
 
 			frappe.db.set_value("Purchase Order Item", po_item, "subcontracted_qty", qty)
 
+	def get_raw_material_qty_at_supplier(self) -> dict:
+		"""Qty of each raw material sent for this order and not yet consumed or returned."""
+		self.initialized_fields()
+		self.subcontract_orders = [self.name]
+		self.get_available_materials()
+
+		qty_at_supplier = defaultdict(float)
+		for (rm_item_code, _finished_good, _order), details in self.available_materials.items():
+			qty_at_supplier[rm_item_code] += flt(details.qty)
+
+		return qty_at_supplier
+
 	@frappe.whitelist()
 	def reserve_raw_materials(self, items: list | None = None, stock_entry: str | None = None):
 		self.check_permission("write")
@@ -697,6 +713,18 @@ def make_subcontracting_receipt(source_name, target_doc=None):
 	return get_mapped_subcontracting_receipt(source_name, target_doc, items=items)
 
 
+def get_mapped_process_loss_qty(row, received_before: float, process_loss_per: float) -> float:
+	"""For a whole-number UOM, whole units rounded on the order row's running received qty,
+	so that the receipts together lose the BOM's process loss."""
+	if not frappe.get_cached_value("UOM", row.stock_uom, "must_be_whole_number"):
+		return flt(row.qty * (process_loss_per / 100), row.precision("process_loss_qty"))
+
+	def whole_loss_on(received_qty):
+		return flt(received_qty * process_loss_per / 100, 0)
+
+	return whole_loss_on(received_before + flt(row.qty)) - whole_loss_on(received_before)
+
+
 def get_mapped_subcontracting_receipt(source_name, target_doc=None, items=None):
 	def update_item(source, target, source_parent):
 		target.purchase_order = source_parent.purchase_order
@@ -704,8 +732,8 @@ def get_mapped_subcontracting_receipt(source_name, target_doc=None, items=None):
 		target.qty = items.get(source.name) or (flt(source.qty) - flt(source.received_qty))
 		target.received_qty = target.qty
 		if process_loss_per := frappe.get_value("BOM", source.bom, "process_loss_percentage"):
-			target.process_loss_qty = flt(
-				target.qty * (process_loss_per / 100), target.precision("process_loss_qty")
+			target.process_loss_qty = get_mapped_process_loss_qty(
+				target, flt(source.received_qty), process_loss_per
 			)
 			target.qty -= target.process_loss_qty
 

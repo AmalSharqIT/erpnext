@@ -1203,6 +1203,10 @@ class update_entries_after:
 		else:
 			dependant_sles = get_sle_by_voucher_detail_no(sle.dependant_sle_voucher_detail_no)
 
+		# secondary items of a Subcontracting Receipt are valued from its finished good row
+		if sle.voucher_type == "Subcontracting Receipt":
+			dependant_sles += self.get_secondary_item_sles_of_receipt(sle)
+
 		for depend_sle in dependant_sles:
 			item_wh_key = self.mark_walk_start(depend_sle)
 			if item_wh_key in self.distinct_dependant_item_wh:
@@ -1308,6 +1312,27 @@ class update_entries_after:
 				],
 			)
 			or []
+		)
+
+	@staticmethod
+	def get_secondary_item_sles_of_receipt(sle):
+		secondary_rows = frappe.get_all(
+			"Subcontracting Receipt Item",
+			filters={"parent": sle.voucher_no, "reference_name": sle.dependant_sle_voucher_detail_no},
+			pluck="name",
+		)
+		if not secondary_rows:
+			return []
+
+		return frappe.get_all(
+			"Stock Ledger Entry",
+			filters={
+				"voucher_type": sle.voucher_type,
+				"voucher_no": sle.voucher_no,
+				"voucher_detail_no": ("in", secondary_rows),
+				"is_cancelled": 0,
+			},
+			fields=["item_code", "warehouse", "posting_date", "posting_time", "posting_datetime", "creation"],
 		)
 
 	def has_stock_reco_with_serial_batch(self, sle):
@@ -2936,9 +2961,7 @@ def get_valuation_rate(
 		if rate := (
 			frappe.db.get_value("Item", item_code, "valuation_rate")
 			or frappe.db.get_value("Item", item_code, "standard_rate")
-			or frappe.db.get_value(
-				"Item Price", dict(item_code=item_code, buying=1, currency=currency), "price_list_rate"
-			)
+			or get_buying_price_per_stock_uom(item_code, currency)
 		):
 			return flt(rate)
 
@@ -2979,6 +3002,22 @@ def get_valuation_rate(
 		msg = message + solutions + sub_solutions + "</li>"
 
 		frappe.throw(msg=msg, title=_("Valuation Rate Missing"))
+
+
+def get_buying_price_per_stock_uom(item_code, currency):
+	"""A buying Item Price of the item, converted from the price's UOM to the stock UOM."""
+	from erpnext.stock.get_item_details import get_conversion_factor
+
+	price = frappe.db.get_value(
+		"Item Price",
+		{"item_code": item_code, "buying": 1, "currency": currency},
+		["price_list_rate", "uom"],
+		as_dict=True,
+	)
+	if not price:
+		return 0.0
+
+	return flt(price.price_list_rate) / get_conversion_factor(item_code, price.uom)["conversion_factor"]
 
 
 def update_qty_in_future_sle(args, allow_negative_stock=False):
