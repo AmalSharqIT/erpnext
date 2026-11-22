@@ -4281,16 +4281,12 @@ class TestJobCard(ERPNextTestSuite):
 			job_card_b.submit()
 
 			operation_a = work_order.operations[0]
-			make_job_card(
+			self.assertRaisesRegex(
+				frappe.ValidationError,
+				"cannot be greater than Qty To Manufacture",
+				make_job_card,
 				work_order.name,
 				[{"name": operation_a.name, "operation": operation_a.operation, "qty": 1, "pending_qty": 1}],
-			)
-			extra_job_card_a = frappe.get_last_doc(
-				"Job Card", {"operation_id": operation_a.name, "docstatus": 0}
-			)
-			complete(extra_job_card_a, 1, 5)
-			self.assertRaisesRegex(
-				frappe.ValidationError, "Completed Qty cannot be greater", extra_job_card_a.submit
 			)
 
 		work_order.reload()
@@ -4357,6 +4353,37 @@ class TestJobCard(ERPNextTestSuite):
 		frappe.get_doc(make_stock_entry_for_work_order(wo.name, "Manufacture", 10)).submit()
 
 		self.assertRaises(JobCardCancelError, second_card.cancel)
+
+	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
+	def test_extra_job_card_is_refused_after_the_operation_is_complete(self):
+		workstation = make_jc_review_workstation()
+		operation = make_jc_review_operation(workstation)
+		wo = make_jc_review_work_order(
+			make_jc_review_item(),
+			[{"item_code": make_jc_review_item(), "qty": 1}],
+			[{"operation": operation, "workstation": workstation, "time_in_mins": 6}],
+			skip_transfer=1,
+		)
+		job_card = get_jc_review_job_cards(wo.name)[0]
+		job_card.append("time_logs", jc_review_log("2031-03-03 08:00:00", 60, 10))
+		job_card.submit()
+
+		extra_job_card = frappe.get_doc(
+			{
+				"doctype": "Job Card",
+				"work_order": wo.name,
+				"operation": operation,
+				"operation_id": job_card.operation_id,
+				"workstation": workstation,
+				"for_quantity": 10,
+				"company": wo.company,
+				"wip_warehouse": wo.wip_warehouse,
+				"posting_date": today(),
+			}
+		)
+		self.assertRaisesRegex(
+			frappe.ValidationError, "cannot be greater than Qty To Manufacture", extra_job_card.insert
+		)
 
 	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
 	def test_sub_operations_with_two_operators_keep_completed_qty(self):
@@ -5027,6 +5054,37 @@ class TestJobCard(ERPNextTestSuite):
 
 		self.assertEqual(job_card.items[0].required_qty, 6)
 
+	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
+	def test_for_quantity_raised_after_transfer_keeps_transferred_items(self):
+		job_card = make_jc_review_transferred_job_card()
+		item_row = job_card.items[0].name
+		job_card.for_quantity = 4
+		job_card.save()
+		frappe.get_doc(make_stock_entry_from_jc(job_card.name)).submit()
+
+		job_card.reload()
+		self.assertEqual(job_card.items[0].name, item_row)
+		self.assertEqual(job_card.items[0].transferred_qty, 8)
+		job_card.append("time_logs", jc_review_log("2031-03-09 00:00:00", 60, 4))
+		job_card.submit()
+
+	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
+	def test_for_quantity_lowered_after_transfer_keeps_transferred_requirement(self):
+		job_card = make_jc_review_transferred_job_card()
+		job_card.for_quantity = 1
+		job_card.save()
+		self.assertEqual(job_card.items[0].required_qty, 4)
+
+	@ERPNextTestSuite.change_settings("Manufacturing Settings", {"disable_capacity_planning": 1})
+	def test_for_quantity_change_drops_untransferred_rows_the_operation_does_not_need(self):
+		job_card = make_jc_review_transferred_job_card()
+		item_row = job_card.items[0].name
+		job_card.append("items", {"item_code": make_jc_review_item(), "required_qty": 5})
+		job_card.for_quantity = 4
+		job_card.save()
+
+		self.assertEqual([row.name for row in job_card.items], [item_row])
+
 	@ERPNextTestSuite.change_settings(
 		"Manufacturing Settings",
 		{"disable_capacity_planning": 1, "overproduction_percentage_for_work_order": 100},
@@ -5649,6 +5707,28 @@ def make_jc_review_shortage_job_card():
 		transfer_material_against="Job Card",
 	)
 	return get_jc_review_job_cards(wo.name)[0], first_item, second_item
+
+
+def make_jc_review_transferred_job_card():
+	"""Job Card for 2 of a 4 qty Work Order, with its 4 Kg of raw material transferred."""
+	workstation = make_jc_review_workstation()
+	operation = make_jc_review_operation(workstation)
+	raw_material = make_jc_review_item(stock_uom="Kg")
+	make_stock_entry(item_code=raw_material, target="_Test Warehouse - _TC", qty=10, basic_rate=100)
+
+	wo = make_jc_review_work_order(
+		make_jc_review_item(),
+		[{"item_code": raw_material, "qty": 2, "operation": operation}],
+		[{"operation": operation, "workstation": workstation, "time_in_mins": 60}],
+		qty=4,
+		transfer_material_against="Job Card",
+	)
+	job_card = get_jc_review_job_cards(wo.name)[0]
+	job_card.for_quantity = 2
+	job_card.save()
+	frappe.get_doc(make_stock_entry_from_jc(job_card.name)).submit()
+	job_card.reload()
+	return job_card
 
 
 def make_jc_review_item(**properties):

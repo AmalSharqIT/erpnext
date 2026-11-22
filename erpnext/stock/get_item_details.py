@@ -93,7 +93,7 @@ def get_item_details(
 ) -> ItemDetails:
 	validate_pricing_context(ctx)
 	out = _get_item_details(ctx, doc, for_validate, overwrite_warehouse)
-	for warehouse in (out.warehouse, ctx.warehouse, ctx.from_warehouse):
+	for warehouse in (out.warehouse, ctx.warehouse):
 		if warehouse:
 			erpnext.require_user_permission("Warehouse", warehouse)
 
@@ -361,7 +361,11 @@ def update_stock(ctx, out, doc=None, has_locked_rate=False):
 				out.update({"batch_no": batch_no, "actual_batch_qty": out.stock_qty})
 				if not has_locked_rate:
 					rate = _get_batch_based_item_price(
-						{"price_list": doc.get("selling_price_list"), "uom": out.uom, "batch_no": batch_no},
+						{
+							"price_list": doc.get("selling_price_list") if doc else ctx.price_list,
+							"uom": out.uom,
+							"batch_no": batch_no,
+						},
 						out.item_code,
 					)
 					if rate:
@@ -388,7 +392,8 @@ def set_serial_nos_for_outward(ctx, out, kwargs, doc):
 	if out.has_batch_no and batch_no:
 		kwargs["batches"] = [batch_no]
 
-	kwargs["ignore_serial_nos"] = [*(kwargs.get("ignore_serial_nos") or []), *get_used_serial_nos(doc)]
+	used_serial_nos = get_used_serial_nos(doc) if doc else []
+	kwargs["ignore_serial_nos"] = [*(kwargs.get("ignore_serial_nos") or []), *used_serial_nos]
 	serial_nos = get_serial_nos_for_outward(kwargs)
 	out["serial_no"] = "\n".join(serial_nos[: cint(out.stock_qty)])
 
@@ -492,7 +497,9 @@ def get_used_serial_nos(doc, table=None):
 
 def update_bin_details(ctx: ItemDetailsCtx, out: ItemDetails, doc):
 	if ctx.doctype == "Material Request" and ctx.material_request_type == "Material Transfer":
-		out.update(_get_bin_details(ctx.item_code, ctx.from_warehouse))
+		# Source Warehouse ignores user permissions, so hide only the stock of one the user cannot see
+		is_permitted = erpnext._is_within_user_permissions("Warehouse", ctx.from_warehouse)
+		out.update(_get_bin_details(ctx.item_code, ctx.from_warehouse if is_permitted else None))
 
 	elif out.get("warehouse"):
 		bin_details = _get_bin_details(

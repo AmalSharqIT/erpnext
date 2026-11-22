@@ -247,12 +247,12 @@ class SellingController(StockController):
 
 		if self.meta.get_field("base_in_words"):
 			base_amount = abs(
-				self.base_grand_total if self.is_rounded_total_disabled() else self.base_rounded_total
+				flt(self.base_grand_total if self.is_rounded_total_disabled() else self.base_rounded_total)
 			)
 			self.base_in_words = money_in_words(base_amount, self.company_currency)
 
 		if self.meta.get_field("in_words"):
-			amount = abs(self.grand_total if self.is_rounded_total_disabled() else self.rounded_total)
+			amount = abs(flt(self.grand_total if self.is_rounded_total_disabled() else self.rounded_total))
 			self.in_words = money_in_words(amount, self.currency)
 
 	def calculate_commission(self):
@@ -1439,6 +1439,7 @@ def get_serial_and_batch_bundle(
 	child, parent, delivery_note_child=None, picked_serial_nos=None, picked_batches=None
 ):
 	"""picked_serial_nos / picked_batches: what earlier rows took; extended with what is picked here."""
+	from erpnext.stock.doctype.packed_item.packed_item import set_incoming_rate_from_bundle
 	from erpnext.stock.serial_batch_bundle import SerialBatchCreation
 
 	if parent.get("is_return") and parent.get("packed_items"):
@@ -1474,6 +1475,7 @@ def get_serial_and_batch_bundle(
 
 	doc = sn_doc.make_serial_and_batch_bundle()
 	child.db_set("serial_and_batch_bundle", doc.name)
+	set_incoming_rate_from_bundle(child, doc)
 	if picked_serial_nos is not None:
 		picked_serial_nos[child.item_code].extend(
 			d.serial_no for d in doc.get("entries") or [] if d.serial_no

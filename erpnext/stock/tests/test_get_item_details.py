@@ -223,6 +223,46 @@ class TestGetItemDetail(ERPNextTestSuite):
 			self.assertEqual(details.valuation_rate, 50)
 			self.assertEqual(details.actual_qty, 1)
 
+	def get_material_transfer_details(self, item_code, from_warehouse):
+		ctx = {
+			"item_code": item_code,
+			"company": "_Test Company",
+			"doctype": "Material Request",
+			"material_request_type": "Material Transfer",
+			"warehouse": "_Test Warehouse 1 - _TC",
+			"from_warehouse": from_warehouse,
+			"transaction_date": today(),
+			"currency": "INR",
+			"conversion_rate": 1.0,
+			"ignore_pricing_rule": 1,
+			"qty": 1,
+		}
+		return get_item_details(ctx, overwrite_warehouse=False)
+
+	def test_material_request_source_warehouse_hides_stock_outside_user_permission(self):
+		item_code = self.make_stock_item_in_two_warehouses()
+
+		with as_user(self.make_warehouse_fenced_user(["Stock User", "Purchase User"])):
+			for from_warehouse, actual_qty in (("_Test Warehouse - _TC", 0), ("_Test Warehouse 1 - _TC", 1)):
+				with self.subTest(from_warehouse=from_warehouse):
+					details = self.get_material_transfer_details(item_code, from_warehouse)
+					self.assertEqual(details.actual_qty, actual_qty)
+
+	def test_material_request_source_warehouse_hides_stock_outside_company_permission(self):
+		from erpnext.stock.doctype.item.test_item import make_item
+		from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
+
+		item_code = make_item(properties={"is_stock_item": 1}).name
+		make_stock_entry(item_code=item_code, to_warehouse="Stores - TCP1", qty=1, rate=100)
+		user = make_fenced_user(
+			"_test_company_fenced_user@example.com",
+			["Stock User", "Purchase User"],
+			[("Company", "_Test Company")],
+		)
+
+		with as_user(user):
+			self.assertEqual(self.get_material_transfer_details(item_code, "Stores - TCP1").actual_qty, 0)
+
 	def test_stock_qty_methods_apply_warehouse_user_permission(self):
 		item_code = self.make_stock_item_in_two_warehouses()
 
@@ -1236,3 +1276,53 @@ class TestGetItemDetail(ERPNextTestSuite):
 
 		with as_user(make_fenced_user("_test_tax_info_sales@example.com", ["Sales User"])):
 			self.assertEqual(get_item_tax_info(**kwargs), expected)
+
+	def test_batch_and_serial_item_details_without_doc(self):
+		"""``doc`` is optional, so a Delivery Note row of a batch or serial item works without it."""
+		from erpnext.stock.doctype.item.test_item import make_item
+		from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
+
+		warehouse = "_Test Warehouse - _TC"
+		batch_item = make_item(
+			properties={
+				"is_stock_item": 1,
+				"has_batch_no": 1,
+				"create_new_batch": 1,
+				"batch_number_series": "TGID-B-.#####",
+			}
+		).name
+		serial_item = make_item(
+			properties={"is_stock_item": 1, "has_serial_no": 1, "serial_no_series": "TGID-S-.#####"}
+		).name
+		for item_code in (batch_item, serial_item):
+			make_stock_entry(item_code=item_code, target=warehouse, qty=10, basic_rate=10)
+
+		ctx = {
+			"company": "_Test Company",
+			"doctype": "Delivery Note",
+			"customer": "_Test Customer",
+			"qty": 2,
+			"warehouse": warehouse,
+			"use_serial_batch_fields": 1,
+			"currency": "INR",
+			"price_list": "Standard Selling",
+			"price_list_currency": "INR",
+			"plc_conversion_rate": 1,
+			"conversion_rate": 1,
+			"transaction_date": today(),
+		}
+
+		batch_no = frappe.db.get_value("Batch", {"item": batch_item})
+		frappe.get_doc(
+			{
+				"doctype": "Item Price",
+				"item_code": batch_item,
+				"price_list": "Standard Selling",
+				"batch_no": batch_no,
+				"price_list_rate": 99,
+			}
+		).insert()
+
+		details = get_item_details(dict(ctx, item_code=batch_item))
+		self.assertEqual((details.batch_no, details.price_list_rate), (batch_no, 99))
+		self.assertEqual(len(get_item_details(dict(ctx, item_code=serial_item)).serial_no.split("\n")), 2)
