@@ -161,7 +161,7 @@ class TransactionBase(StatusUpdater):
 		return prev_doc_detail_map
 
 	def validate_rate_with_reference_doc(self, ref_details):
-		if self.get("is_internal_supplier"):
+		if self.is_internal_transfer():
 			return
 
 		buying_doctypes = ["Purchase Order", "Purchase Invoice", "Purchase Receipt"]
@@ -433,13 +433,17 @@ class TransactionBase(StatusUpdater):
 		if (
 			self.get("is_internal_customer") or self.get("is_internal_supplier")
 		) and fetch_valuation_rate_for_internal_transaction:
+			stock_qty = item_obj.qty * item_obj.conversion_factor
+			# a delivery takes the stock out, so ask for its outgoing rate as set_incoming_rate does
+			is_outgoing = self.get("is_internal_customer") and not self.get("is_return")
+
 			args = frappe._dict(
 				{
 					"item_code": item_obj.item_code,
 					"warehouse": item_obj.from_warehouse
 					if self.doctype in ["Purchase Receipt", "Purchase Invoice"]
 					else item_obj.warehouse,
-					"qty": item_obj.qty * item_obj.conversion_factor,
+					"qty": -stock_qty if is_outgoing else stock_qty,
 					"voucher_type": self.doctype,
 					"company": self.company,
 				}

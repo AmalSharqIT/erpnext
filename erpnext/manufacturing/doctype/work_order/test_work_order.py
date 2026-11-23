@@ -2240,6 +2240,54 @@ class TestWorkOrder(ERPNextTestSuite):
 		self.assertEqual(work_order.material_transferred_for_manufacturing, 0.0)
 		self.assertEqual(work_order.status, "In Process")
 
+	@ERPNextTestSuite.change_settings(
+		"Manufacturing Settings",
+		{"backflush_raw_materials_based_on": "Material Transferred for Manufacture"},
+	)
+	def test_transferred_qty_counts_direct_and_pick_list_transfers(self):
+		from erpnext.manufacturing.doctype.work_order.work_order import create_pick_list
+		from erpnext.stock.doctype.pick_list.pick_list import create_stock_entry
+
+		rm_item = make_item(properties={"is_stock_item": 1}).name
+		fg_item = make_item(properties={"is_stock_item": 1}).name
+		bom = make_bom(item=fg_item, raw_materials=[rm_item], rm_qty=2)
+		test_stock_entry.make_stock_entry(item_code=rm_item, target="Stores - _TC", qty=20, basic_rate=100)
+		work_order = make_wo_order_test_record(
+			production_item=fg_item, bom_no=bom.name, qty=10, source_warehouse="Stores - _TC"
+		)
+		frappe.get_doc(make_stock_entry(work_order.name, "Material Transfer for Manufacture", 4)).submit()
+		pick_list = create_pick_list(work_order.name, for_qty=6)
+		pick_list.submit()
+		frappe.get_doc(create_stock_entry(pick_list.as_dict())).submit()
+		self.assertEqual(work_order.reload().material_transferred_for_manufacturing, 10)
+
+		manufacture = frappe.get_doc(make_stock_entry(work_order.name, "Manufacture", 4))
+		self.assertEqual([row.qty for row in manufacture.items if row.s_warehouse], [8])
+
+	def test_pick_list_transfer_first_covers_what_direct_transfer_left_out(self):
+		from erpnext.manufacturing.doctype.work_order.work_order import create_pick_list
+		from erpnext.stock.doctype.pick_list.pick_list import create_stock_entry
+
+		rm_items = [make_item(properties={"is_stock_item": 1}).name for _ in range(2)]
+		fg_item = make_item(properties={"is_stock_item": 1}).name
+		bom = make_bom(item=fg_item, raw_materials=rm_items, rm_qty=2)
+		for rm_item in rm_items:
+			test_stock_entry.make_stock_entry(
+				item_code=rm_item, target="Stores - _TC", qty=20, basic_rate=100
+			)
+		work_order = make_wo_order_test_record(
+			production_item=fg_item, bom_no=bom.name, qty=10, source_warehouse="Stores - _TC"
+		)
+		transfer = frappe.get_doc(make_stock_entry(work_order.name, "Material Transfer for Manufacture", 4))
+		transfer.items = [row for row in transfer.items if row.item_code == rm_items[0]]
+		transfer.submit()
+		pick_list = create_pick_list(work_order.name, for_qty=4)
+		pick_list.submit()
+		frappe.get_doc(create_stock_entry(pick_list.as_dict())).submit()
+
+		# the second item covers only 4 of the 10
+		self.assertEqual(work_order.reload().material_transferred_for_manufacturing, 4)
+
 	def test_material_request_qty_scales_with_requested_qty(self):
 		work_order = make_wo_order_test_record(
 			planned_start_date=now(), qty=10, source_warehouse="Stores - _TC"
@@ -5407,6 +5455,41 @@ class TestWorkOrder(ERPNextTestSuite):
 		sco = self.subcontract_work_order(wo, 10)
 		self.assertEqual([row.reserve_warehouse for row in sco.supplied_items], ["Stores - _TC"])
 
+	@ERPNextTestSuite.change_settings("Stock Settings", {"enable_stock_reservation": 1})
+	def test_stock_sent_to_subcontractor_is_not_reserved_again(self):
+		wo = self.send_reserved_cloth_to_subcontractor(10)
+		items = [{**get_unreserved_items(wo)[0], "required_qty": 10}]
+		self.assertRaisesRegex(
+			frappe.ValidationError,
+			"Cannot reserve more than Allowed Qty",
+			make_stock_reservation_entries,
+			wo.as_dict(),
+			items=items,
+			is_transfer=0,
+		)
+
+	@ERPNextTestSuite.change_settings("Stock Settings", {"enable_stock_reservation": 1})
+	def test_stock_sent_to_subcontractor_leaves_the_work_order_row_reservation(self):
+		wo = self.send_reserved_cloth_to_subcontractor(4)
+		self.assertEqual(wo.required_items[0].stock_reserved_qty, 6)
+
+	@ERPNextTestSuite.change_settings("Stock Settings", {"enable_stock_reservation": 1})
+	def test_reservation_partly_sent_to_subcontractor_can_be_updated(self):
+		wo = self.send_reserved_cloth_to_subcontractor(4)
+		frappe.get_doc("Stock Reservation Entry", {"voucher_no": wo.name, "docstatus": 1}).save()
+
+	def send_reserved_cloth_to_subcontractor(self, qty):
+		"""A skip-transfer Work Order that reserved its cloth and sent qty of it to a subcontractor."""
+		from erpnext.controllers.subcontracting_controller import make_rm_stock_entry
+
+		cloth = make_item("Test SOI Cloth", {"is_stock_item": 1}).name
+		test_stock_entry.make_stock_entry(item_code=cloth, target="Stores - _TC", qty=20, basic_rate=100)
+		wo = self.make_subcontracted_operation_work_order(skip_transfer=1, reserve_stock=1)
+		sco = self.subcontract_work_order(wo, qty)
+		frappe.new_doc("Stock Entry").update(make_rm_stock_entry(sco.name)).submit()
+		wo.reload()
+		return wo
+
 	def make_subcontracted_operation_work_order(self, **kwargs):
 		"""A Work Order for 10 shirts whose only operation, a subcontracted dyeing, uses 10 cloth."""
 		company = "_Test Company"
@@ -6003,7 +6086,9 @@ class TestWorkOrder(ERPNextTestSuite):
 
 		rm_item = make_item("_Test Workstation Type Cost RM", {"is_stock_item": 1}).name
 		fg_item = make_item("_Test Workstation Type Cost FG", {"is_stock_item": 1}).name
-		bom = make_bom(item=fg_item, raw_materials=[rm_item], with_operations=1, do_not_submit=True)
+		bom = make_bom(
+			item=fg_item, raw_materials=[rm_item], with_operations=1, currency="INR", do_not_submit=True
+		)
 		bom.append(
 			"operations",
 			{"operation": "_Test Costed Operation 1", "workstation": workstation, "time_in_mins": 6},

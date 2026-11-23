@@ -1617,20 +1617,28 @@ class SubcontractingController(StockController):
 	def __update_consumed_qty_in_subcontract_order(self, itemwise_consumed_qty):
 		fields = ["main_item_code", "parent", "name"]
 		filters = {"docstatus": 1, "parent": ("in", self.subcontract_orders)}
+		rows = frappe.get_all(
+			self.subcontract_data.order_supplied_items_field, fields=fields, filters=filters, order_by="idx"
+		)
 		items_sent = self.get_items_sent_on_order_rows()
+		consumed_beyond_sent = get_consumed_qty_beyond_sent(rows, items_sent, itemwise_consumed_qty)
 		precision = frappe.get_precision(self.subcontract_data.order_supplied_items_field, "consumed_qty")
 
-		for row in frappe.get_all(
-			self.subcontract_data.order_supplied_items_field, fields=fields, filters=filters, order_by="idx"
-		):
+		for row in rows:
 			# a row consumes the items sent on it: its raw material or an alternative
 			consumed_qty = 0
 			for item_code, sent_qty in items_sent.get(row.name, {}).items():
-				key = (item_code, row.main_item_code, row.parent)
 				# a return of components books an item's return on one of its rows, so a row can net below 0
-				qty = min(itemwise_consumed_qty.get(key, 0), max(sent_qty, 0))
-				consumed_qty += qty
-				itemwise_consumed_qty[key] -= qty
+				qty_left = max(sent_qty, 0)
+				# its own finished good's consumption first, then what others consumed beyond their rows
+				for consumption, key in (
+					(itemwise_consumed_qty, (item_code, row.main_item_code, row.parent)),
+					(consumed_beyond_sent, (item_code, row.parent)),
+				):
+					qty = min(consumption.get(key, 0), qty_left)
+					consumption[key] -= qty
+					qty_left -= qty
+					consumed_qty += qty
 
 			frappe.db.set_value(
 				self.subcontract_data.order_supplied_items_field,
@@ -1912,6 +1920,20 @@ def update_serial_nos_at_supplier(details, serial_nos, is_return):
 			details.serial_no.remove(serial_no)
 
 
+def get_consumed_qty_beyond_sent(rows, items_sent, itemwise_consumed_qty):
+	"""Consumption, by item and order, beyond what its finished good's order rows were sent."""
+	sent_for = defaultdict(float)
+	for row in rows:
+		for item_code, sent_qty in items_sent.get(row.name, {}).items():
+			sent_for[(item_code, row.main_item_code, row.parent)] += max(sent_qty, 0)
+
+	consumed_qty = defaultdict(float)
+	for (item_code, finished_good, order), qty in itemwise_consumed_qty.items():
+		consumed_qty[(item_code, order)] += max(qty - sent_for[(item_code, finished_good, order)], 0)
+
+	return consumed_qty
+
+
 def get_item_details(items):
 	item = frappe.qb.DocType("Item")
 	item_list = (
@@ -2097,6 +2119,46 @@ def add_items_in_ste(ste_doc, row, qty, rm_details, rm_detail_field="sco_rm_deta
 	)
 
 
+def add_return_items(ste_doc, row, qty, qty_left, rm_details, rm_detail_field, batch_no=None):
+	"""Split a return over the order rows its material was sent on, each up to what the row has left."""
+	order_rows = [name for name in qty_left if name in rm_details and name in row.get(f"{rm_detail_field}s")]
+	if not order_rows:
+		add_items_in_ste(ste_doc, row, qty, rm_details, rm_detail_field, batch_no)
+		return
+
+	precision = frappe.get_precision("Stock Entry Detail", "qty")
+	serial_nos = row.serial_no
+	for order_row in order_rows:
+		row_qty = flt(
+			qty if order_row == order_rows[-1] else min(qty, max(qty_left[order_row], 0)), precision
+		)
+		if row_qty <= 0:
+			continue
+
+		qty_left[order_row] -= row_qty
+		qty -= row_qty
+		row_serial_nos, serial_nos = serial_nos[: cint(row_qty)], serial_nos[cint(row_qty) :]
+		add_items_in_ste(
+			ste_doc,
+			frappe._dict(row, serial_no=row_serial_nos),
+			row_qty,
+			[order_row],
+			rm_detail_field,
+			batch_no,
+		)
+
+
+def get_qty_left_on_order_rows(order_doc):
+	"""Qty each supplied row of the order still has at the supplier, in row order."""
+	rows = frappe.get_all(
+		order_doc.subcontract_data.order_supplied_items_field,
+		filters={"parent": order_doc.name},
+		fields=["name", "total_supplied_qty", "consumed_qty"],
+		order_by="idx",
+	)
+	return {row.name: flt(row.total_supplied_qty) - flt(row.consumed_qty) for row in rows}
+
+
 def make_return_stock_entry_for_subcontract(
 	available_materials, order_doc, rm_details, order_doctype="Subcontracting Order"
 ):
@@ -2112,6 +2174,7 @@ def make_return_stock_entry_for_subcontract(
 
 		target_doc.company = source_doc.company
 		target_doc.is_return = 1
+		qty_left = get_qty_left_on_order_rows(order_doc)
 		for _key, value in available_materials.items():
 			if not value.qty:
 				continue
@@ -2122,9 +2185,11 @@ def make_return_stock_entry_for_subcontract(
 			if value.batch_no:
 				for batch_no, qty in value.batch_no.items():
 					if qty > 0:
-						add_items_in_ste(target_doc, value, qty, rm_details, rm_detail_field, batch_no)
+						add_return_items(
+							target_doc, value, qty, qty_left, rm_details, rm_detail_field, batch_no
+						)
 			else:
-				add_items_in_ste(target_doc, value, value.qty, rm_details, rm_detail_field)
+				add_return_items(target_doc, value, value.qty, qty_left, rm_details, rm_detail_field)
 
 		target_doc.set_stock_entry_type()
 

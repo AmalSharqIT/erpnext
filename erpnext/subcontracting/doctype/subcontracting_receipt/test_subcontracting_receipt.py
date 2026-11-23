@@ -39,6 +39,7 @@ from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import
 	create_stock_reconciliation,
 )
 from erpnext.subcontracting.doctype.subcontracting_order.subcontracting_order import (
+	get_mapped_subcontracting_receipt,
 	make_subcontracting_receipt,
 )
 from erpnext.subcontracting.doctype.subcontracting_order.test_subcontracting_order import (
@@ -591,6 +592,27 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 		self.assertEqual(scr_return.items[1].rate, 15)
 		self.assertEqual(scr_return.items[0].rate, scr.items[0].rate)
 
+	def test_finished_good_takes_the_share_of_a_co_product_not_received(self):
+		scr = make_receipt_with_scrap(co_product_allocation=20, do_not_submit=True)
+		scr.items = [row for row in scr.items if row.secondary_item_type != "Co-Product"]
+		scr.save()
+
+		fg, scrap = scr.items
+		consumed = sum(row.amount for row in scr.supplied_items)
+		self.assertEqual(fg.amount, consumed + 200 - scrap.amount)
+
+	def test_return_of_a_receipt_without_the_co_product_keeps_the_receipt_rate(self):
+		scr = make_receipt_with_scrap(co_product_allocation=20, do_not_submit=True)
+		scr.items = [row for row in scr.items if row.secondary_item_type != "Co-Product"]
+		scr.submit()
+
+		scr_return = make_return_doc("Subcontracting Receipt", scr.name)
+		scr_return.save()
+		scr_return.items[1].reference_name = scr_return.items[0].name
+		scr_return.submit()
+
+		self.assertEqual(scr_return.items[0].rate, scr.items[0].rate)
+
 	def test_return_values_percentage_secondary_items_at_the_receipt_rate(self):
 		scr = make_receipt_with_scrap(co_product_allocation=10)
 
@@ -609,6 +631,32 @@ class TestSubcontractingReceipt(ERPNextTestSuite):
 			"stock_value_difference",
 		)
 		self.assertEqual(stock_value_difference, co_product.amount)
+
+	def test_partial_receipts_take_the_order_additional_costs_once(self):
+		sco = make_order_with_additional_cost_and_transfer(1000)
+
+		first = make_subcontracting_receipt(sco.name)
+		first.items[0].qty = 4
+		first.save()
+		first.submit()
+		second = make_subcontracting_receipt(sco.name)
+		second.save()
+		second.submit()
+
+		self.assertEqual(first.total_additional_costs + second.total_additional_costs, 1000)
+
+	def test_receipt_mapped_for_selected_qty_takes_its_share_of_order_additional_costs(self):
+		sco = make_order_with_additional_cost_and_transfer(1000)
+
+		first = get_mapped_subcontracting_receipt(sco.name, items=[{"name": sco.items[0].name, "qty": 4}])
+		first.save()
+		first.submit()
+		second = make_subcontracting_receipt(sco.name)
+		second.save()
+		second.submit()
+
+		self.assertEqual(first.total_additional_costs, 400)
+		self.assertEqual(second.total_additional_costs, 600)
 
 	@ERPNextTestSuite.change_settings("Stock Settings", {"use_serial_batch_fields": 1})
 	@ERPNextTestSuite.change_settings("Buying Settings", {"set_valuation_rate_for_rejected_materials": 0})
@@ -6167,3 +6215,21 @@ def make_receipt_with_scrap(
 	if not do_not_submit:
 		scr.submit()
 	return scr
+
+
+def make_order_with_additional_cost_and_transfer(amount):
+	set_backflush_based_on("BOM")
+	sco = get_subcontracting_order(do_not_submit=1)
+	sco.append(
+		"additional_costs",
+		{"expense_account": "Cost of Goods Sold - _TC", "description": "Freight", "amount": amount},
+	)
+	sco.submit()
+	rm_items = get_rm_items(sco.supplied_items)
+	itemwise_details = make_stock_in_entry(rm_items=rm_items)
+	make_stock_transfer_entry(
+		sco_no=sco.name,
+		rm_items=rm_items,
+		itemwise_details=copy.deepcopy(itemwise_details),
+	)
+	return sco

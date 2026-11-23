@@ -619,6 +619,8 @@ class BOM(WebsiteGenerator):
 		)
 		args.update(item)
 
+		# the form may send a stale price list exchange rate
+		self.set_plc_conversion_rate()
 		rate = self.get_rm_rate(args) if args.get("fetch_rate") else 0
 		ret_item = {
 			"item_name": item and args["item_name"] or "",
@@ -899,9 +901,12 @@ class BOM(WebsiteGenerator):
 
 		if self.price_list_currency == self.company_currency():
 			self.plc_conversion_rate = 1
-		elif flt(self.plc_conversion_rate) in (0, 1) or self.has_value_changed("buying_price_list"):
-			self.plc_conversion_rate = get_exchange_rate(
-				self.price_list_currency, self.company_currency(), args="for_buying"
+		elif self.price_list_currency == self.currency:
+			self.plc_conversion_rate = self.conversion_rate
+		else:
+			self.plc_conversion_rate = (
+				get_exchange_rate(self.price_list_currency, self.company_currency(), args="for_buying")
+				or self.plc_conversion_rate
 			)
 
 	def validate_materials(self):
@@ -1135,6 +1140,7 @@ class BOM(WebsiteGenerator):
 		self.base_operating_cost = 0
 		if self.get("with_operations"):
 			for d in self.get("operations"):
+				self.set_cost_based_on_bom_qty(d, save)
 				if d.workstation or d.workstation_type:
 					self.update_rate_and_time(d, update_hour_rate, save)
 
@@ -1156,7 +1162,26 @@ class BOM(WebsiteGenerator):
 
 		self.base_operating_cost = flt(self.base_operating_cost, self.precision("base_operating_cost"))
 
+	def set_cost_based_on_bom_qty(self, row, save):
+		"""As in the Work Order, fixed time is never per batch and a batch based operation always is."""
+		if row.fixed_time:
+			per_batch = 0
+		elif frappe.get_cached_value("Operation", row.operation, "create_job_card_based_on_batch_size"):
+			per_batch = 1
+		else:
+			return
+
+		if cint(row.set_cost_based_on_bom_qty) == per_batch:
+			return
+
+		row.set_cost_based_on_bom_qty = per_batch
+		if save:
+			# the row is saved only when hour rates are refreshed, so save the flag on its own
+			row.db_set("set_cost_based_on_bom_qty", per_batch, update_modified=False)
+
 	def update_rate_and_time(self, row, update_hour_rate=False, save=True):
+		self.update_stale_hour_rate(row)
+
 		if not row.hour_rate or update_hour_rate:
 			hour_rate = 0
 			if row.workstation:
@@ -1167,24 +1192,38 @@ class BOM(WebsiteGenerator):
 				)
 
 			if hour_rate:
-				row.hour_rate = (
-					hour_rate / flt(self.conversion_rate) if self.conversion_rate and hour_rate else hour_rate
-				)
+				row.hour_rate = flt(hour_rate / (flt(self.conversion_rate) or 1), row.precision("hour_rate"))
 
-		if row.hour_rate:
-			row.base_hour_rate = flt(
-				flt(row.hour_rate) * flt(self.conversion_rate), row.precision("base_hour_rate")
-			)
+		row.base_hour_rate = flt(
+			flt(row.hour_rate) * flt(self.conversion_rate), row.precision("base_hour_rate")
+		)
 
-			if row.time_in_mins:
-				row.operating_cost = flt(row.hour_rate) * flt(row.time_in_mins) / 60.0
-				base_operating_cost = flt(row.operating_cost) * flt(self.conversion_rate)
-				row.base_operating_cost = flt(base_operating_cost, row.precision("base_operating_cost"))
-				row.cost_per_unit = row.operating_cost / (row.batch_size or 1.0)
-				row.base_cost_per_unit = base_operating_cost / (row.batch_size or 1.0)
+		if row.time_in_mins:
+			row.operating_cost = flt(row.hour_rate) * flt(row.time_in_mins) / 60.0
+			base_operating_cost = flt(row.operating_cost) * flt(self.conversion_rate)
+			row.base_operating_cost = flt(base_operating_cost, row.precision("base_operating_cost"))
+			row.cost_per_unit = row.operating_cost / (row.batch_size or 1.0)
+			row.base_cost_per_unit = base_operating_cost / (row.batch_size or 1.0)
 
 		if update_hour_rate and save:
 			row.db_update()
+
+	def update_stale_hour_rate(self, row):
+		"""Workstation or conversion rate changed but the hour rate did not, e.g. through the API."""
+		before = self.get_doc_before_save()
+		previous = before and before.get("operations", {"name": row.name})
+		if not previous or flt(previous[0].hour_rate) != flt(row.hour_rate):
+			return
+
+		old_rate, new_rate = flt(before.conversion_rate), flt(self.conversion_rate)
+		if any(
+			cstr(previous[0].get(field)) != cstr(row.get(field))
+			for field in ("workstation", "workstation_type")
+		):
+			row.hour_rate = 0
+		elif old_rate and new_rate and old_rate != new_rate:
+			# keeps the rate in company currency, also a manual one
+			row.hour_rate = flt(flt(row.hour_rate) * old_rate / new_rate, row.precision("hour_rate"))
 
 	def calculate_rm_cost(self, save=False):
 		"""Fetch RM rate as per today's valuation rate and calculate totals"""
@@ -1931,8 +1970,12 @@ def add_non_stock_items_cost(stock_entry, work_order, expense_account, job_card=
 	if work_order and not job_card:
 		table = "exploded_items" if work_order.get("use_multi_level_bom") else "items"
 
+	rows = bom.get(table)
+	if job_card:
+		rows = [row for row in rows if _is_job_card_row(row, job_card, work_order)]
+
 	items = frappe._dict()
-	for d in bom.get(table):
+	for d in rows:
 		# Phantom item is exploded, so its cost is considered via its components
 		if d.get("is_phantom_item"):
 			continue
@@ -1965,6 +2008,13 @@ def add_non_stock_items_cost(stock_entry, work_order, expense_account, job_card=
 				"amount": non_stock_items_cost,
 			},
 		)
+
+
+def _is_job_card_row(row, job_card, work_order):
+	"""Whether the row is charged on this card's output; rows of no operation go to the last one."""
+	if row.operation_row_id or row.operation:
+		return job_card.is_own_material(row)
+	return job_card.finished_good == work_order.production_item
 
 
 def get_component_operating_cost(wc, row, consumed_op_cost, total_component_rate):
