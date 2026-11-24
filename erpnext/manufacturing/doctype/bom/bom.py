@@ -1620,6 +1620,15 @@ def get_bom_item_rate(args, bom_doc):
 	return flt(rate)
 
 
+@frappe.whitelist()
+def get_secondary_item_valuation_rate(item_code: str, company: str, warehouse: str | None = None) -> float:
+	"""Company currency rate a Valuation Rate secondary item is costed at."""
+	frappe.has_permission("BOM", "read", throw=True)
+	return get_valuation_rate(
+		{"item_code": item_code, "company": company, "warehouse": warehouse, "set_rate_based_on_warehouse": 1}
+	)
+
+
 def get_valuation_rate(data):
 	"""
 	1) Get average valuation rate from all warehouses
@@ -2076,8 +2085,9 @@ def add_operating_cost_component_wise(stock_entry, work_order=None, op_expense_a
 						"description": _("{0} Operating Cost for operation {1}").format(
 							wc.operating_component, row.operation
 						),
+						# by size, so a negative component's credit is capped like a cost
 						"amount": flt(
-							min(operating_cost, actual_cp_operating_cost),
+							min(operating_cost, actual_cp_operating_cost, key=abs),
 							frappe.get_precision("Landed Cost Taxes and Charges", "amount"),
 						),
 						"has_operating_cost": 1,

@@ -11,7 +11,7 @@ from frappe.model.utils.mask import mask_dict_results
 from frappe.query_builder import Case, Criterion, Tuple
 from frappe.query_builder.functions import Count, Max, Min, Sum
 from frappe.query_builder.terms import ParameterizedValueWrapper
-from frappe.utils import cint, cstr, flt, get_link_to_form, getdate
+from frappe.utils import cint, cstr, flt, get_datetime, get_link_to_form, getdate
 
 import erpnext
 from erpnext.accounts.general_ledger import (
@@ -1419,38 +1419,48 @@ class StockController(AccountsController):
 		row's qty."""
 		from erpnext.controllers.buying_controller import get_stock_qty
 
-		stock_qty = get_stock_qty(row, qty)
 		if self.docstatus == 2:
-			return flt(self.get_posted_return_qty(row, warehouse)) or stock_qty
+			return self.get_posted_return_qty(row, warehouse)
 
 		left = self.get_row_left_to_return(row, warehouse)
-		if flt(left.stock_qty) <= 0:
-			return stock_qty
+		if left is None:
+			return get_stock_qty(row, qty)
 
-		unreturned_stock_qty = left.unrounded_stock_qty + flt(qty) * flt(row.conversion_factor)
-		if flt(unreturned_stock_qty, row.precision("stock_qty")) <= 0:
-			return -left.stock_qty
+		return self.take_from_row_left_to_return(left, row, qty)
 
-		return max(stock_qty, -left.stock_qty)
+	def take_from_row_left_to_return(self, left, row, qty) -> float:
+		"""Stock qty a return row takes from what is left of its original row, signed as its qty, taken off
+		what is left: no more than is left, and all of it once the row returns the rest of the qty."""
+		from erpnext.controllers.buying_controller import get_stock_qty
 
-	def get_row_left_to_return(self, row, warehouse) -> frappe._dict:
+		precision = row.precision("stock_qty")
+		left.unrounded_stock_qty += flt(qty) * flt(row.conversion_factor)
+		if flt(left.unrounded_stock_qty, precision) <= 0:
+			taken = -left.stock_qty
+		else:
+			taken = max(get_stock_qty(row, qty), -left.stock_qty)
+
+		left.stock_qty = flt(left.stock_qty + taken, precision)
+		return taken
+
+	def get_row_left_to_return(self, row, warehouse) -> frappe._dict | None:
 		"""Unrounded and posted stock qty the returned original row moved in the warehouse that its other
-		returns have not moved back. A delivery counts every warehouse its rows used, as a return can put
-		its stock back in another one."""
+		returns and the earlier rows of this return have not moved back, or None if it moved no stock
+		there. A delivery counts every warehouse its rows used, as a return can put its stock back in
+		another one."""
 		from erpnext.controllers.buying_controller import get_posted_stock_qty_by_row
 
-		left = frappe._dict(unrounded_stock_qty=0.0, stock_qty=0.0)
 		reference_field = get_return_reference_field(self.doctype)
 		original_row = row.get(reference_field)
 		if not original_row:
-			return left
+			return None
 
 		item = frappe.qb.DocType(row.doctype)
 		fields = [item.name, item.qty, item.conversion_factor, item.warehouse]
 		if frappe.get_meta(row.doctype).has_field("rejected_warehouse"):
 			fields += [item.rejected_qty, item.rejected_warehouse]
 
-		rows = (
+		query = (
 			frappe.qb.from_(item)
 			.select(*fields)
 			.where(
@@ -1460,19 +1470,42 @@ class StockController(AccountsController):
 					| ((item[reference_field] == original_row) & (item.parent != self.name))
 				)
 			)
-			.run(as_dict=True)
 		)
-		warehouses = [warehouse] if self.is_stock_receipt() else list({d.warehouse for d in rows})
+		if self.meta.has_field("update_stock"):
+			parent = frappe.qb.DocType(self.doctype)
+			query = query.inner_join(parent).on(parent.name == item.parent).select(parent.update_stock)
+
+		rows = query.run(as_dict=True)
+		earlier_rows = [d for d in self.items if d.get(reference_field) == original_row and d.idx < row.idx]
+		warehouses = (
+			[warehouse] if self.is_stock_receipt() else list({d.warehouse for d in rows + earlier_rows})
+		)
 		posted_qty = get_posted_stock_qty_by_row([d.name for d in rows], warehouses)
+		if original_row not in posted_qty:
+			return None
+
+		left = frappe._dict(
+			unrounded_stock_qty=0.0, stock_qty=sum(posted_qty.values()) * self.get_stock_qty_sign()
+		)
 		for d in rows:
-			if d.name not in posted_qty:
-				continue  # moved no stock, like a return without Update Stock
+			if not d.get("update_stock", 1):
+				continue  # a return without Update Stock moves no stock
 			if d.warehouse in warehouses:
 				left.unrounded_stock_qty += flt(d.qty) * flt(d.conversion_factor)
 			if d.get("rejected_warehouse") in warehouses:
 				left.unrounded_stock_qty += flt(d.rejected_qty) * flt(d.conversion_factor)
 
-		left.stock_qty = flt(sum(posted_qty.values()) * self.get_stock_qty_sign(), row.precision("stock_qty"))
+		left.stock_qty = max(flt(left.stock_qty, row.precision("stock_qty")), 0)
+
+		# the earlier rows of this return post their entries first
+		for d in earlier_rows:
+			if d.warehouse not in warehouses:
+				continue
+			if self.posts_stock_ledger_entry(d.item_code, d.stock_qty):
+				self.take_from_row_left_to_return(left, d, d.qty)
+			else:  # takes nothing, and counts like a return that took nothing
+				left.unrounded_stock_qty += flt(d.qty) * flt(d.conversion_factor)
+
 		return left
 
 	def get_posted_return_qty(self, row, warehouse):
@@ -1489,6 +1522,10 @@ class StockController(AccountsController):
 			"actual_qty",
 		)
 		return flt(actual_qty) * sign
+
+	def posts_stock_ledger_entry(self, item_code, stock_qty) -> bool:
+		"""Whether a row of a stock item posts its stock ledger entries."""
+		return True
 
 	def get_stock_qty_sign(self) -> int:
 		"""1 where a row's stock qty goes into the warehouse, as on a receipt, -1 where it goes out."""
@@ -2718,7 +2755,10 @@ class StockController(AccountsController):
 
 		for row in rows:
 			row.key = (row.subcontracting_order, row.item_code, row.s_warehouse)
-		return rows
+
+		# returns submitted before the upgrade left the reservations alone
+		cutoff = frappe.db.get_default("reserved_components_return_cutoff")
+		return [row for row in rows if not cutoff or row.submitted_at > get_datetime(cutoff)]
 
 	def get_usage_query(self, parent, child, qty_field: str, field: str):
 		"""Rows of the submitted and cancelled `parent` vouchers, with their bundle entries, oldest first.
@@ -3280,6 +3320,9 @@ def make_bundle_for_material_transfer(**kwargs):
 	bundle_doc.docstatus = 0
 	bundle_doc.warehouse = kwargs.warehouse
 	bundle_doc.type_of_transaction = kwargs.type_of_transaction
+	if bundle_doc.voucher_type != kwargs.voucher_type:
+		bundle_doc.voucher_detail_no = None
+
 	bundle_doc.voucher_type = kwargs.voucher_type
 	bundle_doc.voucher_no = "" if kwargs.is_new or kwargs.docstatus == 2 else kwargs.voucher_no
 	bundle_doc.is_cancelled = 0

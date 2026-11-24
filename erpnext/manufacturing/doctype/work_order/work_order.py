@@ -894,13 +894,30 @@ class WorkOrder(Document):
 				status = "In Process"
 
 		if status == "Not Started" and self.reserve_stock:
-			if any(row.stock_reserved_qty for row in self.required_items):
-				if any(row.stock_reserved_qty < row.required_qty for row in self.required_items):
+			if any(row.stock_reserved_qty or row.subcontracted_qty for row in self.required_items):
+				if any(self.get_unreserved_qty(row) > 0 for row in self.required_items):
 					status = "Stock Partially Reserved"
 				else:
 					status = "Stock Reserved"
 
 		return status
+
+	def refresh_status(self):
+		"""Save the computed status if it changed, unless the order is Stopped or Closed or another transaction changed its status."""
+		status = self.get_status()
+		if status == self.status:
+			return
+
+		saved_status = frappe.db.get_value("Work Order", self.name, "status", for_update=True)
+		if saved_status == self.status and saved_status not in ("Stopped", "Closed"):
+			self.db_set("status", status)
+
+	@staticmethod
+	def get_unreserved_qty(row):
+		# a Subcontracting Order reserves and sends what it took over
+		return flt(
+			row.required_qty - row.subcontracted_qty - row.stock_reserved_qty, row.precision("required_qty")
+		)
 
 	def _has_transferred_material(self):
 		"""True if any raw material transferred against this work order via a pick list or a
@@ -2209,14 +2226,9 @@ class WorkOrder(Document):
 			.select(
 				ste_child.item_code,
 				ste_child.original_item,
-				fn.Sum(ste_child.transfer_qty).as_("qty"),
+				fn.Sum(self._signed_transfer_qty(ste, ste_child)).as_("qty"),
 			)
-			.where(
-				(ste.docstatus == 1)
-				& (ste.work_order == self.name)
-				& (ste.purpose == "Material Transfer for Manufacture")
-				& (ste.is_return == is_return)
-			)
+			.where(self._material_transfer_filter(ste, is_return))
 			.where(fn.Coalesce(job_card.is_corrective_job_card, 0) == 0)
 			.groupby(ste_child.item_code, ste_child.original_item)
 		)
@@ -2232,6 +2244,24 @@ class WorkOrder(Document):
 			return self._cap_returned_qty_to_transferred(transferred_items)
 
 		return transferred_items
+
+	def _material_transfer_filter(self, ste, is_return):
+		has_job_card = IfNull(ste.job_card, "") != ""
+		if is_return:
+			return_filter = (ste.is_return == 1) & ~has_job_card
+		else:
+			return_filter = (ste.is_return == 0) | has_job_card
+
+		return (
+			(ste.docstatus == 1)
+			& (ste.work_order == self.name)
+			& (ste.purpose == "Material Transfer for Manufacture")
+			& return_filter
+		)
+
+	def _signed_transfer_qty(self, ste, ste_child):
+		is_job_card_return = (ste.is_return == 1) & (IfNull(ste.job_card, "") != "")
+		return Case().when(is_job_card_return, -ste_child.transfer_qty).else_(ste_child.transfer_qty)
 
 	def _cap_returned_qty_to_transferred(self, returned_qty_by_item):
 		transferred_qty_by_item = self._material_transfer_qty_by_item(is_return=0)
@@ -2256,28 +2286,28 @@ class WorkOrder(Document):
 				ste_child.item_code,
 				ste_child.original_item,
 				ste_child.s_warehouse,
+				ste_child.t_warehouse,
+				ste.is_return,
 				job_card.operation_row_id,
 				job_card.operation,
-				fn.Sum(ste_child.transfer_qty).as_("qty"),
+				fn.Sum(self._signed_transfer_qty(ste, ste_child)).as_("qty"),
 			)
-			.where(
-				(ste.docstatus == 1)
-				& (ste.work_order == self.name)
-				& (ste.purpose == "Material Transfer for Manufacture")
-				& (ste.is_return == 0)
-			)
+			.where(self._material_transfer_filter(ste, 0))
 			.where(fn.Coalesce(job_card.is_corrective_job_card, 0) == 0)
 			.groupby(
 				ste_child.item_code,
 				ste_child.original_item,
 				ste_child.s_warehouse,
+				ste_child.t_warehouse,
+				ste.is_return,
 				job_card.operation_row_id,
 				job_card.operation,
 			)
 		)
 		qty_by_key = {}
 		for d in query.run(as_dict=1) or []:
-			key = (d.original_item or d.item_code, d.s_warehouse, d.operation_row_id, d.operation)
+			warehouse = d.t_warehouse if d.is_return else d.s_warehouse
+			key = (d.original_item or d.item_code, warehouse, d.operation_row_id, d.operation)
 			qty_by_key[key] = qty_by_key.get(key, 0.0) + flt(d.qty)
 
 		return qty_by_key
@@ -3062,6 +3092,9 @@ class WorkOrder(Document):
 			sre.update_status()
 			sre.update_reserved_stock_in_bin()
 			sre.update_reserved_qty_in_voucher()
+
+		self.reload()
+		self.refresh_status()
 
 	def _subcontract_transferred_qty_by_item(self):
 		"""Qty sent to subcontractors for this Work Order, keyed by (item_code, source warehouse).

@@ -2344,27 +2344,32 @@ class TestWorkOrder(ERPNextTestSuite):
 		{"backflush_raw_materials_based_on": "Material Transferred for Manufacture"},
 	)
 	def test_transferred_qty_counts_direct_and_pick_list_transfers(self):
-		from erpnext.manufacturing.doctype.work_order.work_order import create_pick_list
-		from erpnext.stock.doctype.pick_list.pick_list import create_stock_entry
-
-		rm_item = make_item(properties={"is_stock_item": 1}).name
-		fg_item = make_item(properties={"is_stock_item": 1}).name
-		bom = make_bom(item=fg_item, raw_materials=[rm_item], rm_qty=2)
-		test_stock_entry.make_stock_entry(item_code=rm_item, target="Stores - _TC", qty=20, basic_rate=100)
-		work_order = make_wo_order_test_record(
-			production_item=fg_item, bom_no=bom.name, qty=10, source_warehouse="Stores - _TC"
-		)
-		frappe.get_doc(make_stock_entry(work_order.name, "Material Transfer for Manufacture", 4)).submit()
-		pick_list = create_pick_list(work_order.name, for_qty=6)
-		pick_list.submit()
-		frappe.get_doc(create_stock_entry(pick_list.as_dict())).submit()
-		self.assertEqual(work_order.reload().material_transferred_for_manufacturing, 10)
+		work_order = make_mixed_transfer_work_order()
+		self.assertEqual(work_order.material_transferred_for_manufacturing, 10)
 
 		manufacture = frappe.get_doc(make_stock_entry(work_order.name, "Manufacture", 4))
 		self.assertEqual([row.qty for row in manufacture.items if row.s_warehouse], [8])
 
 		# both transfers count towards the qty a Manufacture may take
 		frappe.get_doc(make_stock_entry(work_order.name, "Manufacture", 10)).insert()
+
+	def test_patch_recalculates_transferred_qty_of_open_mixed_transfer_work_orders(self):
+		from erpnext.patches.v16_0.recalculate_transferred_qty_of_work_orders_with_mixed_transfers import (
+			execute,
+		)
+
+		open_order = make_mixed_transfer_work_order()
+		closed_order = make_mixed_transfer_work_order()
+		closed_order.db_set("status", "Closed")
+		# the value stored before pick list transfers counted next to direct ones
+		for work_order in (open_order, closed_order):
+			work_order.db_set("material_transferred_for_manufacturing", 4)
+
+		execute()
+
+		self.assertEqual(open_order.reload().material_transferred_for_manufacturing, 10)
+		self.assertEqual(closed_order.reload().material_transferred_for_manufacturing, 4)
+		frappe.get_doc(make_stock_entry(open_order.name, "Manufacture", 10)).insert()
 
 	def test_pick_list_transfer_first_covers_what_direct_transfer_left_out(self):
 		from erpnext.manufacturing.doctype.work_order.work_order import create_pick_list
@@ -5579,6 +5584,35 @@ class TestWorkOrder(ERPNextTestSuite):
 	def test_reservation_partly_sent_to_subcontractor_can_be_updated(self):
 		wo = self.send_reserved_cloth_to_subcontractor(4)
 		frappe.get_doc("Stock Reservation Entry", {"voucher_no": wo.name, "docstatus": 1}).save()
+
+	@ERPNextTestSuite.change_settings("Stock Settings", {"enable_stock_reservation": 1})
+	def test_stock_sent_to_subcontractor_stays_reserved_in_the_status(self):
+		for qty in (4, 10):
+			wo = self.send_reserved_cloth_to_subcontractor(qty)
+			self.assertEqual(wo.get_status(), "Stock Reserved")
+
+	@ERPNextTestSuite.change_settings(
+		"Stock Settings", {"enable_stock_reservation": 1, "allow_partial_reservation": 1}
+	)
+	def test_subcontracting_refreshes_the_saved_work_order_status(self):
+		from erpnext.controllers.subcontracting_controller import make_rm_stock_entry
+
+		cloth = make_item("Test SOI Cloth", {"is_stock_item": 1}).name
+		test_stock_entry.make_stock_entry(item_code=cloth, target="Stores - _TC", qty=6, basic_rate=100)
+		wo = self.make_subcontracted_operation_work_order(skip_transfer=1, reserve_stock=1)
+		sco = self.subcontract_work_order(wo, 4)
+		self.assertEqual(frappe.db.get_value("Work Order", wo.name, "status"), "Stock Reserved")
+
+		send = frappe.new_doc("Stock Entry").update(make_rm_stock_entry(sco.name))
+		send.submit()
+		self.assertEqual(frappe.db.get_value("Work Order", wo.name, "status"), "Stock Partially Reserved")
+
+		send.cancel()
+		self.assertEqual(frappe.db.get_value("Work Order", wo.name, "status"), "Stock Reserved")
+
+		sco.reload()
+		sco.cancel()
+		self.assertEqual(frappe.db.get_value("Work Order", wo.name, "status"), "Stock Partially Reserved")
 
 	def send_reserved_cloth_to_subcontractor(self, qty):
 		"""A skip-transfer Work Order that reserved its cloth and sent qty of it to a subcontractor."""
@@ -9789,6 +9823,25 @@ def make_batch_finished_good_work_order(fg_properties=None, process_loss_percent
 	return make_wo_order_test_record(
 		item=fg_item, qty=10, skip_transfer=True, source_warehouse="_Test Warehouse - _TC"
 	)
+
+
+def make_mixed_transfer_work_order():
+	"""Work Order for 10 with 4 transferred directly and 6 through a Pick List."""
+	from erpnext.manufacturing.doctype.work_order.work_order import create_pick_list
+	from erpnext.stock.doctype.pick_list.pick_list import create_stock_entry
+
+	rm_item = make_item(properties={"is_stock_item": 1}).name
+	fg_item = make_item(properties={"is_stock_item": 1}).name
+	bom = make_bom(item=fg_item, raw_materials=[rm_item], rm_qty=2)
+	test_stock_entry.make_stock_entry(item_code=rm_item, target="Stores - _TC", qty=20, basic_rate=100)
+	work_order = make_wo_order_test_record(
+		production_item=fg_item, bom_no=bom.name, qty=10, source_warehouse="Stores - _TC"
+	)
+	frappe.get_doc(make_stock_entry(work_order.name, "Material Transfer for Manufacture", 4)).submit()
+	pick_list = create_pick_list(work_order.name, for_qty=6)
+	pick_list.submit()
+	frappe.get_doc(create_stock_entry(pick_list.as_dict())).submit()
+	return work_order.reload()
 
 
 def make_wo_order_test_record(**args):

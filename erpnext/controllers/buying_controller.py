@@ -390,12 +390,14 @@ class BuyingController(SubcontractingController):
 
 	def set_rate_for_standalone_debit_note(self):
 		if self.get("is_return") and self.get("update_stock") and not self.return_against:
+			# set_missing_values sets the supplier and exchange rate only later
+			self.set_supplier_from_item_default()
+			self.set_price_list_currency("Buying")
+			exchange_rate = self.get_standalone_debit_note_exchange_rate()
 			for row in self.items:
 				if row.rate <= 0:
-					# override the rate with valuation rate, converted to the row's UOM
-					conversion_factor = flt(row.conversion_factor) or get_conversion_factor(
-						row.item_code, row.uom
-					).get("conversion_factor")
+					# override the rate with valuation rate, converted to the row's UOM and currency
+					conversion_factor = self.get_standalone_debit_note_conversion_factor(row)
 					valuation_rate = _get_incoming_rate(
 						{
 							"item_code": row.item_code,
@@ -411,11 +413,48 @@ class BuyingController(SubcontractingController):
 						},
 						raise_error_if_no_rate=False,
 					)
-					row.rate = flt(valuation_rate * conversion_factor, row.precision("rate"))
+					row.rate = flt(
+						valuation_rate * conversion_factor / exchange_rate,
+						row.precision("rate"),
+					)
+					if not row.rate and flt(valuation_rate) > 0:
+						frappe.throw(
+							_(
+								"Row #{0}: The valuation rate of Item {1} rounds to 0 in the invoice currency. Increase the precision of Rate or enter the rate."
+							).format(row.idx, frappe.bold(row.item_code))
+						)
 
 					row.discount_percentage = 0.0
 					row.discount_amount = 0.0
 					row.margin_rate_or_amount = 0.0
+
+	def get_standalone_debit_note_exchange_rate(self):
+		# without a price list, a missing currency is set from the supplier only later
+		currency = self.currency or frappe.get_cached_value("Supplier", self.supplier, "default_currency")
+		if (currency or self.company_currency) == self.company_currency:
+			return 1.0
+		return flt(self.conversion_rate) or 1.0
+
+	@staticmethod
+	def get_standalone_debit_note_conversion_factor(row):
+		"""Factor of the row's UOM, as its UOM and stock UOM are set from the item only later."""
+		item = (
+			frappe.get_cached_value("Item", row.item_code, ["stock_uom", "purchase_uom"], as_dict=True)
+			or frappe._dict()
+		)
+		if not row.uom:
+			# a factor sent without a UOM is not the factor of the UOM the row gets
+			row.uom = item.purchase_uom or item.stock_uom
+			row.conversion_factor = get_conversion_factor(row.item_code, row.uom, throw_if_missing=True).get(
+				"conversion_factor"
+			)
+
+		if row.uom == item.stock_uom:
+			return 1.0
+
+		return flt(row.conversion_factor) or get_conversion_factor(row.item_code, row.uom).get(
+			"conversion_factor"
+		)
 
 	def set_missing_values(self, for_validate=False):
 		super().set_missing_values(for_validate)
