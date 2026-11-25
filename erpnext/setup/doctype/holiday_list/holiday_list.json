@@ -150,6 +150,7 @@
    "default": "0",
    "fieldname": "is_half_day",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Is Half Day"
   }
  ],
