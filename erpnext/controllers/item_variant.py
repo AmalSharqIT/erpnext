@@ -574,17 +574,19 @@ def make_variant_item_code(template_item_code, template_item_name, variant):
 	if variant.item_code:
 		return
 
-	if abbreviations := get_variant_abbreviations(variant.attributes):
+	abbreviations, values = get_variant_abbreviations(variant.attributes)
+	if abbreviations:
 		variant.item_code = "{}-{}".format(template_item_code, "-".join(abbreviations))
-		variant.item_name = "{}-{}".format(template_item_name, "-".join(abbreviations))
+		variant.item_name = "{}-{}".format(template_item_name, "-".join(values))
 
 
 def get_variant_code(template_item_code, attributes, abbr_overrides):
-	abbreviations = get_variant_abbreviations(attributes, abbr_overrides)
+	abbreviations, _ = get_variant_abbreviations(attributes, abbr_overrides)
 	return "{}-{}".format(template_item_code, "-".join(abbreviations)) if abbreviations else None
 
 
 def get_variant_abbreviations(attributes, abbr_overrides=None):
+	values = []
 	abbreviations = []
 	for attr in attributes:
 		if abbr := (abbr_overrides or {}).get((attr.attribute, cstr(attr.attribute_value))):
@@ -598,8 +600,13 @@ def get_variant_abbreviations(attributes, abbr_overrides=None):
 		abbreviations.append(
 			cstr(attr.attribute_value) if item_attribute[0].numeric_values else item_attribute[0].abbr
 		)
+		values.append(
+			cstr(attr.attribute_value)
+			if item_attribute[0].numeric_values
+			else item_attribute[0].attribute_value
+		)
 
-	return abbreviations
+	return abbreviations, values
 
 
 def get_attribute_abbreviation(attr):
@@ -609,7 +616,7 @@ def get_attribute_abbreviation(attr):
 		frappe.qb.from_(ia)
 		.left_join(iav)
 		.on(ia.name == iav.parent)
-		.select(ia.numeric_values, iav.abbr)
+		.select(ia.numeric_values, iav.abbr, iav.attribute_value)
 		.where(
 			(ia.name == attr.attribute)
 			# attribute_value is a varchar column; cast the param to str so postgres doesn't choke on
