@@ -1,0 +1,10 @@
+{
+  "creation": "2026-08-15",
+  "doc_type": "GL Entry",
+  "doctype": "Permission Type",
+  "modified": "2026-08-15",
+  "modified_by": "Administrator",
+  "name": "gl_entry_access_all",
+  "owner": "Administrator",
+  "perm_type": "access_all"
+}
