@@ -58,7 +58,27 @@ class BuyingController(SubcontractingController):
 				or self.has_value_changed("transaction_date")
 			)
 		):
-			self.conversion_rate = None
+			conversion_rate = None
+			for row in self.items:
+				if self.doctype == "Purchase Invoice" and row.purchase_receipt:
+					conversion_rate = frappe.get_value(
+						"Purchase Receipt", row.purchase_receipt, "conversion_rate"
+					)
+					break
+				elif self.doctype == "Purchase Receipt" and row.purchase_invoice:
+					conversion_rate = frappe.get_value(
+						"Purchase Invoice", row.purchase_invoice, "conversion_rate"
+					)
+					break
+
+			self.conversion_rate = conversion_rate
+		elif self.doctype == "Purchase Receipt":
+			for row in self.items:
+				if row.purchase_invoice:
+					if self.conversion_rate != frappe.get_value(
+						"Purchase Invoice", row.purchase_invoice, "conversion_rate"
+					):
+						frappe.throw(_("Exchange Rate should be same Exchange Rate in Purchase Invoice"))
 		validate_terms_and_conditions(self.get("tc_name"), "buying")
 		self.set_rate_for_standalone_debit_note()
 
