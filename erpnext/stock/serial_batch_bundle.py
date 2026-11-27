@@ -811,20 +811,20 @@ class SerialNoValuation(DeprecatedSerialNoValuation):
 
 		incoming_rates = frappe._dict()
 		for serial_nos_batch in create_batch(serial_nos, SERIAL_NO_QUERY_BATCH_SIZE):
-			for serial_no, incoming_rate in self.get_inward_serial_no_rates(
+			for serial_no, warehouse, incoming_rate in self.get_inward_serial_no_rates(
 				serial_nos_batch, bundle_child, posted_before_condition
 			):
-				incoming_rates.setdefault(serial_no, incoming_rate)
+				if warehouse == self.sle.warehouse:
+					incoming_rates.setdefault(serial_no, incoming_rate)
 
 		return incoming_rates
 
 	def get_inward_serial_no_rates(self, serial_nos, bundle_child, posted_before_condition):
 		query = (
 			frappe.qb.from_(bundle_child)
-			.select(bundle_child.serial_no, bundle_child.incoming_rate)
+			.select(bundle_child.serial_no, bundle_child.warehouse, bundle_child.incoming_rate)
 			.where(
-				(bundle_child.warehouse == self.sle.warehouse)
-				& (bundle_child.serial_no.isin(serial_nos))
+				(bundle_child.serial_no.isin(serial_nos))
 				& (bundle_child.item_code == self.sle.item_code)
 				& (bundle_child.is_cancelled == 0)
 				& (bundle_child.docstatus == 1)
@@ -1521,6 +1521,15 @@ class SerialBatchCreation:
 	def set_serial_batch_entries(self, doc):
 		incoming_rate = self.get("incoming_rate")
 
+		standard_rate = self.get_standard_cost_rate()
+		if standard_rate is not None:
+			# Standard Cost values every serial/batch at the same rate, so the bundle entries
+			# must carry the standard rate (not the document/billed rate) to stay consistent
+			# with the standard-valued Stock Ledger Entry.
+			incoming_rate = standard_rate
+			self.serial_nos_valuation = None
+			self.batches_valuation = None
+
 		precision = frappe.get_precision("Serial and Batch Entry", "qty")
 		if self.get("serial_nos"):
 			serial_no_wise_batch = frappe._dict({})
@@ -1556,6 +1565,25 @@ class SerialBatchCreation:
 						"incoming_rate": incoming_rate,
 					},
 				)
+
+	def get_standard_cost_rate(self):
+		"""Return the standard valuation rate for the item if its valuation method is
+		Standard Cost, else None — used to value bundle entries at standard."""
+		from erpnext.stock.doctype.item_standard_cost.item_standard_cost import get_item_standard_rate
+		from erpnext.stock.utils import get_valuation_method
+
+		company = self.get("company")
+		if not company and self.get("warehouse"):
+			company = frappe.get_cached_value("Warehouse", self.warehouse, "company")
+
+		if not company or get_valuation_method(self.item_code, company) != "Standard Cost":
+			return None
+
+		posting_date = self.get("posting_date")
+		if not posting_date and self.get("posting_datetime"):
+			posting_date = getdate(self.posting_datetime)
+
+		return get_item_standard_rate(self.item_code, company, posting_date)
 
 	def create_batch(self):
 		from erpnext.stock.doctype.batch.batch import make_batch
