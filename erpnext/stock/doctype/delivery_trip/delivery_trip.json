@@ -37,6 +37,7 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Series",
    "options": "MAT-DT-.YYYY.-"
   },
@@ -56,6 +57,7 @@
    "default": "0",
    "fieldname": "email_notification_sent",
    "fieldtype": "Check",
+   "hidden": 1,
    "label": "Initial Email Notification Sent",
    "read_only": 1
   },
@@ -191,7 +193,7 @@
  "icon": "route",
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-27 13:06:50.643296",
+ "modified": "2026-06-14",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",
