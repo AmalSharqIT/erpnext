@@ -8,7 +8,7 @@ from itertools import chain
 import frappe
 from frappe import _, bold
 from frappe.model.utils.mask import mask_dict_results
-from frappe.query_builder import Case, Criterion, Tuple
+from frappe.query_builder import Case, Criterion, Order, Tuple
 from frappe.query_builder.functions import Count, Max, Min, Sum
 from frappe.query_builder.terms import ParameterizedValueWrapper
 from frappe.utils import cint, cstr, flt, format_datetime, get_datetime, get_link_to_form, getdate
@@ -404,7 +404,8 @@ class StockController(AccountsController):
 			is_material_issue = True
 
 		check_batches = self.is_batch_check_needed()
-		for d in self.get("items"):
+		# packed rows on batch fields get their bundle only at submit
+		for d in self.get("items") + self.get_current_packed_rows():
 			if hasattr(d, "serial_no") and hasattr(d, "batch_no") and d.serial_no and d.batch_no:
 				serial_nos = frappe.get_all(
 					"Serial No",
@@ -2503,6 +2504,8 @@ class StockController(AccountsController):
 						)
 					)
 				)
+				# serial and batch reservations first, so a qty one only takes what they did not match
+				.orderby(table.reservation_based_on, order=Order.desc)
 				.orderby(table.creation)
 			)
 			if purpose == "Return of Components" and self._action == "cancel":

@@ -30,6 +30,7 @@ from erpnext.controllers.sales_and_purchase_return import get_rate_for_return
 from erpnext.controllers.subcontracting_controller import SubcontractingController
 from erpnext.setup.doctype.terms_and_conditions.terms_and_conditions import validate_terms_and_conditions
 from erpnext.setup.utils import get_exchange_rate
+from erpnext.stock.doctype.item.item import validate_item_uoms
 from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
 from erpnext.stock.get_item_details import (
 	NOT_APPLICABLE_TAX,
@@ -67,6 +68,7 @@ class BuyingController(SubcontractingController):
 			self.supplier_name = frappe.db.get_value("Supplier", self.supplier, "supplier_name")
 
 		self.validate_items()
+		validate_item_uoms(self.get("items"))
 		self.set_received_qty()
 		self.set_qty_as_per_stock_uom()
 		self.validate_stock_or_nonstock_items()
@@ -1524,11 +1526,16 @@ class BuyingController(SubcontractingController):
 		)
 
 	def get_returned_source_package(self, row, source_qty):
+		"""Package that puts the returned accepted and rejected stock back in transit."""
+		package, include_bundle = row.serial_and_batch_bundle, row.rejected_serial_and_batch_bundle
+		if not package:  # a return of only the rejected qty
+			package, include_bundle = include_bundle, None
+
 		return self.make_package_for_transfer(
-			row.serial_and_batch_bundle,
+			package,
 			row.from_warehouse,
 			type_of_transaction="Inward",
-			include_bundle=row.rejected_serial_and_batch_bundle,
+			include_bundle=include_bundle,
 			total_qty=source_qty,
 		)
 
@@ -1961,9 +1968,7 @@ class BuyingController(SubcontractingController):
 
 		if any(d.schedule_date for d in self.get("items")):
 			# Select earliest schedule_date.
-			self.schedule_date = min(
-				d.schedule_date for d in self.get("items") if d.schedule_date is not None
-			)
+			self.schedule_date = min(getdate(d.schedule_date) for d in self.get("items") if d.schedule_date)
 
 		if self.schedule_date:
 			for d in self.get("items"):

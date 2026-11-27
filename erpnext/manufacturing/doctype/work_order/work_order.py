@@ -779,7 +779,7 @@ class WorkOrder(Document):
 			get_qty_before_process_loss,
 		)
 
-		# already ordered qty
+		# already ordered qty; sub-assembly Work Orders make input for the parent assembly, not the qty sold
 		wo = frappe.qb.DocType("Work Order")
 		plan_item = frappe.qb.DocType("Production Plan Item")
 		ordered_qty_against_so = (
@@ -792,6 +792,7 @@ class WorkOrder(Document):
 				& (wo.sales_order == self.sales_order)
 				& (wo.docstatus == 1)
 				& (wo.name != self.name)
+				& (IfNull(wo.production_plan_sub_assembly_item, "") == "")
 			)
 		).run()[0][0]
 
@@ -2371,19 +2372,21 @@ class WorkOrder(Document):
 			"voucher_detail_no": row.name,
 			"warehouse": row.source_warehouse,
 		}
+		# serial and batch reservations first, so a qty one only takes what they did not match;
+		# a Closed one stays in, so a qty one does not take what it already matched
 		names = frappe.get_all(
 			"Stock Reservation Entry",
 			# a fully transferred reservation is Closed, and must reopen when its transfer is cancelled
 			filters={**filters, "docstatus": 1},
 			pluck="name",
-			order_by="creation",
+			order_by="reservation_based_on desc, creation",
 		)
 		if self.status == "Closed":
 			names += frappe.get_all(
 				"Stock Reservation Entry",
 				filters={**filters, "docstatus": 2, "transferred_qty": (">", 0)},
 				pluck="name",
-				order_by="creation",
+				order_by="reservation_based_on desc, creation",
 			)
 
 		if names:
@@ -2394,27 +2397,30 @@ class WorkOrder(Document):
 					continue
 
 				qty_to_update = min(flt(transferred_qty), flt(doc.reserved_qty - doc.consumed_qty))
-				transferred_qty = flt(transferred_qty) - qty_to_update
-
 				if qty_to_update < 0:
+					transferred_qty = flt(transferred_qty) - qty_to_update
 					continue
 
 				if doc.docstatus == 2:
 					doc.db_set("transferred_qty", flt(qty_to_update), update_modified=False)
 					doc.release_reversed_usage("transferred_qty", row_wise_serial_batch)
-					continue
+				else:
+					if (
+						doc.has_batch_no or doc.has_serial_no
+					) and doc.reservation_based_on == "Serial and Batch":
+						doc.consume_serial_batch_for_material_transfer(row_wise_serial_batch)
+						qty_to_update = doc.matched_serial_batch_qty
 
-				if (doc.has_batch_no or doc.has_serial_no) and doc.reservation_based_on == "Serial and Batch":
-					doc.consume_serial_batch_for_material_transfer(row_wise_serial_batch)
-					qty_to_update = doc.matched_serial_batch_qty
+					doc.db_set("transferred_qty", flt(qty_to_update), update_modified=False)
+					if doc.transferred_qty >= doc.reserved_qty:
+						doc.db_set("status", "Closed", update_modified=False)
 
-				doc.db_set("transferred_qty", flt(qty_to_update), update_modified=False)
-				if doc.transferred_qty >= doc.reserved_qty:
-					doc.db_set("status", "Closed", update_modified=False)
+					doc.update_status()
+					doc.update_reserved_stock_in_bin()
+					doc.update_reserved_qty_in_voucher()
 
-				doc.update_status()
-				doc.update_reserved_stock_in_bin()
-				doc.update_reserved_qty_in_voucher()
+				# a serial and batch reservation keeps only what it matched
+				transferred_qty = flt(transferred_qty - doc.transferred_qty, doc.precision("transferred_qty"))
 
 		return transferred_qty
 
@@ -2575,23 +2581,7 @@ class WorkOrder(Document):
 		return consumption_by_row
 
 	def get_consumed_qty_by_item(self):
-		ste = frappe.qb.DocType("Stock Entry")
-		ste_child = frappe.qb.DocType("Stock Entry Detail")
-		item_code = fn.Coalesce(fn.NullIf(ste_child.original_item, ""), ste_child.item_code)
-		query = (
-			frappe.qb.from_(ste)
-			.inner_join(ste_child)
-			.on(ste_child.parent == ste.name)
-			.select(item_code.as_("item_code"), fn.Sum(ste_child.transfer_qty).as_("qty"))
-			.where(
-				(ste.work_order == self.name)
-				& (ste.purpose.isin(CONSUMPTION_PURPOSES))
-				& (ste.docstatus == 1)
-				& (ste_child.s_warehouse.isnotnull())
-			)
-			.groupby(item_code)
-		)
-		return frappe._dict({d.item_code: flt(d.qty) for d in query.run(as_dict=1)})
+		return get_consumed_qty_by_work_order([self.name]).get(self.name, frappe._dict())
 
 	def update_consumed_qty_in_stock_reservation(self, item, consumed_qty, wip_warehouse):
 		filters = {
@@ -2616,7 +2606,7 @@ class WorkOrder(Document):
 			filters=filters,
 			or_filters=or_filters,
 			pluck="name",
-			order_by="creation",
+			order_by="reservation_based_on desc, creation",
 		):
 			for name in names:
 				if consumed_qty < 0:
@@ -2627,19 +2617,22 @@ class WorkOrder(Document):
 				qty_to_update = consumed_qty if consumed_qty < reserved_qty else reserved_qty
 				if qty_to_update >= 0:
 					doc.db_set("consumed_qty", flt(qty_to_update), update_modified=False)
-					consumed_qty -= qty_to_update
 
 				if doc.docstatus == 2:
 					doc.release_reversed_usage("consumed_qty", row_wise_serial_batch)
-					continue
+				else:
+					if (
+						doc.has_batch_no or doc.has_serial_no
+					) and doc.reservation_based_on == "Serial and Batch":
+						doc.consume_serial_batch_for_material_transfer(row_wise_serial_batch)
+						doc.db_set("consumed_qty", doc.matched_serial_batch_qty, update_modified=False)
 
-				if (doc.has_batch_no or doc.has_serial_no) and doc.reservation_based_on == "Serial and Batch":
-					doc.consume_serial_batch_for_material_transfer(row_wise_serial_batch)
-					doc.db_set("consumed_qty", doc.matched_serial_batch_qty, update_modified=False)
+					doc.update_status()
+					doc.update_reserved_stock_in_bin()
+					doc.update_reserved_qty_in_voucher()
 
-				doc.update_status()
-				doc.update_reserved_stock_in_bin()
-				doc.update_reserved_qty_in_voucher()
+				# a serial and batch reservation keeps only what it matched
+				consumed_qty = flt(consumed_qty - doc.consumed_qty, doc.precision("consumed_qty"))
 
 	def validate_reserved_qty(self):
 		sre_details = get_sre_details(self.name)
@@ -3634,7 +3627,6 @@ def make_stock_entry(
 	stock_entry.set_stock_entry_type()
 	stock_entry.is_additional_transfer_entry = is_additional_transfer_entry
 	stock_entry.get_items()
-	stock_entry.set_secondary_items_from_job_card()
 
 	if purpose != "Disassemble":
 		stock_entry.set_serial_no_batch_for_finished_good()
@@ -3715,6 +3707,31 @@ def is_row_of_operation(row, operation):
 		return cint(row.operation_row_id) == cint(operation.operation_row_id)
 
 	return not row.operation or row.operation == operation.operation
+
+
+def get_consumed_qty_by_work_order(work_orders):
+	"""Return {work_order: {item_code: qty}} consumed by submitted stock entries, returns excluded."""
+	ste = frappe.qb.DocType("Stock Entry")
+	ste_child = frappe.qb.DocType("Stock Entry Detail")
+	item_code = fn.Coalesce(fn.NullIf(ste_child.original_item, ""), ste_child.item_code)
+	query = (
+		frappe.qb.from_(ste)
+		.inner_join(ste_child)
+		.on(ste_child.parent == ste.name)
+		.select(ste.work_order, item_code.as_("item_code"), fn.Sum(ste_child.transfer_qty).as_("qty"))
+		.where(
+			(ste.work_order.isin(work_orders))
+			& (ste.purpose.isin(CONSUMPTION_PURPOSES))
+			& (ste.docstatus == 1)
+			& (ste_child.s_warehouse.isnotnull())
+		)
+		.groupby(ste.work_order, item_code)
+	)
+
+	consumed = {}
+	for d in query.run(as_dict=1):
+		consumed.setdefault(d.work_order, frappe._dict())[d.item_code] = flt(d.qty)
+	return consumed
 
 
 def distribute_over_rows(rows, qty_by_item):

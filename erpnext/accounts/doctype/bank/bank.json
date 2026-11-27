@@ -96,7 +96,7 @@
   },
   {
    "fieldname": "plaid_access_token",
-   "fieldtype": "Data",
+   "fieldtype": "Password",
    "hidden": 1,
    "label": "Plaid Access Token",
    "no_copy": 1,

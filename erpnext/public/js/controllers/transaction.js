@@ -126,7 +126,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		});
 
 		frappe.ui.form.on(this.frm.cscript.tax_table, "rate", function (frm, cdt, cdn) {
-			cur_frm.cscript.calculate_taxes_and_totals();
+			cur_frm.cscript.refresh_item_tax_rates();
 		});
 
 		frappe.ui.form.on(this.frm.cscript.tax_table, "tax_amount", function (frm, cdt, cdn) {
@@ -661,6 +661,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		// real currency change can be told apart from a mere exchange rate refresh
 		// (e.g. triggered by a date change).
 		this._doc_currency = this.frm.doc.currency;
+		this._schedule_base_date = this.get_schedule_base_date();
 		this.set_dynamic_labels();
 		this.setup_sms();
 		this.setup_quality_inspection();
@@ -1412,7 +1413,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		if (this.frm.doc.transaction_date) {
 			this.frm.transaction_date = this.frm.doc.transaction_date;
 			this.update_rates_for_new_date();
-			this.recalculate_terms();
+			this.recalculate_terms(this.pop_schedule_date_shift());
 		}
 	}
 
@@ -1420,6 +1421,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		var me = this;
 		if (this.frm.doc.posting_date) {
 			this.frm.posting_date = this.frm.doc.posting_date;
+			const days_moved = this.pop_schedule_date_shift();
 
 			if (
 				(this.frm.doc.doctype == "Sales Invoice" && this.frm.doc.customer) ||
@@ -1440,7 +1442,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 							me.frm.doc.due_date = r.message;
 							refresh_field("due_date");
 							me.update_rates_for_new_date();
-							me.recalculate_terms();
+							me.recalculate_terms(days_moved);
 						}
 					},
 				});
@@ -1527,7 +1529,20 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		this.posting_date();
 	}
 
-	recalculate_terms() {
+	get_schedule_base_date() {
+		const doc = this.frm.doc;
+		return doc.bill_date || doc.posting_date || doc.transaction_date;
+	}
+
+	// days the schedule base date moved since the manual rows were last aligned to it
+	pop_schedule_date_shift() {
+		const base_date = this.get_schedule_base_date();
+		const days_moved = frappe.datetime.get_day_diff(base_date, this._schedule_base_date || base_date);
+		this._schedule_base_date = base_date;
+		return days_moved;
+	}
+
+	recalculate_terms(days_moved) {
 		const doc = this.frm.doc;
 		if (doc.payment_terms_template) {
 			this.payment_terms_template();
@@ -1536,13 +1551,10 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			doc.payment_schedule.forEach(function (term) {
 				if (term.payment_term) {
 					me.payment_term(doc, term.doctype, term.name);
-				} else {
-					frappe.model.set_value(
-						term.doctype,
-						term.name,
-						"due_date",
-						doc.posting_date || doc.transaction_date
-					);
+				} else if (term.due_date && days_moved) {
+					// hand-entered due dates move with the document date, keeping their gaps
+					const due_date = moment(term.due_date).add(days_moved, "days").format("YYYY-MM-DD");
+					frappe.model.set_value(term.doctype, term.name, "due_date", due_date);
 				}
 			});
 		}
@@ -2744,7 +2756,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 							refresh_field("taxes");
 						} else {
 							me.frm.set_value("taxes", taxes);
-							me.calculate_taxes_and_totals();
+							me.refresh_item_tax_rates();
 						}
 					}
 				},
@@ -2806,6 +2818,41 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				},
 			});
 		}
+	}
+
+	refresh_item_tax_rates() {
+		// item_tax_rate also holds each tax row's rate, so rebuild it as the server does on save
+		const items = this.frm.doc.items || [];
+		const templates = [...new Set(items.map((item) => item.item_tax_template || ""))];
+		const doc = {
+			company: this.frm.doc.company,
+			taxes: (this.frm.doc.taxes || []).map(({ account_head, rate, set_by_item_tax_template }) => ({
+				account_head,
+				rate,
+				set_by_item_tax_template,
+			})),
+		};
+		const request = (this.item_tax_rates_request = (this.item_tax_rates_request || 0) + 1);
+
+		return Promise.all(
+			templates.map((tax_template) =>
+				frappe.xcall("erpnext.stock.get_item_details.get_item_tax_map", {
+					doc,
+					tax_template,
+					as_json: true,
+				})
+			)
+		)
+			.then((item_tax_rates) => {
+				// a later tax change has its own request in flight
+				if (request !== this.item_tax_rates_request) return;
+
+				items.forEach((item) => {
+					const index = templates.indexOf(item.item_tax_template || "");
+					if (index !== -1) item.item_tax_rate = item_tax_rates[index];
+				});
+			})
+			.finally(() => this.calculate_taxes_and_totals());
 	}
 
 	item_tax_template(doc, cdt, cdn) {
